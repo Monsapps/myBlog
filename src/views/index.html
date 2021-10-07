@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+
+{% block content %}
+<!-- Home -->
+<section>
+    <h1>édito</h1>
+    <div class="hero-container">
+        <div class="hero-avatar">
+            <img src="./public/images/avatars/avatar.svg" alt="Photo de moi">
+            Martin Durand
+        </div>
+        <div class="hero-more">
+            <div class="hero-quote">Martin Durand, le développeur qu’il vous faut!</div>
+            <div class="hero-cv">
+                Consultez mon CV
+            </div>
+            <div class="hero-social">
+                Suivez moi sur:
+            </div>
+        </div>
+    </div>
+</section>
+<section>
+    <h2>Contactez moi</h2>
+    <div class="contact-container">
+        <form action="" method="POST" class="contact-form">
+            <div>
+                <input type="text" name="name" id="name" required>
+                <label for="name">Nom</label>
+            </div>
+            <div>
+                <input type="text" name="surname" id="surname" required>
+                <label for="surname">Pr&eacute;nom</label>
+            </div>
+            <div>
+                <input type="email" name="email" id="email" required>
+                <label for="email">Email</label>
+            </div>
+            <div class="contact-message">
+                <textarea name="message" required></textarea>
+                <label for="message">Message</label>
+            </div>
+            <input type="submit" value="Envoyer">
+        </form> 
+    </div>
+</section>
+{% endblock %}
