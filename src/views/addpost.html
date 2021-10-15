@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block content %}
+<!-- Add Post -->
+<section>
+    <h2>Ajouter un article</h2>
+    <div class="contact-container">
+        <form action="./index.php?page=publish" method="POST" class="contact-form">
+            <div>
+                <input type="text" name="title" required>
+                <label for="title">Titre</label>
+            </div>
+            <div>
+                <input type="text" name="hat" required>
+                <label for="chapo">Chap&ocirc;</label>
+            </div>
+            <div>
+                <input type="text" name="keywords" required>
+                <label for="keywords">Mots-clefs</label>
+            </div>
+            <div class="contact-message">
+                <textarea name="content" required></textarea>
+                <label for="content">Contenu</label>
+            </div>
+            <input type="submit" value="Ajouter">
+        </form> 
+    </div>
+</section>
+{% endblock %}

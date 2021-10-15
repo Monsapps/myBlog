@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block content %}
+<!-- Posts -->
+<section>
+    <h1>Articles</h1>
+    {% if (role == 1) or (role == 2) %}
+    <div>
+        <a href="./index.php?page=addpost">Ajouter un article</a>
+    </div>
+    {% endif %}
+
+    {% for post in posts %}
+    <div>
+        <a href="./index.php?page=post&id={{ post.id }}">{{ post.title }}</a><br />
+        {{ post.hat }}<br />
+        écrit par {{ post.name }} {{ post.surname }} Dernière modification {{ post.last_edited }}
+    </div>
+    {% else %}
+        Aucuns articles
+    {% endfor %}
+</section>
+{% endblock %}

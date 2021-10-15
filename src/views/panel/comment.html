@@ -1,0 +1,17 @@
+{% extends "/panel/base.html" %}
+
+{% block content %}
+{% if (role == 1) %}
+<!-- Panel -->
+<section>
+    <h1>Commentaires en attente de validation</h1>
+    {% for comment in comments %}
+    <div>
+        {{ comment.content }} écrit par {{ comment.name }} dans l'article <b>{{ comment.title }}</b> <a href="./index.php?page=confirmcomment&id={{ comment.id }}">Confirmer</a> <a href="./index.php?page=rejectcomment&id={{ comment.id }}">Rejeter</a>
+    </div>
+    {% else %}
+        Aucuns commentaires
+    {% endfor %}
+</section>
+{% endif %}
+{% endblock %}

@@ -187,16 +187,16 @@ section h2::first-letter {
     display: flex;
 }
 
-.hero-avatar {
+.hero-infos {
     width: 25%;
     text-align: center;
 }
 
-.hero-avatar img {
-    display: block;
+.hero-avatar {
+    width: 100%;
     border: solid 2px black;
     border-radius: 50%;
-    overflow: hidden ;
+    overflow: hidden;
 }
 
 .hero-more {
@@ -251,7 +251,10 @@ section h2::first-letter {
     transition: all ease-in 0.20s;
 }
 
-.contact-form > div > input[type=text], .contact-form > div > input[type=email], .contact-form > div > input[type=password] {
+.contact-form > div > input[type=text], 
+.contact-form > div > input[type=email], 
+.contact-form > div > input[type=password],
+.contact-form > div > select {
     position: absolute;
     bottom: 0;
     background: transparent;
@@ -264,7 +267,9 @@ section h2::first-letter {
     border-bottom: 2px solid gray;
 }
 
-.contact-form input:focus ~ label, .contact-form textarea:focus ~ label {
+.contact-form input:focus ~ label, 
+.contact-form textarea:focus ~ label,
+.contact-form select:focus ~ label {
     font-size: 1.1em;
     font-weight: bolder;
 }

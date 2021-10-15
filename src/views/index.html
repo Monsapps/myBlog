@@ -5,17 +5,27 @@
 <section>
     <h1>édito</h1>
     <div class="hero-container">
-        <div class="hero-avatar">
-            <img src="./public/images/avatars/avatar.svg" alt="Photo de moi">
-            Martin Durand
+        <div class="hero-infos">
+            {% if (main_user.path_name is empty) %}
+            <img src="./public/images/avatars/default.svg" alt="Photo de {{ main_user.name}} {{ main_user.surname }}" class="hero-avatar">
+            {% else %}
+            <img src="./public/uploads/{{ main_user.path_name }}" alt="Photo de {{ main_user.name}} {{ main_user.surname }}" class="hero-avatar">
+            {% endif %}
+            <div>
+                {{ main_user.name}} {{ main_user.surname }}
+            </div>
         </div>
         <div class="hero-more">
-            <div class="hero-quote">Martin Durand, le développeur qu’il vous faut!</div>
+            <div class="hero-quote">{{ main_user.user_hat }}</div>
             <div class="hero-cv">
-                Consultez mon CV
+                {% if (main_user.file_name is empty) %}
+                Aucun cv disponible
+                {% else %}
+                <a href="./public/uploads/{{ main_user.file_name }}">Consulter mon cv</a>
+                {% endif %}
             </div>
             <div class="hero-social">
-                Suivez moi sur:
+                Suivez moi sur: à faire
             </div>
         </div>
     </div>
