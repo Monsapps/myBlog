@@ -1,13 +1,29 @@
 {% extends "base.html" %}
 
-{% block content %}
-
-<!-- Errors -->
-
-{% if (error == 1) %}
-    <!-- add error spec -->
+{% block error %}
+{% if(error != "0") %}
+<script>
+    function closeWindow() {
+        document.getElementById("error-box").hidden = true;
+    }
+</script>
+<div class="error-box" id="error-box">
+    {% if(error == "1") %}
+        Les deux mots de passes ne correspondent pas
+    {% endif %}
+    {% if(error == "2") %}
+    L'email est déjà présent
+    {% endif %}
+    {% if(error == "3") %}
+    L'email et/ou le mot de passe ne correspondent pas
+    {% endif %}
+    <input type="button" value="Fermer" onclick="closeWindow()" >
+</div>
 {% endif %}
+{% endblock %}
 
+
+{% block content %}
 <!-- Log in -->
 <section>
     <h2>Connectez-vous</h2>

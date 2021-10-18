@@ -1,5 +1,24 @@
 {% extends "/panel/base.html" %}
 
+{% block error %}
+{% if(error != "0") %}
+<script>
+    function closeWindow() {
+        document.getElementById("error-box").hidden = true;
+    }
+</script>
+<div class="error-box" id="error-box">
+    {% if(error == "1") %}
+        Le type de fichier envoyer n'est pas au bon format
+    {% endif %}
+    {% if(error == "2") %}
+        Erreur lors de la copie du fichier, veuillez rééssayer plus tard
+    {% endif %}
+    <input type="button" value="Fermer" onclick="closeWindow()" >
+</div>
+{% endif %}
+{% endblock %}
+
 {% block content %}
 {% if (role != -1) %}
 <!-- Panel -->

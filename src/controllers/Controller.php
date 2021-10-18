@@ -33,6 +33,14 @@ class Controller {
         $currentPage = (empty($_GET["page"])) ? "" : $_GET["page"];
         $this->twig->addGlobal("currentPage", $currentPage);
 
+        // add variable id_error if present (default: 0)
+        $idError = (empty($_GET["error"])) ? "0" : $_GET["error"];
+        $this->twig->addGlobal("error", $idError);
+
+        // add variable id_status if present (default: 0)
+        $idStatus = (empty($_GET["status"])) ? "0" : $_GET["status"];
+        $this->twig->addGlobal("status", $idStatus);
+
         $this->isAllowedToCRUD = false;
         $this->role = -1;
         if(((isset($_COOKIE["email"])) && !empty($_COOKIE["email"])) && (isset($_COOKIE["sessionid"])) ) {
@@ -351,7 +359,7 @@ class Controller {
                     Header("Location: ./index.php?page=panel");
                     exit;
                 } else {
-                    Header("Location: ./index.php?page=panel&error=1");
+                    Header("Location: ./index.php?page=panel&error=2");
                     exit;
                 }
             } else {
@@ -381,7 +389,7 @@ class Controller {
                         $image->setCv((int)$postArray["user_id"], $encodedFileName);
                     }
                 } else {
-                    Header("Location: ./index.php?page=panel&error=1");
+                    Header("Location: ./index.php?page=panel&error=2");
                     exit;
                 }
                 Header("Location: ./index.php?page=panel");

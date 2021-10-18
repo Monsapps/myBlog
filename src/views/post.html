@@ -31,6 +31,9 @@
     {% endfor %}
 </section>
 <section>
+    {% if(status == "1") %}
+        Votre commentaire à bien été enregistré, cependant il sera affiché lorsque l'administrateur l'aura validé.
+    {% endif %}
     {% if (role != -1) %}
     <div class="contact-container">
         <form action="./index.php?page=addcomment" method="post" class="contact-form">
