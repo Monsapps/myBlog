@@ -22,7 +22,7 @@ class Post {
   }
 
   function getPostInfos(int $id) {
-    $sql = "SELECT p.id, p.title, p.hat, p.content, p.date, p.last_edited, p.keywords, u.name, u.surname
+    $sql = "SELECT p.id, p.user_id, p.title, p.hat, p.content, p.date, p.last_edited, p.keywords, u.name, u.surname
           FROM `post` AS p
           LEFT JOIN `user` AS u ON u.`id` = p.`user_id`
           WHERE p.`id` = :id

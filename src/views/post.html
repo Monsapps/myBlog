@@ -13,7 +13,7 @@
     {% else %}
     Dernière modification: {{ post.last_edited }}
     {% endif %}
-    {% if (role >= 1) or (user_id == post.user_id) %}
+    {% if (is_allowed_to_crud) or (user_id == post.user_id) %}
     <div>
         <a href="./index.php?page=editpost&id={{ post.id }}">Modifier article</a>
     </div>

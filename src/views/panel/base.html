@@ -17,7 +17,9 @@
                 <nav>
                     <li>
                         <ul {% if (currentPage == "panel") %}class="current"{% endif %}><a href="./index.php?page=panel">Profil</a></ul>
+                        {% if (role >= 1) %}
                         <ul {% if (currentPage == "postmanager") %}class="current"{% endif %}><a href="./index.php?page=postmanager">Articles</a></ul>
+                        {% endif %}
                         {% if (role == 1) %}
                             <ul {% if (currentPage == "commentmanager") %}class="current"{% endif %}><a href="./index.php?page=commentmanager">Commentaires</a></ul>
                             <ul {% if (currentPage == "permissionmanager") %}class="current"{% endif %}><a href="./index.php?page=permissionmanager">Permissions</a></ul>

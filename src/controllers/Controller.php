@@ -15,6 +15,7 @@ class Controller {
     private $mainUser;
     private $twig;
     private $role;
+    private $isAllowedToCRUD;
 
     function __construct() {
 
@@ -32,10 +33,12 @@ class Controller {
         $currentPage = (empty($_GET["page"])) ? "" : $_GET["page"];
         $this->twig->addGlobal("currentPage", $currentPage);
 
+        $this->isAllowedToCRUD = false;
         $this->role = -1;
         if(((isset($_COOKIE["email"])) && !empty($_COOKIE["email"])) && (isset($_COOKIE["sessionid"])) ) {
             $permission = new AutorisationController();
             $this->role = $permission->getUserRole($_COOKIE["email"], $_COOKIE["sessionid"]);
+            $this->isAllowedToCRUD = $permission->isAllowedToCrud();
         }
     }
 
@@ -69,13 +72,13 @@ class Controller {
             "navtitle" => $this->title, 
             "desciption" => $this->descriptions,
             "keywords" => $this->keywords,
-            "role" => $this->role, 
+            "role" => $this->role,
             "posts" => $posts
         ));
     }
 
     function getPostPage(int $id) {
-        // We need to check user id if he can edit his post
+        // We need to check user id if he can edit his post/comment
         if(!empty($_COOKIE["email"])) {
             $user = new \Monsapp\Myblog\Models\User();
             $userInfos = $user->getUserInfos($_COOKIE["email"]);
@@ -96,6 +99,7 @@ class Controller {
             "desciption" => $this->descriptions,
             "keywords" => $postInfos["keywords"],
             "role" => $this->role,
+            "is_allowed_to_crud" => $this->isAllowedToCRUD, 
             "user_id" => $userId,
             "post" => $postInfos,
             "comments" => $comments
@@ -103,7 +107,7 @@ class Controller {
     }
 
     function getAddPostPage() {
-        if(($this->role == 1) || ($this->role == 2) ) {
+        if($this->isAllowedToCRUD) {
             echo $this->twig->render("addpost.html", array(
                 "title" => $this->title, 
                 "navtitle" => $this->title, 
@@ -118,7 +122,7 @@ class Controller {
     }
 
     function getPublishPage(array $postArray) {
-        if(($this->role == 1) || ($this->role == 2) ) {
+        if($this->isAllowedToCRUD) {
             // We need to attach user id to a post
             $user = new \Monsapp\Myblog\Models\User();
             $userInfos = $user->getUserInfos($_COOKIE["email"]);
@@ -145,7 +149,7 @@ class Controller {
         $post = new \Monsapp\Myblog\Models\Post();
         $postInfos = $post->getPostInfos($id);
 
-        if(($this->role == 1) || ($userInfos["id"] == $postInfos["user_id"]) ) {
+        if($this->isAllowedToCRUD || ($userInfos["id"] == $postInfos["user_id"])) {
             echo $this->twig->render("editpost.html", array(
                 "title" => $this->title, 
                 "navtitle" => $this->title, 
@@ -162,11 +166,16 @@ class Controller {
     }
 
     function getEditPostPublishPage(array $postArray) {
-        $post = new \Monsapp\Myblog\Models\Post();
-        // IMPORTANT mettre le controlleur isAllowedToEditPost()
-        $post->updatePost((int)$postArray["id"], (int)$postArray["author"], $postArray["title"], $postArray["hat"], $postArray["content"], $postArray["keywords"]);
-        Header("Location: ./index.php?page=post&id=". $postArray["id"]);
+        if($this->isAllowedToCRUD) {
+            $post = new \Monsapp\Myblog\Models\Post();
+            // IMPORTANT mettre le controlleur isAllowedToEditPost()
+            $post->updatePost((int)$postArray["id"], (int)$postArray["author"], $postArray["title"], $postArray["hat"], $postArray["content"], $postArray["keywords"]);
+            Header("Location: ./index.php?page=post&id=". $postArray["id"]);
+            exit;
+        } else {
+            Header("Location: ./index.php?page=post&id=". $postArray["id"]);
         exit;
+        }
     }
 
     /**
@@ -224,7 +233,6 @@ class Controller {
         $hashedPassword = $userInfos["password"];
 
         if(password_verify($password, $hashedPassword)) {
-
             // Set cookies to store email and hashed pass
             setcookie("email", $email, time()+3600);
             // We store combination of userId & email hashed password to compare inside Autorisation Controller
@@ -251,10 +259,15 @@ class Controller {
      */
 
     function getAddCommentPage(array $postArray) {
-        $comment = new \Monsapp\Myblog\Models\Comment();
-        $comment->addComment((int)$postArray["post_id"], (int)$postArray["user_id"], $postArray["comment"]);
-        Header("Location: ./index.php?page=post&id=". $postArray["post_id"]) ."&status=1";
-        exit;
+        if($this->role != -1) {
+            $comment = new \Monsapp\Myblog\Models\Comment();
+            $comment->addComment((int)$postArray["post_id"], (int)$postArray["user_id"], $postArray["comment"]);
+            Header("Location: ./index.php?page=post&id=". $postArray["post_id"] ."&status=1");
+            exit;
+        } else {
+            Header("Location: ./index.php?page=post&id=". $postArray["post_id"]);
+            exit;
+        }
     }
 
     /**
@@ -293,42 +306,83 @@ class Controller {
     }
 
     function getEditProfilePage(array $postArray) {
-        $user = new \Monsapp\Myblog\Models\User();
-        $user->updateUser((int)$postArray["id"], $postArray["name"], $postArray["surname"], $postArray["hat"]);
+        if($this->role != -1) {
+            $user = new \Monsapp\Myblog\Models\User();
+            $user->updateUser((int)$postArray["id"], $postArray["name"], $postArray["surname"], $postArray["hat"]);
 
-        Header("Location: ./index.php?page=panel");
-        exit;
+            Header("Location: ./index.php?page=panel");
+            exit;
+        } else {
+            Header("Location: ./index.php");
+            exit;
+        }
     }
 
     function getUploadAvatarPage(array $files, array $postArray) {
 
-        $image = new \Monsapp\Myblog\Models\Image();
+        // only confirmed users can upload avatar
+        if($this->role != -1) {
+            $image = new \Monsapp\Myblog\Models\Image();
+            $uploadDir = "./public/uploads/";
+            $mimeType = mime_content_type($files['avatar']['tmp_name']);
 
-        $uploadDir = "./public/uploads/";
+            // checking the mime_type if <<image/...>>
+            if(strpos($mimeType, "image") !== false) {
 
-        $mimeType = mime_content_type($files['avatar']['tmp_name']);
+                // get the file extension for the mimetype
+                preg_match("#/([a-z]{3,4})#", $mimeType, $fileExtension);
 
-        // checking the mime_type if <<image/...>>
-        if(strpos($mimeType, "image") !== false) {
+                // unique file name for id reference
+                $encodedFileName = md5($postArray["user_id"]) .".". $fileExtension[1];
 
-            // get the file extension for the mimetype
-            preg_match("#/([a-z]{3,4})#", $mimeType, $fileExtension);
+                $uploadFile = $uploadDir . basename($encodedFileName);
+                if (move_uploaded_file($files['avatar']['tmp_name'], $uploadFile)) {
+                    // update or insert data image if user_image_id exist
+                    if(!empty($postArray["user_image_id"])) {
+                        $image->updateImage((int)$postArray["user_image_id"], $encodedFileName);
 
-            // unique file name for id reference
-            $encodedFileName = md5($postArray["user_id"]) .".". $fileExtension[1];
+                        // if the file name is not the same name = delete
+                        if(!empty($postArray["user_image_file"]) && $postArray["user_image_file"] != $encodedFileName) {
+                            unlink($uploadDir . $postArray["user_image_file"]);
+                        }
+                    } else {
+                        $image->setImage((int)$postArray["user_id"], $encodedFileName);
+                    }
+                    Header("Location: ./index.php?page=panel");
+                    exit;
+                } else {
+                    Header("Location: ./index.php?page=panel&error=1");
+                    exit;
+                }
+            } else {
+                Header("Location: ./index.php?page=panel&error=1");
+                exit;
+            }
+        } else {
+            Header("Location: ./index.php?page=panel");
+            exit;
+        }
+    }
 
-            $uploadFile = $uploadDir . basename($encodedFileName);
-            if (move_uploaded_file($files['avatar']['tmp_name'], $uploadFile)) {
-                // update or insert data image if user_image_id exist
-                if(!empty($postArray["user_image_id"])) {
-                    $image->updateImage((int)$postArray["user_image_id"], $encodedFileName);
+    function getUploadCvPage(array $files, array $postArray) {
 
-                    // if the file name is not the same name = delete
-                    if(!empty($postArray["user_image_file"]) && $postArray["user_image_file"] != $encodedFileName) {
-                        unlink($uploadDir . $postArray["user_image_file"]);
+        // only admin can upload cv
+        if($this->role == 1) {
+            $image = new \Monsapp\Myblog\Models\CurriculumVitae();
+            $uploadDir = "./public/uploads/";
+    
+            $mimeType = mime_content_type($files['cv']['tmp_name']);
+            if(strpos($mimeType, "application/pdf") !== false) {
+                // encode pdf file to store on server
+                $encodedFileName = md5($postArray["user_id"]) .".pdf";
+                $uploadFile = $uploadDir . basename($encodedFileName);
+                if (move_uploaded_file($files['cv']['tmp_name'], $uploadFile)) {
+                    if(empty($postArray["user_cv_id"])) {
+                        $image->setCv((int)$postArray["user_id"], $encodedFileName);
                     }
                 } else {
-                    $image->setImage((int)$postArray["user_id"], $encodedFileName);
+                    Header("Location: ./index.php?page=panel&error=1");
+                    exit;
                 }
                 Header("Location: ./index.php?page=panel");
                 exit;
@@ -337,39 +391,14 @@ class Controller {
                 exit;
             }
         } else {
-            Header("Location: ./index.php?page=panel&error=1");
-            exit;
-        }
-    }
-
-    function getUploadCvPage(array $files, array $postArray) {
-        $image = new \Monsapp\Myblog\Models\CurriculumVitae();
-        $uploadDir = "./public/uploads/";
-
-        $mimeType = mime_content_type($files['cv']['tmp_name']);
-        if(strpos($mimeType, "application/pdf") !== false) {
-            // encode pdf file to store on server
-            $encodedFileName = md5($postArray["user_id"]) .".pdf";
-            $uploadFile = $uploadDir . basename($encodedFileName);
-            if (move_uploaded_file($files['cv']['tmp_name'], $uploadFile)) {
-                if(empty($postArray["user_cv_id"])) {
-                    $image->setCv((int)$postArray["user_id"], $encodedFileName);
-                }
-            } else {
-                Header("Location: ./index.php?page=panel&error=1");
-                exit;
-            }
             Header("Location: ./index.php?page=panel");
             exit;
-        } else {
-            Header("Location: ./index.php?page=panel&error=1");
-            exit;
         }
-
-
     }
 
     function getSettingsManagerPage() {
+
+        // only admin can edit main settings
         if($this->role == 1) {
             $user = new \Monsapp\Myblog\Models\User();
             $allUsers = $user->getAllUsers();
@@ -390,28 +419,34 @@ class Controller {
     }
 
     function getMainSettingsPage(array $post) {
+        // only admin can edit main settings
+        if($this->role == 1) {
+            if(!empty($post["site_title"]) && $this->title != $post["site_title"]) {
+                $this->config->editConfig("site_title", $post["site_title"]);
+            }
 
-        if(!empty($post["site_title"]) && $this->title != $post["site_title"]) {
-            $this->config->editConfig("site_title", $post["site_title"]);
+            if(!empty($post["site_descriptions"]) && $this->descriptions != $post["site_descriptions"]) {
+                $this->config->editConfig("site_descriptions", $post["site_description"]);
+            }
+
+            if(!empty($post["site_keywords"]) && $this->keywords != $post["site_keywords"]) {
+                $this->config->editConfig("site_keywords", $post["site_keywords"]);
+            }
+
+            if(!empty($post["main_user"]) && $this->mainUser != $post["main_user"]) {
+                $this->config->editConfig("site_main_user_id", $post["main_user"]);
+            }
+
+            Header("Location: ./index.php?page=settingsmanager");
+            exit;
+        } else {
+            Header("Location: ./index.php");
+            exit;
         }
-
-        if(!empty($post["site_descriptions"]) && $this->descriptions != $post["site_descriptions"]) {
-            $this->config->editConfig("site_descriptions", $post["site_description"]);
-        }
-
-        if(!empty($post["site_keywords"]) && $this->keywords != $post["site_keywords"]) {
-            $this->config->editConfig("site_keywords", $post["site_keywords"]);
-        }
-
-        if(!empty($post["main_user"]) && $this->mainUser != $post["main_user"]) {
-            $this->config->editConfig("site_main_user_id", $post["main_user"]);
-        }
-
-        Header("Location: ./index.php?page=settingsmanager");
-        exit;
     }
 
     function getCommentManagerPage() {
+        // only admin can crud comment
         if($this->role == 1) {
             $comment = new \Monsapp\Myblog\Models\Comment();
             $comments = $comment->getPendingComments();
@@ -430,17 +465,27 @@ class Controller {
     }
 
     function getActivateCommentPage(int $commentId) {
-        $comment = new \Monsapp\Myblog\Models\Comment();
-        $comment->activateComment($commentId);
-        Header("Location: ./index.php?page=commentmanager");
-        exit;
+        if($this->role == 1) {
+            $comment = new \Monsapp\Myblog\Models\Comment();
+            $comment->activateComment($commentId);
+            Header("Location: ./index.php?page=commentmanager");
+            exit;
+        } else {
+            Header("Location: ./index.php?page=panel");
+            exit;
+        }
     }
 
     function getRejectCommentPage(int $commentId) {
-        $comment = new \Monsapp\Myblog\Models\Comment();
-        $comment->rejectComment($commentId);
-        Header("Location: ./index.php?page=commentmanager");
-        exit;
+        if($this->role == 1) {
+            $comment = new \Monsapp\Myblog\Models\Comment();
+            $comment->rejectComment($commentId);
+            Header("Location: ./index.php?page=commentmanager");
+            exit;
+        } else {
+            Header("Location: ./index.php?page=panel");
+            exit;
+        }
     }
 
     function getPermissionsManagerPage() {
@@ -467,10 +512,14 @@ class Controller {
     }
 
     function getSetPermissionPage(array $postArray) {
-        $user = new \Monsapp\Myblog\Models\User();
-        $user->setPermission((int)$postArray["user_id"], (int)$postArray["role_id"]);
-        Header("Location: ./index.php?page=permissionmanager");
-        exit;
+        if($this->role == 1) {
+            $user = new \Monsapp\Myblog\Models\User();
+            $user->setPermission((int)$postArray["user_id"], (int)$postArray["role_id"]);
+            Header("Location: ./index.php?page=permissionmanager");
+            exit;
+        } else {
+            Header("Location: ./index.php");
+            exit;
+        }
     }
-
 }

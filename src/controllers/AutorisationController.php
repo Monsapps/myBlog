@@ -29,16 +29,28 @@ class AutorisationController {
         $query->execute(array(":email" => $email));
 
         if($query->rowCount() == 0) {
+            $this->userRole = -1;
             return -1;
         } else {
             $userInfos = $query->fetch();
             $query->closeCursor();
             // We compare hashed string with database infos
             if(password_verify($userInfos["id"] . $userInfos["email"], $hashed)) {
+                $this->userRole = (int)$userInfos['role_id'];
                 return (int)$userInfos['role_id'];
             } else {
+                $this->userRole = -1;
                 return -1;
             }
         }
+    }
+
+    function isAllowedToCrud() {
+        if($this->userRole > 0) {
+            return true;
+        } else {
+            return false;
+        }
+
     }
 }
