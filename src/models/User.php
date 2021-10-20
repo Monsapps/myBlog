@@ -96,7 +96,6 @@ class User {
         $query = null;
     }
 
-    // todo remove this
     function getUserImage(int $userId) {
         $sql = "SELECT *
             FROM `image`
@@ -122,7 +121,43 @@ class User {
 
         return $userCv;
     }
-    // end todo
+
+    function getUserSocials(int $userId) {
+        $sql = "SELECT us.id, us.meta, s.name, s.social_image
+            FROM `user_social` AS us
+            LEFT JOIN `social` AS s ON s.`id` = us.`social_id`
+            WHERE `user_id` = :id";
+        $query = $this->db->prepare($sql, array(\PDO::ATTR_CURSOR => \PDO::CURSOR_FWDONLY));
+        $query->execute(array(":id" => $userId));
+        $socials = $query->fetchAll();
+        $query = null;
+
+        return $socials;
+    }
+
+    function addSocial(int $userId, int $socialId, string $meta) {
+
+        $sql = "INSERT INTO `user_social` (`user_id`, `social_id`, `meta`) VALUES (:user_id, :social_id, :meta);";
+
+        $query = $this->db->prepare($sql, array(\PDO::ATTR_CURSOR => \PDO::CURSOR_FWDONLY));
+        $query->execute(array(":user_id" => $userId, ":social_id" => $socialId, ":meta" => $meta));
+        $query = null;
+    }
+
+    function updateSocial(int $socialId, string $socialMeta) {
+        $sql = "UPDATE `user_social` SET `meta` = :meta WHERE `id` = :id;";
+
+        $query = $this->db->prepare($sql, array(\PDO::ATTR_CURSOR => \PDO::CURSOR_FWDONLY));
+        $query->execute(array(":meta" => $socialMeta, ":id" => $socialId));
+        $query = null;
+    }
+
+    function deleteSocial(int $socialId) {
+        $sql = "DELETE FROM `user_social` WHERE `id` = :id;";
+        $query = $this->db->prepare($sql, array(\PDO::ATTR_CURSOR => \PDO::CURSOR_FWDONLY));
+        $query->execute(array(":id" =>$socialId));
+        $query = null;
+    }
 
     function getUserFullInfos(int $userId) {
 

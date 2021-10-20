@@ -1,0 +1,102 @@
+{% extends "/panel/base.html.twig" %}
+
+{% block head %}
+<script type="text/javascript">
+function loadSocial() {
+
+    {% if (socials is not empty) %}
+    {% for social in socials %}
+        index = index+1;
+        var inputHtml = `
+            <div id="social-${index}">
+                <img src="./public/images/socials/{{ social.social_image }}" alt="Logo de {{ social.name }}" style="max-width: 15px;">
+                <input type="hidden" name="id[]" id="social_id_${index}" value="{{ social.id }}">
+                <input type="text" name="name[]" id="social_name_${index}" value="{{ social.name }}" oninput="saveInput(${index})">
+                <input type="file" name="image[]" id="social_image_${index}" value="" oninput="saveInput(${index})">
+                <a href="./index.php?page=deletesocial&id={{ social.id }}">Supprimer</a>
+            </div>`;
+        document.getElementById("social_form").innerHTML += inputHtml;
+    {% endfor %}
+    {% endif %}
+}
+</script>
+{% endblock %}
+
+{% block onload %}
+onload="loadSocial()"
+{% endblock %}
+
+
+{% block error %}
+{% if(error != "0") %}
+<script>
+    function closeWindow() {
+        document.getElementById("error-box").hidden = true;
+    }
+</script>
+<div class="error-box" id="error-box">
+    {% if(error == "1") %}
+        Le type de fichier envoyer n'est pas au bon format
+    {% endif %}
+    {% if(error == "2") %}
+        Erreur lors de la copie du fichier, veuillez rééssayer plus tard
+    {% endif %}
+    <input type="button" value="Fermer" onclick="closeWindow()" >
+</div>
+{% endif %}
+{% endblock %}
+
+{% block content %}
+{% if (role == 1) %}
+<!-- Panel -->
+<section>
+    <h1>Configurations Générales</h1>
+    <div class="contact-container">
+        <form action="./index.php?page=mainsettings" method="POST" class="contact-form">
+            <div>
+                <input type="text" name="site_title" value="{{ navtitle }}" required>
+                <label for="site_title">Nom de site</label>
+            </div>
+            <div>
+                <input type="text" name="site_keywords" value="{{ keywords }}" required>
+                <label for="site_title">Mots-clefs généraux</label>
+            </div>
+            <div>
+                <input type="text" name="site_description" value="{{ description }}" required>
+                <label for="site_title">Description du site</label>
+            </div>
+            <div>
+                <select name="main_user">
+                    {% for author in authors %}
+                    <option value="{{ author.id }}"{% if (main_user_id == author.id) %} selected {% endif %}>{{ author.name }} {{ author.surname }}</option>
+                    {% endfor %}
+                </select>
+                <label for="author">Héro du site</label>
+            </div>
+            <input type="submit" value="Modifier">
+        </form>
+    </div>
+    <script type="text/javascript">
+        function addSocial() {
+            index = index+1;
+            var inputSocial = `
+                    <div id="social-${index}">
+                        <input type="button" value="X" onclick="deleteSocial(${index})">
+                        <input type="hidden" name="id[]" id="social_id-${index}" value="">
+                        <input type="text" name="name[]" id="social_name_${index}" value="" oninput="saveInput(${index})">
+                        <input type="file" name="image[]" id="social_image_${index}" value=""  oninput="saveInput(${index})">
+                    </div>`;
+        document.getElementById("social_form").innerHTML += inputSocial;
+        restoreInput();
+        }
+    </script>
+    <h2>Réseaux Sociaux</h2>
+    <input type="button" value="Ajouter" onclick="addSocial()">
+    <form action="./index.php?page=updatesocial" method="post" enctype="multipart/form-data">
+        <div class="social-network" id="social_form">
+        </div>
+        <input type="submit" value="Modifier">
+        </form>
+</section>
+{% endif %}
+{% endblock %}

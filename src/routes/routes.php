@@ -69,6 +69,15 @@ if(isset($_GET["page"])) {
         case "uploadavatar":
             $controller->getUploadAvatarPage($_FILES, $_POST);
         break;
+        case "addusersocials":
+            $controller->getAddUserSocialsPage($_POST);
+        break;
+        case "updateusersocials":
+            $controller->getUpdateUserSocialsPage($_POST);
+        break;
+        case "deleteusersocial":
+            $controller->getDeleteUserSocialPage($_GET["user_id"], $_GET["social_id"]);
+        break;
         case "uploadcv":
             $controller->getUploadCvPage($_FILES, $_POST);
         break;
@@ -100,6 +109,12 @@ if(isset($_GET["page"])) {
         break;
         case "setpermission":
             $controller->getSetPermissionPage($_POST);
+        break;
+        case "deletesocial":
+            $controller->getDeleteSocialPage($_GET["id"]);
+        break;
+        case "updatesocial":
+            $controller->getUpdateSocialPage($_FILES, $_POST);
         break;
         default:
             $controller->getHomepage();

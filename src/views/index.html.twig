@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+{% extends "base.html.twig" %}
 
 {% block content %}
 <!-- Home -->
@@ -25,7 +25,13 @@
                 {% endif %}
             </div>
             <div class="hero-social">
-                Suivez moi sur: à faire
+                Suivez moi sur:
+                <div>
+                    {% for userSocial in userSocials %}
+                    <a href="{{ userSocial.meta }}"><img src="./public/images/socials/{{ userSocial.social_image }}" alt="Logo de {{ userSocial.name }}" style="max-width: 25px;"></a>
+                    {% endfor %}
+                </div>
+            </div>
             </div>
         </div>
     </div>

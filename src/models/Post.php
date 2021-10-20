@@ -40,7 +40,7 @@ class Post {
     $date = date("Y-m-d H:i:s");
 
     $sql = "INSERT INTO `post` (`user_id`, `title`, `hat`, `content`, `date`, `last_edited`, `keywords`)
-        VALUES(:user_id, :title, :hat, :content, :date, :date, :keywords);";
+        VALUES (:user_id, :title, :hat, :content, :date, :date, :keywords);";
 
     $query = $this->db->prepare($sql, array(\PDO::ATTR_CURSOR => \PDO::CURSOR_FWDONLY));
 
