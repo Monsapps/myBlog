@@ -119,6 +119,9 @@ if(isset($_GET["page"])) {
         case "postmanager":
             $controller->getPostManagerPage();
         break;
+        case "deletepost":
+            $controller->getDeletePostPage($_GET["id"]);
+        break;
         default:
             $controller->getHomepage();
         }

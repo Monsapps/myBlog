@@ -694,4 +694,21 @@ class Controller {
             exit;
         }
     }
+
+    function getDeletePostPage(int $id) {
+        $post = new \Monsapp\Myblog\Models\Post();
+        $postInfo = $post->getPostInfos($id);
+        if($this->role == 1) {
+            $post->deletePost((int)$id);
+            Header("Location: ./index.php?page=postmanager");
+            exit;
+        } elseif($this->role == 2 && $this->userInfos == $postInfo["used_id"]) {
+            $post->deletePost((int)$id);
+            Header("Location: ./index.php?page=postmanager");
+            exit;
+         }else {
+            Header("Location: ./index.php");
+            exit;
+        }
+    }
 }

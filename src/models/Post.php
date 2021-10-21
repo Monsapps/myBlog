@@ -77,4 +77,12 @@ class Post {
     $query = null;
   }
 
+  function deletePost(int $id) {
+    $sql = "DELETE FROM `post` WHERE `id` = :id;";
+
+    $query = $this->db->prepare($sql, array(\PDO::ATTR_CURSOR => \PDO::CURSOR_FWDONLY));
+
+    $query->execute(array(":id" => $id));
+    $query = null;
+  }
 }
