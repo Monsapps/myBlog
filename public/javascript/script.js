@@ -80,19 +80,6 @@ function restoreInput() {
     });
 }
 
-function addSocial() {
-    index = index+1;
-    var inputSocial = `
-            <div id="social-${index}">
-                <input type="button" value="X" onclick="deleteSocial(${index})">
-                <input type="hidden" name="id[]" id="social_id-${index}" value="">
-                <input type="text" name="name[]" id="social_name_${index}" value="" oninput="saveInput(${index})">
-                <input type="text" name="image[]" id="social_image_${index}" value=""  oninput="saveInput(${index})">
-            </div>`;
-document.getElementById("social_form").innerHTML += inputSocial;
-restoreInput();
-}
-
 function deleteSocial(id) {
     document.getElementById(`social-${id}`).outerHTML="";
 }

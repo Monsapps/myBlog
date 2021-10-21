@@ -116,6 +116,9 @@ if(isset($_GET["page"])) {
         case "updatesocial":
             $controller->getUpdateSocialPage($_FILES, $_POST);
         break;
+        case "postmanager":
+            $controller->getPostManagerPage();
+        break;
         default:
             $controller->getHomepage();
         }

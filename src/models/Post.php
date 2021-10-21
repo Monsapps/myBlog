@@ -13,7 +13,7 @@ class Post {
   }
 
   function getAllPosts() {
-    $query = $this->db->query("SELECT p.id, p.title, p.hat, p.date, p.last_edited, u.name, u.surname
+    $query = $this->db->query("SELECT p.id, p.user_id, p.title, p.hat, p.date, p.last_edited, u.name, u.surname
                       FROM `post` AS p
                       LEFT JOIN `user` AS u ON u.`id` = p.`user_id`
                       ORDER by `last_edited` DESC;");

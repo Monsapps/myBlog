@@ -1,0 +1,25 @@
+{% extends "/panel/base.html.twig" %}
+
+{% block content %}
+{% if (role >= 1) %}
+<!-- Panel -->
+<section>
+    <h1>Articles</h1>
+    {% for post in posts %}
+        {% if (role == 2) and (post.user_id == user_id) %}
+        <div>
+            {{ post.title }} <br />
+            {{ post.hat }} <br />
+            <a href="./index.php?page=editpost&id={{ post.id }}">Modifier article</a>
+        </div>
+        {% elseif (role == 1) %}
+        <div>
+            {{ post.title }} <br />
+            {{ post.hat }} <br />
+            &Eacute;crit par {{ post.name }} {{ post.surname }} | <a href="./index.php?page=editpost&id={{ post.id }}">Modifier article</a>
+        </div>
+        {% endif %}
+    {% endfor %}
+</section>
+{% endif %}
+{% endblock %}
