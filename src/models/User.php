@@ -116,33 +116,6 @@ class User {
         $query = null;
     }
 
-    //
-    function getUserImage(int $userId) {
-        $sql = "SELECT *
-            FROM `image`
-            WHERE `user_id` = :id
-            LIMIT 1;";
-        $query = $this->db->prepare($sql, array(\PDO::ATTR_CURSOR => \PDO::CURSOR_FWDONLY));
-        $query->execute(array(":id" => $userId));
-        $userImage = $query->fetch();
-        $query = null;
-
-        return $userImage;
-    }
-
-    function getUserCv(int $userId) {
-        $sql = "SELECT *
-            FROM `curriculum_vitae`
-            WHERE `user_id` = :id
-            LIMIT 1;";
-        $query = $this->db->prepare($sql, array(\PDO::ATTR_CURSOR => \PDO::CURSOR_FWDONLY));
-        $query->execute(array(":id" => $userId));
-        $userCv = $query->fetch();
-        $query = null;
-
-        return $userCv;
-    }
-
     function getUserSocials(int $userId) {
         $sql = "SELECT us.id, us.meta, s.name, s.social_image
             FROM `user_social` AS us
