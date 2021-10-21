@@ -14,18 +14,38 @@ class User {
         $this->db = new \Monsapp\Myblog\Utils\DatabaseManager();
     }
 
-    function getUserInfos(string $email) {
-        $sql = "SELECT *
-            FROM `user`
-            WHERE email = :email
-            LIMIT 1;";
-        $query = $this->db->prepare($sql, array(\PDO::ATTR_CURSOR => \PDO::CURSOR_FWDONLY));
-        $query->execute(array(":email" => $email));
-    
-        $userInfos = $query->fetch();
-    
-        $query = null;
-    
+    function getUserInfos($emailOrInt) {
+        $userInfos = null;
+        // if email is present return infos by email for login
+        if(is_string($emailOrInt)) {
+            $sql = "SELECT u.id, u.email, u.name, u.surname, u.password, u.user_hat, u.role_id, i.path_name, c.file_name
+                FROM `user` AS u
+                LEFT JOIN `image` AS i ON i.`user_id` = u.`id`
+                LEFT JOIN `curriculum_vitae` AS c ON c.`user_id` = u.`id`
+                WHERE u.`email` = :email
+                LIMIT 1;";
+            $query = $this->db->prepare($sql, array(\PDO::ATTR_CURSOR => \PDO::CURSOR_FWDONLY));
+            $query->execute(array(":email" => $emailOrInt));
+        
+            $userInfos = $query->fetch();
+        
+            $query = null;
+        }
+
+        // if userId is present return infos by id
+        if(is_int($emailOrInt)) {
+            $sql = "SELECT u.name, u.surname, u.user_hat, i.path_name, c.file_name
+                FROM `user` AS u
+                LEFT JOIN `image` AS i ON i.`user_id` = u.`id`
+                LEFT JOIN `curriculum_vitae` AS c ON c.`user_id` = u.`id`
+                WHERE u.`id` = :id
+                LIMIT 1;";
+
+            $query = $this->db->prepare($sql, array(\PDO::ATTR_CURSOR => \PDO::CURSOR_FWDONLY));
+            $query->execute(array(":id" => $emailOrInt));
+            $userInfos = $query->fetch();
+            $query = null;
+        }
         return $userInfos;
      }
     
@@ -96,6 +116,7 @@ class User {
         $query = null;
     }
 
+    //
     function getUserImage(int $userId) {
         $sql = "SELECT *
             FROM `image`
@@ -157,22 +178,5 @@ class User {
         $query = $this->db->prepare($sql, array(\PDO::ATTR_CURSOR => \PDO::CURSOR_FWDONLY));
         $query->execute(array(":id" =>$socialId));
         $query = null;
-    }
-
-    function getUserFullInfos(int $userId) {
-
-        $sql = "SELECT u.name, u.surname, u.user_hat, i.path_name, c.file_name
-        FROM `user` AS u
-        LEFT JOIN `image` AS i ON i.`user_id` = u.`id`
-        LEFT JOIN `curriculum_vitae` AS c ON c.`user_id` = u.`id`
-        WHERE u.`id` = :id
-        LIMIT 1;";
-
-        $query = $this->db->prepare($sql, array(\PDO::ATTR_CURSOR => \PDO::CURSOR_FWDONLY));
-        $query->execute(array(":id" => $userId));
-        $mainUserInfo = $query->fetch();
-        $query = null;
-
-        return $mainUserInfo;
     }
 }

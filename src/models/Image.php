@@ -26,12 +26,12 @@ class Image {
         $query = null;
     }
 
-    function updateImage(int $imageId, string $imageName) {
-        $sql = "UPDATE `image` SET `path_name` = :path_name WHERE `id` = :id;";
+    function updateImage(int $userId, string $imageName) {
+        $sql = "UPDATE `image` SET `path_name` = :path_name WHERE `user_id` = :id;";
         $query = $this->db->prepare($sql, array(\PDO::ATTR_CURSOR => \PDO::CURSOR_FWDONLY));
         $query->execute(array(
             ":path_name" => $imageName,
-            ":id" => $imageId
+            ":id" => $userId
         ));
         $query = null;
     }
