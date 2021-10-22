@@ -130,7 +130,6 @@ class Controller {
 
     function getPublishPage(array $postArray) {
         if($this->isAllowedToCRUD) {
-            // We need to attach user id to a post
             $userInfos = $this->userInfos;
 
             $post = new \Monsapp\Myblog\Models\Post();
@@ -159,7 +158,7 @@ class Controller {
             echo $this->twig->render("editpost.html.twig", array(
                 "title" => $this->title, 
                 "navtitle" => $this->title, 
-                "desciption" => $this->descriptions,
+                "desciption" => $this->descriptions, //todo
                 "keywords" => $this->keywords,
                 "role" => $this->role,
                 "user" => $this->userInfos,
