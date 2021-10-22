@@ -15,34 +15,39 @@ class AutorisationController {
 
     private $db;
     private $userRole;
+    private $userInfos;
 
-    function __construct() {
+    function __construct(string $email, string $hashed) {
         $this->db = new \Monsapp\Myblog\Utils\DatabaseManager();
-    }
-
-    function getUserRole(string $email, string $hashed) {
         $sql = "SELECT *
-            FROM `user`
-            WHERE `email` = :email
-            LIMIT 1;";
+        FROM `user`
+        WHERE `email` = :email
+        LIMIT 1;";
         $query = $this->db->prepare($sql, array(\PDO::ATTR_CURSOR => \PDO::CURSOR_FWDONLY));
         $query->execute(array(":email" => $email));
 
         if($query->rowCount() == 0) {
             $this->userRole = -1;
-            return -1;
+            $this->userInfos = null;
         } else {
             $userInfos = $query->fetch();
             $query->closeCursor();
             // We compare hashed string with database infos
             if(password_verify($userInfos["id"] . $userInfos["email"], $hashed)) {
+                $this->userInfos = $userInfos;
                 $this->userRole = (int)$userInfos['role_id'];
-                return (int)$userInfos['role_id'];
             } else {
                 $this->userRole = -1;
-                return -1;
             }
         }
+    }
+
+    function getUserRole() {
+        return $this->userRole;
+    }
+
+    function getUserInfos() {
+        return $this->userInfos;
     }
 
     function isAllowedToCrud() {

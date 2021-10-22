@@ -6,8 +6,10 @@
         <meta name="description" content="{{ description }}">
         <meta name="keywords" content="{{ keywords }}">
         <link rel="stylesheet" type="text/css" href="./public/css/style.css">
+        <script src="./public/javascript/script.js"></script>
+        {% block head %}{% endblock %}
     </head>
-    <body>
+    <body {% block onload %}{% endblock %}>
         <header>
             <!-- Name of blog & navigations -->
             <div class="left blog-title">

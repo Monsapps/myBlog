@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+{% extends "base.html.twig" %}
 
 {% block content %}
 <!-- Post  -->
@@ -13,7 +13,7 @@
     {% else %}
     Dernière modification: {{ post.last_edited }}
     {% endif %}
-    {% if (is_allowed_to_crud) or (user_id == post.user_id) %}
+    {% if (is_allowed_to_crud) and (user_id == post.user_id) %}
     <div>
         <a href="./index.php?page=editpost&id={{ post.id }}">Modifier article</a>
     </div>

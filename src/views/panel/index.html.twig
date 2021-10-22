@@ -1,4 +1,4 @@
-{% extends "/panel/base.html" %}
+{% extends "/panel/base.html.twig" %}
 
 {% block error %}
 {% if(error != "0") %}
@@ -58,23 +58,51 @@
         <input type="file" name="avatar">
         <input type="submit" value="Envoyer">
     </form>
-    <script>
-        var count = 0;
-        function addSocial() {
-            var inputSocial = "<div><select name=\"social_id[]\"><option value=\"id_social\">Social</option></select> <input type=\"text\" name=\"meta[]\"></div>";
-            document.getElementById("social_form").innerHTML += inputSocial;
-            count = count+1;
+    {% if (socials is not empty) %}
+    <h2>Réseaux Sociaux</h2>
+    <script type="text/javascript">
+        function addSocialNetwork() {
+            index = index+1;
+            var inputSocial =  `
+                        <div id="social-${index}">
+                            <input type="button" value="X" onclick="deleteSocial(${index})">
+                            <select name="social_id[]" id="social_id_${index}" onchange="saveInput(${index})">
+                                {% for social in socials %}
+                                    <option value="{{ social.id }}">{{ social.name }}</option>
+                                {% endfor %}
+                            </select>
+                            <input type="text" name="meta[]" id="social_meta_${index}" oninput="saveInput(${index})">
+                        </div>`;
+            document.getElementById("profile_social").innerHTML += inputSocial;
+            restoreInput();
         }
     </script>
-    <h2>Réseaux Sociaux</h2>
-        <div>
-            <input type="button" value="Ajouter un réseau social" onclick="addSocial()">
-            <form action="" method="post">
-                <div id="social_form">
+        {% if (userSocials is not empty) %}
+        <form action="./index.php?page=updateusersocials" method="POST" class="contact-form">
+            <input type="hidden" name="user_id" value="{{ user.id }}">
+            {% for userSocial in userSocials %}
+            <div>
+                <img src="./public/images/socials/{{ userSocial.social_image }}" alt="Logo de {{ userSocial.name }}" style="max-width: 15px;">
+                {{ userSocial.name }}
+                <input type="hidden" name="social_id[]" value="{{ userSocial.id }}">
+                <input type="text" name="meta[]" value="{{ userSocial.meta }}">
+                <a href="index.php?page=deleteusersocial&social_id={{ userSocial.id }}&user_id={{ user.id }}">Supprimer</a>
+            </div>
+            {% endfor %}
+            <input type="submit" value="Modifier">
+        </form>
+        {% endif %}
+    {% endif %}
+    <input type="button" value="Ajouter des réseaux sociaux" onclick="addSocialNetwork()">
+    <div>
+                <form action="./index.php?page=addusersocials" method="post">
+                <div class="social-network" id="profile_social">
+                    <input type="hidden" name="user_id" value="{{ user.id }}">
                 </div>
-            </form>
+                <input type="submit" value="Ajouter">
+                </form>
+    </div>
 
-        </div>
     {% if (role == 1) %}
     <h2>Curriculum Vitae</h2>
     <form action="./index.php?page=uploadcv" method="post" enctype="multipart/form-data">
