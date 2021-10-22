@@ -43,18 +43,17 @@
             </form>
         </div>
     <h2>Avatar</h2>
-    {% if (userImage is empty) %}
+    {% if (user.path_name is empty) %}
     <img src="./public/images/avatars/default.svg" alt="Avatar" style="width: 100px; height: 100px;">
     {% else %}
-    <img src="./public/uploads/{{ userImage.path_name }}" alt="Avatar" style="width: 100px; height: 100px;">
+    <img src="./public/uploads/{{ user.path_name }}" alt="Avatar" style="width: 100px; height: 100px;">
     {% endif %}
     <div>
         Changer d'avatar
     </div>
     <form action="./index.php?page=uploadavatar" method="post" enctype="multipart/form-data">
         <input type="hidden" name="user_id" value="{{ user.id }}">
-        <input type="hidden" name="user_image_id" value="{{ userImage.id }}">
-        <input type="hidden" name="user_image_file" value="{{ userImage.path_name }}">
+        <input type="hidden" name="user_image_file" value="{{ user.path_name }}">
         <input type="file" name="avatar">
         <input type="submit" value="Envoyer">
     </form>
@@ -107,7 +106,7 @@
     <h2>Curriculum Vitae</h2>
     <form action="./index.php?page=uploadcv" method="post" enctype="multipart/form-data">
         <input type="hidden" name="user_id" value="{{ user.id }}">
-        <input type="hidden" name="user_cv_id" value="{{ cv.id }}">
+        <input type="hidden" name="user_cv_name" value="{{ user.file_name }}">
         <input type="file" name="cv">
         <input type="submit" value="Envoyer">
     </form>

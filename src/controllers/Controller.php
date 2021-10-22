@@ -8,7 +8,6 @@ namespace Monsapp\Myblog\Controllers;
 
 class Controller {
 
-    private $config;
     private $title;
     private $keywords;
     private $descriptions;
@@ -20,12 +19,12 @@ class Controller {
 
     function __construct() {
 
-        $this->config = new \Monsapp\Myblog\Utils\ConfigManager();
+        $config = new \Monsapp\Myblog\Utils\ConfigManager();
 
-        $this->title = $this->config->getConfig("site_title");
-        $this->keywords = $this->config->getConfig("site_keywords");
-        $this->descriptions = $this->config->getConfig("site_descriptions");
-        $this->mainUser = $this->config->getConfig("site_main_user_id");
+        $this->title = $config->getConfig("site_title");
+        $this->keywords = $config->getConfig("site_keywords");
+        $this->descriptions = $config->getConfig("site_descriptions");
+        $this->mainUser = $config->getConfig("site_main_user_id");
 
         $loader = new \Twig\Loader\FilesystemLoader("src/views/");
         $this->twig = new \Twig\Environment($loader);
@@ -46,11 +45,11 @@ class Controller {
         $this->role = -1;
         $this->userInfos = null;
         if(((isset($_COOKIE["email"])) && !empty($_COOKIE["email"])) && (isset($_COOKIE["sessionid"])) ) {
-            $permission = new AutorisationController($_COOKIE["email"], $_COOKIE["sessionid"]);
-            $this->role = $permission->getUserRole();
-            $this->isAllowedToCRUD = $permission->isAllowedToCrud();
+            $userController = new UserController($_COOKIE["email"], $_COOKIE["sessionid"]);
+            $this->role = $userController->getUserRole();
+            $this->isAllowedToCRUD = $userController->isAllowedToCrud();
             // securised userinfo with hashed string
-            $this->userInfos = $permission->getUserInfos();
+            $this->userInfos = $userController->getUserInfos();
         }
     }
 
@@ -60,7 +59,7 @@ class Controller {
 
     function getHomepage() {
         $user = new \Monsapp\Myblog\Models\User();
-        $mainUser = $user->getUserFullInfos((int)$this->mainUser);
+        $mainUser = $user->getUserInfos((int)$this->mainUser);
         $userSocials = $user->getUserSocials((int)$this->mainUser);
         echo $this->twig->render("index.html.twig", array(
                 "title" => $this->title, 
@@ -68,6 +67,7 @@ class Controller {
                 "desciption" => $this->descriptions,
                 "keywords" => $this->keywords,
                 "role" => $this->role,
+                "user" => $this->userInfos,
                 "main_user" => $mainUser,
                 "userSocials" => $userSocials
             ));
@@ -87,14 +87,12 @@ class Controller {
             "desciption" => $this->descriptions,
             "keywords" => $this->keywords,
             "role" => $this->role,
+            "user" => $this->userInfos,
             "posts" => $posts
         ));
     }
 
     function getPostPage(int $id) {
-        // We need to check user id if he can edit his post/comment
-        $userId = $this->userInfos["id"];
-
         $post = new \Monsapp\Myblog\Models\Post();
         $postInfos = $post->getPostInfos($id);
 
@@ -108,7 +106,7 @@ class Controller {
             "keywords" => $postInfos["keywords"],
             "role" => $this->role,
             "is_allowed_to_crud" => $this->isAllowedToCRUD, 
-            "user_id" => $userId,
+            "user" => $this->userInfos,
             "post" => $postInfos,
             "comments" => $comments
         ));
@@ -121,7 +119,8 @@ class Controller {
                 "navtitle" => $this->title, 
                 "desciption" => $this->descriptions,
                 "keywords" => $this->keywords,
-                "role" => $this->role
+                "role" => $this->role,
+                "user" => $this->userInfos
             ));
         } else {
             Header("Location: ./index.php");
@@ -163,6 +162,7 @@ class Controller {
                 "desciption" => $this->descriptions,
                 "keywords" => $this->keywords,
                 "role" => $this->role,
+                "user" => $this->userInfos,
                 "post" => $postInfos,
                 "authors" => $allUsers
             ));
@@ -292,8 +292,6 @@ class Controller {
                 $userId = (int)$userInfos["id"];
                 $social = new \Monsapp\Myblog\Models\Social();
                 $socials = $social->getAllSocials();
-                $userImage = $user->getUserImage($userId);
-                $cv = $user->getUserCv($userId);
                 $userSocials = $user->getUserSocials($userId);
                 echo $this->twig->render("panel/index.html.twig", array(
                     "title" => "Panneau de configation - " . $this->title,
@@ -302,8 +300,6 @@ class Controller {
                     "keywords" => $this->keywords,
                     "role" => $this->role,
                     "user" => $userInfos,
-                    "userImage" => $userImage,
-                    "cv" => $cv,
                     "socials" => $socials,
                     "userSocials" => $userSocials
                 ));
@@ -334,7 +330,7 @@ class Controller {
     }
 
     function getUploadAvatarPage(array $files, array $postArray) {
-        $userInfos = $this->userInfos();
+        $userInfos = $this->userInfos;
         // only confirmed users and user himself can upload avatar
         if($this->role != -1 && $userInfos["id"] == $postArray["user_id"]) {
             $image = new \Monsapp\Myblog\Models\Image();
@@ -353,11 +349,11 @@ class Controller {
                 $uploadFile = $uploadDir . basename($encodedFileName);
                 if (move_uploaded_file($files['avatar']['tmp_name'], $uploadFile)) {
                     // update or insert data image if user_image_id exist
-                    if(!empty($postArray["user_image_id"])) {
-                        $image->updateImage((int)$postArray["user_image_id"], $encodedFileName);
+                    if(!empty($postArray["user_image_file"])) {
+                        $image->updateImage((int)$postArray["user_id"], $encodedFileName);
 
                         // if the file name is not the same name = delete
-                        if(!empty($postArray["user_image_file"]) && $postArray["user_image_file"] != $encodedFileName) {
+                        if(!$postArray["user_image_file"] != $encodedFileName) {
                             unlink($uploadDir . $postArray["user_image_file"]);
                         }
                     } else {
@@ -443,7 +439,7 @@ class Controller {
                 $encodedFileName = md5($postArray["user_id"]) .".pdf";
                 $uploadFile = $uploadDir . basename($encodedFileName);
                 if (move_uploaded_file($files['cv']['tmp_name'], $uploadFile)) {
-                    if(empty($postArray["user_cv_id"])) {
+                    if(empty($postArray["user_cv_name"])) {
                         $image->setCv((int)$postArray["user_id"], $encodedFileName);
                     }
                 } else {
@@ -694,6 +690,23 @@ class Controller {
                 "posts" => $posts
             ));
         } else {
+            Header("Location: ./index.php");
+            exit;
+        }
+    }
+
+    function getDeletePostPage(int $id) {
+        $post = new \Monsapp\Myblog\Models\Post();
+        $postInfo = $post->getPostInfos($id);
+        if($this->role == 1) {
+            $post->deletePost((int)$id);
+            Header("Location: ./index.php?page=postmanager");
+            exit;
+        } elseif($this->role == 2 && $this->userInfos == $postInfo["used_id"]) {
+            $post->deletePost((int)$id);
+            Header("Location: ./index.php?page=postmanager");
+            exit;
+         }else {
             Header("Location: ./index.php");
             exit;
         }

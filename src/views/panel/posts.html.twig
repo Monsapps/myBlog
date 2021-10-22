@@ -10,13 +10,13 @@
         <div>
             {{ post.title }} <br />
             {{ post.hat }} <br />
-            <a href="./index.php?page=editpost&id={{ post.id }}">Modifier article</a>
+            <a href="./index.php?page=editpost&id={{ post.id }}">Modifier article</a> | <a href="./index.php?page=editpost&id={{ post.id }}">Modifier l'article</a> | <a href="./index.php?page=deletepost&id={{ post.id }}">Supprimer l'article</a>
         </div>
         {% elseif (role == 1) %}
         <div>
             {{ post.title }} <br />
             {{ post.hat }} <br />
-            &Eacute;crit par {{ post.name }} {{ post.surname }} | <a href="./index.php?page=editpost&id={{ post.id }}">Modifier article</a>
+            &Eacute;crit par {{ post.name }} {{ post.surname }} | <a href="./index.php?page=editpost&id={{ post.id }}">Modifier l'article</a> | <a href="./index.php?page=deletepost&id={{ post.id }}">Supprimer l'article</a>
         </div>
         {% endif %}
     {% endfor %}

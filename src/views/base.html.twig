@@ -22,6 +22,11 @@
                             <ul {% if (currentPage == "connect") %}class="current"{% endif %}><a href="./index.php?page=connect">Connexion</a></ul>
                         {% else %}
                             <ul><a href="./index.php?page=disconnect">D&eacute;connexion</a></ul>
+                            {% if (user.path_name is empty) %}
+                            <ul><img src="./public/images/avatars/default.svg" alt="Avatar" style="width: 25px; height: 25px;"></ul>
+                            {% else %}
+                            <ul><img src="./public/uploads/{{ user.path_name }}" alt="Avatar" style="width: 25px; height: 25px;"></ul>
+                            {% endif %}
                         {% endif %}
                     </li>
                 </nav>
