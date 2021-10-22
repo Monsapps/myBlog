@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block content %}
+<!-- Add Post -->
+<section>
+    <h2>Modifier l'article: {{ post.title }}</h2>
+    <div class="contact-container">
+        <form action="./index.php?page=editpostpublish" method="POST" class="contact-form">
+            <input type="hidden" name="id" value="{{ post.id }}">
+            <div>
+                <input type="text" name="title" value="{{ post.title }}" required>
+                <label for="title">Titre</label>
+            </div>
+            <div>
+                <input type="text" name="hat" value="{{ post.hat }}" required>
+                <label for="chapo">Chap&ocirc;</label>
+            </div>
+            <div>
+                <input type="text" name="keywords" value="{{ post.keywords }}" required>
+                <label for="keywords">Mots-clefs</label>
+            </div>
+            {% if (role == 1) %}
+            <!-- only admin can change author -->
+            <div>
+                <select name="author">
+                    {% for author in authors %}
+                    <option value="{{ author.id }}"{% if (post.user_id == author.id) %} selected {% endif %}>{{ author.name }} {{ author.surname }}</option>
+                    {% endfor %}
+                </select>
+                <label for="author">Auteur</label>
+            </div>
+            {% endif %}
+            <div class="contact-message">
+                <textarea name="content" required>{{ post.content }}</textarea>
+                <label for="content">Contenu</label>
+            </div>
+            <input type="submit" value="Modifier">
+        </form> 
+    </div>
+</section>
+{% endblock %}

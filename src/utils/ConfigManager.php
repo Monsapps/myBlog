@@ -8,15 +8,15 @@ namespace Monsapp\Myblog\Utils;
 
 class ConfigManager {
 
-    //private $db;
+    private $db;
     private $dbQuery;
 
     function __construct() {
 
-        $db = new DatabaseManager();
+        $this->db = new DatabaseManager();
 
         // Load settings from database
-        $query = $db->query("SELECT * FROM `config`");
+        $query = $this->db->query("SELECT * FROM `config`");
 
         // Add $query to local $dbQuery
         $this->dbQuery = $query;
@@ -42,6 +42,19 @@ class ConfigManager {
 
         }
 
+    }
+
+    function editConfig(string $setting, string $values) {
+        $sql = "UPDATE `config`
+            SET `value` = :values
+            WHERE `name` = :setting;";
+
+        $query = $this->db->prepare($sql, array(\PDO::ATTR_CURSOR => \PDO::CURSOR_FWDONLY));
+        $query->execute(array(
+            ":setting" => $setting,
+            ":values" => $values
+        ));
+        $query = null;
     }
 
     // Create config table for first launch

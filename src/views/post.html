@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+
+{% block content %}
+<!-- Post  -->
+<section>
+    <h1>{{ post.title }}</h1>
+    {{ post.hat }}<br />
+    {{ post.content }}<br />
+    écrit par {{ post.name }} {{ post.surname }} <br />
+
+    {% if (post.date == post.last_edited) %}
+    Ajouté: {{ post.date }}
+    {% else %}
+    Dernière modification: {{ post.last_edited }}
+    {% endif %}
+    {% if (is_allowed_to_crud) or (user_id == post.user_id) %}
+    <div>
+        <a href="./index.php?page=editpost&id={{ post.id }}">Modifier article</a>
+    </div>
+    {% endif %}
+</section>
+<section>
+    <h2>Commentaires</h2>
+    {% for comment in comments %}
+    <div>
+        {{ comment.content }}<br />
+        Par {{ comment.name }} {{ comment.surname }}
+    </div>
+    {% else %}
+        Aucuns commentaires
+    {% endfor %}
+</section>
+<section>
+    {% if(status == "1") %}
+        Votre commentaire à bien été enregistré, cependant il sera affiché lorsque l'administrateur l'aura validé.
+    {% endif %}
+    {% if (role != -1) %}
+    <div class="contact-container">
+        <form action="./index.php?page=addcomment" method="post" class="contact-form">
+            <input type="hidden" name="post_id" value="{{ post.id }}">
+            <input type="hidden" name="user_id" value="{{ user_id }}">
+            <div class="contact-message">
+                <textarea name="comment" required></textarea>
+                <label for="content">Ajouter un commentaire</label>
+            </div>
+            <input type="submit" value="Commenter">
+        </form>
+    </div>
+    {% else %}
+        <a href="./index.php?page=connect">Inscrivez-vous pour pouvoir commenter cet article</a>
+    {% endif %}
+</section>
+{% endblock %}

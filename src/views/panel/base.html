@@ -11,17 +11,19 @@
         <header>
             <!-- Name of blog & navigations -->
             <div class="left blog-title">
-                {{ navtitle }}
+                <a href="./index.php">Retourner vers {{ navtitle }}</a>
             </div>
             <div class="right">
                 <nav>
                     <li>
-                        <ul {% if (currentPage is empty) %}class="current"{% endif %}><a href="./index.php">Accueil</a></ul>
-                        <ul {% if (currentPage == "post") %}class="current"{% endif %}><a href="./index.php?page=post">Articles</a></ul>
-                        {% if (role == -1) or (role is empty) %}
-                            <ul {% if (currentPage == "connect") %}class="current"{% endif %}><a href="./index.php?page=connect">Connexion</a></ul>
-                        {% else %}
-                            <ul><a href="./index.php?page=disconnect">D&eacute;connexion</a></ul>
+                        <ul {% if (currentPage == "panel") %}class="current"{% endif %}><a href="./index.php?page=panel">Profil</a></ul>
+                        {% if (role >= 1) %}
+                        <ul {% if (currentPage == "postmanager") %}class="current"{% endif %}><a href="./index.php?page=postmanager">Articles</a></ul>
+                        {% endif %}
+                        {% if (role == 1) %}
+                            <ul {% if (currentPage == "commentmanager") %}class="current"{% endif %}><a href="./index.php?page=commentmanager">Commentaires</a></ul>
+                            <ul {% if (currentPage == "permissionmanager") %}class="current"{% endif %}><a href="./index.php?page=permissionmanager">Permissions</a></ul>
+                            <ul {% if (currentPage == "settingsmanager") %}class="current"{% endif %}><a href="./index.php?page=settingsmanager">Préférences générales</a></ul>
                         {% endif %}
                     </li>
                 </nav>
@@ -29,14 +31,13 @@
         </header>
         <!-- Error -->
         {% block error %}{% endblock %}
-
+        
         <!-- Content -->
-
         {% block content %}{% endblock %}
 
         <footer>
             <!-- Navigations & Copyright -->
-            {% if (role != -1) %}
+            {% if (role == 1) %}
             <div class="panel">
                 <a href="./index.php?page=panel">Panneau de configuration</a>
             </div>
