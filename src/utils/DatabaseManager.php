@@ -30,5 +30,3 @@ class DatabaseManager extends \PDO {
         $this->iniConfig = $iniConfig;
     }
 }
-
-?>
