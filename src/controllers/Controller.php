@@ -150,6 +150,7 @@ class Controller {
         $userInfos = $this->userInfos;
 
         // We store all users for edit author's post
+        $user = new \Monsapp\Myblog\Models\User();
         $allUsers = $user->getAllUsers();
 
         $post = new \Monsapp\Myblog\Models\Post();
@@ -671,6 +672,27 @@ class Controller {
 
             Header("Location: ./index.php?page=settingsmanager");
             exit;
+        } else {
+            Header("Location: ./index.php");
+            exit;
+        }
+    }
+
+    function getPostManagerPage() {
+        $userInfos = $this->userInfos;
+
+        $post = new \Monsapp\Myblog\Models\Post();
+        $posts = $post->getAllPosts();
+        if($this->role >= 1) {
+            echo $this->twig->render("panel/posts.html.twig", array(
+                "title" => "Gestions des articles - " . $this->title,
+                "navtitle" => $this->title,
+                "description" => $this->descriptions,
+                "keywords" => $this->keywords,
+                "role" => $this->role,
+                "user_id" => $userInfos["id"],
+                "posts" => $posts
+            ));
         } else {
             Header("Location: ./index.php");
             exit;
