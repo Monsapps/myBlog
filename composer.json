@@ -1,0 +1,20 @@
+{
+    "name": "monsapp/myblog",
+    "description": "This is a framework for a blog project",
+    "type": "project",
+    "require": {
+        "twig/twig": "^1.42"
+    },
+    "autoload": {
+        "psr-4": {
+            "Monsapp\\Myblog\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Monsapps",
+            "email": "sebastien.monsanglant@gmail.com"
+        }
+    ],
+    "minimum-stability": "stable"
+}
