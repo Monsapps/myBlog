@@ -2,20 +2,37 @@
 
 {% block content %}
 <!-- Posts -->
-<section>
+    <section class="container">
     <h1>Articles</h1>
     {% if (role >= 1) %}
-    <div>
-        <a href="./index.php?page=addpost">Ajouter un article</a>
+    <div class="row">
+        <div class="col text-end">
+            <a href="./index.php?page=addpost" class="link-dark">Ajouter un article</a>
+        </div>
     </div>
     {% endif %}
 
     {% for post in posts %}
-    <div>
-        <a href="./index.php?page=post&id={{ post.id }}">{{ post.title }}</a><br />
-        {{ post.hat }}<br />
-        écrit par {{ post.name }} {{ post.surname }} Dernière modification {{ post.last_edited }}
+    <div class="post-container">
+    <div class="row">
+        <div class="col fw-bold post-title-size">
+            <a href="./index.php?page=post&id={{ post.id }}" class="link-dark">{{ post.title }}</a>
+        </div>
     </div>
+    <div class="row">
+        <div class="col text-justify post-hat-size">
+            {{ post.hat }}
+        </div>
+    </div>
+    <div class="row">
+        <div class="col text-start post-author-size">
+            Par {{ post.name }} {{ post.surname }}
+        </div>
+        <div class="col text-end post-date-size">
+            Dérni&egrave;re modification: {{ post.last_edited }}
+        </div>
+    </div>
+</div>
     {% else %}
         Aucuns articles
     {% endfor %}

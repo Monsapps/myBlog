@@ -11,9 +11,10 @@ class Comment {
     function getComments(int $postId) {
         $db = new \Monsapp\Myblog\Utils\DatabaseManager();
         
-        $sql = "SELECT c.content, c.date, u.name, u.surname
+        $sql = "SELECT c.content, c.date, u.name, u.surname, i.path_name
                 FROM `comment` AS c
                 LEFT JOIN `user` AS u ON u.`id` = c.`user_id`
+                LEFT JOIN `image` AS i ON u.`id` = i.`user_id`
                 WHERE `post_id` = :id AND `status` = 'Confirmed'
                 ORDER BY c.`date` ASC;";
     
@@ -28,11 +29,12 @@ class Comment {
     function getPendingComments() {
         $db = new \Monsapp\Myblog\Utils\DatabaseManager();
 
-        $query = $db->query("SELECT c.id, c.content, p.title, u.name 
+        $query = $db->query("SELECT c.id, c.content, p.title, u.name, u.surname
             FROM `comment` AS c
             LEFT JOIN `post` AS p ON p.`id` = c.`post_id`
             LEFT JOIN `user`AS u ON u.`id` = c.`user_id`
-            WHERE `status` = 'Pending'");
+            WHERE `status` = 'Pending'
+            ORDER BY c.id DESC;");
 
         $results = $query->fetchAll();
         $query->closeCursor();

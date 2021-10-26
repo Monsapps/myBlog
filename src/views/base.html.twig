@@ -2,52 +2,71 @@
 <html lang="fr">
     <head>
         <meta charset="utf-8">
-        <title>{{ title }}</title>
-        <meta name="description" content="{{ description }}">
-        <meta name="keywords" content="{{ keywords }}">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-U1DAWAznBHeqEIlVSCgzq+c9gqGAJn5c/t99JyeKa9xxaYpSvHU5awsuZVVFIhvj" crossorigin="anonymous"></script>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/css/bootstrap.min.css" integrity="sha384-KyZXEAg3QhqLMpG8r+8fhAXLRk2vvoC2f3B09zVXn8CA5QIVfZOJ3BCsw2P0p/We" crossorigin="anonymous">
+        <meta name="description" content="{{ descriptions }}">
+		<meta name="keywords" content="{{ keywords }}">
         <link rel="stylesheet" type="text/css" href="./public/css/style.css">
+        <title>{{ title }}</title>
     </head>
     <body>
-        <header>
-            <!-- Name of blog & navigations -->
-            <div class="left blog-title">
-                {{ navtitle }}
-            </div>
-            <div class="right">
-                <nav>
-                    <li>
-                        <ul {% if (currentPage is empty) %}class="current"{% endif %}><a href="./index.php">Accueil</a></ul>
-                        <ul {% if (currentPage == "post") %}class="current"{% endif %}><a href="./index.php?page=post">Articles</a></ul>
+        <!-- Name of blog & navigations -->
+        <header class="container">
+            <nav class="navbar navbar-expand-lg navbar-light bg-light">
+                <a class="navbar-brand nav-bar-margin-start" href="./index.php">{{ navtitle }}</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
+                  <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarText">
+                    <ul class="navbar-nav mr-auto">
+                        <li class="nav-item{% if (currentPage is empty) %} active{% endif %}">
+                            <a class="nav-link" href="./index.php">Accueil</a>
+                        </li>
+                        <li class="nav-item{% if (currentPage == "post") %} active{% endif %}">
+                            <a class="nav-link" href="./index.php?page=post">Articles</a>
+                        </li>
                         {% if (role == -1) or (role is empty) %}
-                            <ul {% if (currentPage == "connect") %}class="current"{% endif %}><a href="./index.php?page=connect">Connexion</a></ul>
+                        <li class="nav-item{% if (currentPage == "connect") %} active{% endif %}">
+                            <a class="nav-link" href="./index.php?page=connect">Connexion</a>
+                        </li>
                         {% else %}
-                            <ul><a href="./index.php?page=disconnect">D&eacute;connexion</a></ul>
-                            {% if (user.path_name is empty) %}
-                            <ul><img src="./public/images/avatars/default.svg" alt="Avatar" style="width: 25px; height: 25px;"></ul>
-                            {% else %}
-                            <ul><img src="./public/uploads/{{ user.path_name }}" alt="Avatar" style="width: 25px; height: 25px;"></ul>
-                            {% endif %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="./index.php?page=disconnect">D&eacute;connexion</a>
+                        </li>
                         {% endif %}
-                    </li>
-                </nav>
-            </div>
+                    </ul>
+                </div>
+                {% if (role >= 0) %}
+                <div class="collapse navbar-collapse navbar-user-avatar">
+                    {% if (user.path_name is empty) %}
+                    <img src="./public/images/avatars/default.svg" alt="Avatar de {{ user.name }} {{ user.surname }}" title="{{ user.name }} {{ user.surname }}">
+                    {% else %}
+                    <img src="./public/uploads/{{ user.path_name }}" alt="Avatar de {{ user.name }} {{ user.surname }}" title="{{ user.name }} {{ user.surname }}">
+                    {% endif %}
+                </div>
+                {% endif %}
+            </nav>
         </header>
         <!-- Error -->
+        
         {% block error %}{% endblock %}
 
         <!-- Content -->
 
         {% block content %}{% endblock %}
 
-        <footer>
+        <footer class="container">
             <!-- Navigations & Copyright -->
-            {% if (role != -1) %}
-            <div class="panel">
-                <a href="./index.php?page=panel">Panneau de configuration</a>
-            </div>
-            {% endif %}
-            <div class="copy">
-                myBlog &copy; 2021
+            <div class="row bg-light">
+                {% if (role != -1) %}
+                <div class="col text-start">
+                    <a href="./index.php?page=panel" class="link-dark">Panneau de configuration</a>
+                </div>
+                {% endif %}
+                <div class="col text-end">
+                    myBlog &copy; 2021
+                </div>
             </div>
         </footer>
     </body>

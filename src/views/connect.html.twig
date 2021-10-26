@@ -4,70 +4,72 @@
 {% if(error != "0") %}
 <script>
     function closeWindow() {
-        document.getElementById("error-box").hidden = true;
+        document.getElementById("box-error").hidden = true;
     }
 </script>
-<div class="error-box" id="error-box">
-    {% if(error == "1") %}
-        Les deux mots de passes ne correspondent pas
-    {% endif %}
-    {% if(error == "2") %}
-    L'email est déjà présent
-    {% endif %}
-    {% if(error == "3") %}
-    L'email et/ou le mot de passe ne correspondent pas
-    {% endif %}
-    <input type="button" value="Fermer" onclick="closeWindow()" >
-</div>
+<section class="container">
+    <div class="box-error" id="box-error">
+        {% if(error == "1") %}
+            Les deux mots de passes ne correspondent pas
+        {% endif %}
+        {% if(error == "2") %}
+        L'email est déjà présent
+        {% endif %}
+        {% if(error == "3") %}
+        L'email et/ou le mot de passe ne correspondent pas
+        {% endif %}
+        <!-- <input type="button" value="Fermer" onclick="closeWindow()">-->
+    </div>
+</section>
 {% endif %}
 {% endblock %}
 
 
 {% block content %}
 <!-- Log in -->
-<section>
+<section class="container">
     <h2>Connectez-vous</h2>
-    <div class="contact-container">
-        <form action="./index.php?page=login" method="POST" class="contact-form">
-            <div>
-                <input type="email" name="email"required>
-                <label for="email">Email</label>
-            </div>
-            <div>
-                <input type="password" name="password" required>
-                <label for="name">Mot de passe</label>
-            </div>
-            <input type="submit" value="Se connecter">
-        </form> 
-    </div>
+    <form action="./index.php?page=login" method="post">
+        <div class="form-container">
+                <div>
+                    <input type="email" name="email"required>
+                    <label for="email">Email</label>
+                </div>
+                <div>
+                    <input type="password" name="password" required>
+                    <label for="name">Mot de passe</label>
+                </div>
+                <input type="submit" value="Se connecter">
+        </div>
+    </form> 
 </section>
 <!-- Register -->
-<section>
+<section class="container">
     <h2>Enregistrez-vous</h2>
-    <div class="contact-container">
-        <form action="./index.php?page=register" method="POST" class="contact-form">
-            <div>
-                <input type="text" name="surname" required>
-                <label for="surname">Nom</label>
-            </div>
-            <div>
-                <input type="text" name="name" required>
-                <label for="name">Pr&eacute;nom</label>
-            </div>
-            <div>
-                <input type="email" name="email" required>
-                <label for="email">Email</label>
-            </div>
-            <div>
-                <input type="password" name="password" required>
-                <label for="password">Mot de passe</label>
-            </div>
-            <div>
-                <input type="password" name="retrypassword" required>
-                <label for="password">V&eacute;rifier le mot de passe</label>
-            </div>
-            <input type="submit" value="S'enregistrer">
-        </form> 
-    </div>
+    <form action="./index.php?page=register" method="post">
+        <div class="form-container">
+                <div>
+                    <input type="text" name="surname" required>
+                    <label for="surname">Nom</label>
+                </div>
+                <div>
+                    <input type="text" name="name" required>
+                    <label for="name">Pr&eacute;nom</label>
+                </div>
+                <div>
+                    <input type="email" name="email" required>
+                    <label for="email">Email</label>
+                </div>
+                <div>
+                    <input type="password" name="password" required>
+                    <label for="password">Mot de passe</label>
+                </div>
+                <div>
+                    <input type="password" name="retrypassword" required>
+                    <label for="password">V&eacute;rifier le mot de passe</label>
+                </div>
+                <input type="submit" value="S'enregistrer">
+        </div>
+    </form> 
 </section>
 {% endblock %}

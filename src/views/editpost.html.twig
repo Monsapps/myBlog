@@ -2,10 +2,10 @@
 
 {% block content %}
 <!-- Add Post -->
-<section>
+<section class="container">
     <h2>Modifier l'article: {{ post.title }}</h2>
-    <div class="contact-container">
-        <form action="./index.php?page=editpostpublish" method="POST" class="contact-form">
+    <form action="./index.php?page=editpostpublish" method="POST" class="contact-form">
+    <div class="form-container">
             <input type="hidden" name="id" value="{{ post.id }}">
             <div>
                 <input type="text" name="title" value="{{ post.title }}" required>
@@ -30,12 +30,12 @@
                 <label for="author">Auteur</label>
             </div>
             {% endif %}
-            <div class="contact-message">
+            <div class="form-textarea-container">
                 <textarea name="content" required>{{ post.content }}</textarea>
                 <label for="content">Contenu</label>
             </div>
-            <input type="submit" value="Modifier">
-        </form> 
+            <input type="submit" value="Modifier"> 
     </div>
+    </form>
 </section>
 {% endblock %}

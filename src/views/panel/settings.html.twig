@@ -8,12 +8,20 @@ function loadSocial() {
     {% for social in socials %}
         index = index+1;
         var inputHtml = `
-            <div id="social-${index}">
-                <img src="./public/images/socials/{{ social.social_image }}" alt="Logo de {{ social.name }}" style="max-width: 15px;">
-                <input type="hidden" name="id[]" id="social_id_${index}" value="{{ social.id }}">
-                <input type="text" name="name[]" id="social_name_${index}" value="{{ social.name }}" oninput="saveInput(${index})">
-                <input type="file" name="image[]" id="social_image_${index}" value="" oninput="saveInput(${index})">
-                <a href="./index.php?page=deletesocial&id={{ social.id }}">Supprimer</a>
+            <div class="row" id="social-${index}">
+                <div class="col-1">
+                    <img src="./public/images/socials/{{ social.social_image }}" alt="Logo de {{ social.name }}" style="max-width: 30px;">
+                </div>
+                <div class="col-2">
+                    <input type="hidden" name="id[]" id="social_id_${index}" value="{{ social.id }}">
+                    <input type="text" name="name[]" id="social_name_${index}" value="{{ social.name }}" oninput="saveInput(${index})">
+                </div>
+                <div class="col-3">
+                    <input type="file" name="image[]" id="social_image_${index}" value="" oninput="saveInput(${index})">
+                </div>
+                <div class="col-6">
+                    <a href="./index.php?page=deletesocial&id={{ social.id }}" class="link-dark">Supprimer</a>
+                </div>
             </div>`;
         document.getElementById("social_form").innerHTML += inputHtml;
     {% endfor %}
@@ -49,42 +57,51 @@ onload="loadSocial()"
 {% block content %}
 {% if (role == 1) %}
 <!-- Panel -->
-<section>
+<section class="container">
     <h1>Configurations Générales</h1>
-    <div class="contact-container">
-        <form action="./index.php?page=mainsettings" method="POST" class="contact-form">
-            <div>
-                <input type="text" name="site_title" value="{{ navtitle }}" required>
-                <label for="site_title">Nom de site</label>
-            </div>
-            <div>
-                <input type="text" name="site_keywords" value="{{ keywords }}" required>
-                <label for="site_title">Mots-clefs généraux</label>
-            </div>
-            <div>
-                <input type="text" name="site_description" value="{{ description }}" required>
-                <label for="site_title">Description du site</label>
-            </div>
-            <div>
-                <select name="main_user">
-                    {% for author in authors %}
-                    <option value="{{ author.id }}"{% if (main_user_id == author.id) %} selected {% endif %}>{{ author.name }} {{ author.surname }}</option>
-                    {% endfor %}
-                </select>
-                <label for="author">Héro du site</label>
-            </div>
-            <input type="submit" value="Modifier">
-        </form>
-    </div>
+    <form action="./index.php?page=mainsettings" method="post">
+        <div class="form-container">
+                <div>
+                    <input type="text" name="site_title" value="{{ navtitle }}" required>
+                    <label for="site_title">Nom de site</label>
+                </div>
+                <div>
+                    <input type="text" name="site_keywords" value="{{ keywords }}" required>
+                    <label for="site_title">Mots-clefs généraux</label>
+                </div>
+                <div>
+                    <input type="text" name="site_description" value="{{ descriptions }}" required>
+                    <label for="site_title">Description du site</label>
+                </div>
+                <div>
+                    <select name="main_user">
+                        {% for author in authors %}
+                        <option value="{{ author.id }}"{% if (main_user_id == author.id) %} selected {% endif %}>{{ author.name }} {{ author.surname }}</option>
+                        {% endfor %}
+                    </select>
+                    <label for="author">Héro du site</label>
+                </div>
+                <input type="submit" value="Modifier">
+            </form>
+        </div>
+    </form>
     <script type="text/javascript">
         function addSocial() {
             index = index+1;
             var inputSocial = `
-                    <div id="social-${index}">
-                        <input type="button" value="X" onclick="deleteSocial(${index})">
-                        <input type="hidden" name="id[]" id="social_id-${index}" value="">
-                        <input type="text" name="name[]" id="social_name_${index}" value="" oninput="saveInput(${index})">
-                        <input type="file" name="image[]" id="social_image_${index}" value=""  oninput="saveInput(${index})">
+                    <div class="row" id="social-${index}">
+                        <div class="col-1">
+                            <input type="button" value="X" onclick="deleteSocial(${index})">
+                        </div>
+                        <div class="col-2">
+                            <input type="hidden" name="id[]" id="social_id_${index}" value="">
+                            <input type="text" name="name[]" id="social_name_${index}" value="" oninput="saveInput(${index})">
+                        </div>
+                        <div class="col-3">
+                            <input type="file" name="image[]" id="social_image_${index}" value="" oninput="saveInput(${index})">
+                        </div>
+                        <div class="col-6">
+                        </div>
                     </div>`;
         document.getElementById("social_form").innerHTML += inputSocial;
         restoreInput();
@@ -96,7 +113,11 @@ onload="loadSocial()"
         <div class="social-network" id="social_form">
         </div>
         <input type="submit" value="Modifier">
-        </form>
+        <div class="row">
+            <div class="col" id="social_form">
+            </div>
+        </div>
+    </form>
 </section>
 {% endif %}
 {% endblock %}
