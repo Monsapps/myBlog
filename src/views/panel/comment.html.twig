@@ -3,11 +3,19 @@
 {% block content %}
 {% if (role == 1) %}
 <!-- Panel -->
-<section>
+<section class="container">
     <h1>Commentaires en attente de validation</h1>
     {% for comment in comments %}
-    <div>
-        {{ comment.content }} écrit par {{ comment.name }} dans l'article <b>{{ comment.title }}</b> <a href="./index.php?page=confirmcomment&id={{ comment.id }}">Confirmer</a> <a href="./index.php?page=rejectcomment&id={{ comment.id }}">Rejeter</a>
+    <div class="row">
+        <div class="col-8">
+            {{ comment.content }} écrit par {{ comment.name }} {{ comment.surname }} dans l'article <b>{{ comment.title }}</b> 
+        </div>
+        <div class="col-2">
+            <a href="./index.php?page=confirmcomment&id={{ comment.id }}" class="link-dark">Confirmer</a>
+        </div>
+        <div class="col-2">
+            <a href="./index.php?page=rejectcomment&id={{ comment.id }}" class="link-dark">Rejeter</a>
+        </div>
     </div>
     {% else %}
         Aucuns commentaires

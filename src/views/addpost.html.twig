@@ -2,10 +2,10 @@
 
 {% block content %}
 <!-- Add Post -->
-<section>
+<section class="container">
     <h2>Ajouter un article</h2>
-    <div class="contact-container">
-        <form action="./index.php?page=publish" method="POST" class="contact-form">
+    <form action="./index.php?page=publish" method="post" class="contact-form">
+    <div class="form-container">
             <div>
                 <input type="text" name="title" required>
                 <label for="title">Titre</label>
@@ -18,12 +18,12 @@
                 <input type="text" name="keywords" required>
                 <label for="keywords">Mots-clefs</label>
             </div>
-            <div class="contact-message">
+            <div class="form-textarea-container">
                 <textarea name="content" required></textarea>
                 <label for="content">Contenu</label>
             </div>
             <input type="submit" value="Ajouter">
-        </form> 
     </div>
+    </form> 
 </section>
 {% endblock %}

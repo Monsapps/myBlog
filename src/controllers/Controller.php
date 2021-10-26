@@ -8,6 +8,7 @@ namespace Monsapp\Myblog\Controllers;
 
 class Controller {
 
+    private $config;
     private $title;
     private $keywords;
     private $descriptions;
@@ -19,12 +20,12 @@ class Controller {
 
     function __construct() {
 
-        $config = new \Monsapp\Myblog\Utils\ConfigManager();
+        $this->config = new \Monsapp\Myblog\Utils\ConfigManager();
 
-        $this->title = $config->getConfig("site_title");
-        $this->keywords = $config->getConfig("site_keywords");
-        $this->descriptions = $config->getConfig("site_descriptions");
-        $this->mainUser = $config->getConfig("site_main_user_id");
+        $this->title = $this->config->getConfig("site_title");
+        $this->keywords = $this->config->getConfig("site_keywords");
+        $this->descriptions = $this->config->getConfig("site_descriptions");
+        $this->mainUser = $this->config->getConfig("site_main_user_id");
 
         $loader = new \Twig\Loader\FilesystemLoader("src/views/");
         $this->twig = new \Twig\Environment($loader);
@@ -64,7 +65,7 @@ class Controller {
         echo $this->twig->render("index.html.twig", array(
                 "title" => $this->title, 
                 "navtitle" => $this->title, 
-                "desciption" => $this->descriptions,
+                "descriptions" => $this->descriptions,
                 "keywords" => $this->keywords,
                 "role" => $this->role,
                 "user" => $this->userInfos,
@@ -84,7 +85,7 @@ class Controller {
         echo $this->twig->render("posts.html.twig", array(
             "title" => "Articles - " . $this->title, 
             "navtitle" => $this->title, 
-            "desciption" => $this->descriptions,
+            "descriptions" => $this->descriptions,
             "keywords" => $this->keywords,
             "role" => $this->role,
             "user" => $this->userInfos,
@@ -102,7 +103,7 @@ class Controller {
         echo $this->twig->render("post.html.twig", array(
             "title" => $postInfos["title"] . " - " . $this->title, 
             "navtitle" => $this->title, 
-            "desciption" => $this->descriptions,
+            "descriptions" => $this->descriptions,
             "keywords" => $postInfos["keywords"],
             "role" => $this->role,
             "is_allowed_to_crud" => $this->isAllowedToCRUD, 
@@ -117,7 +118,7 @@ class Controller {
             echo $this->twig->render("addpost.html.twig", array(
                 "title" => $this->title, 
                 "navtitle" => $this->title, 
-                "desciption" => $this->descriptions,
+                "descriptions" => $this->descriptions,
                 "keywords" => $this->keywords,
                 "role" => $this->role,
                 "user" => $this->userInfos
@@ -145,21 +146,19 @@ class Controller {
     }
 
     function getEditPostPage(int $id) {
-        // We need to verify user id to edit post
-        $userInfos = $this->userInfos;
 
-        // We store all users for edit author's post
+        // We store all users to edit author's post
         $user = new \Monsapp\Myblog\Models\User();
         $allUsers = $user->getAllUsers();
 
         $post = new \Monsapp\Myblog\Models\Post();
         $postInfos = $post->getPostInfos($id);
 
-        if($this->isAllowedToCRUD && ($userInfos["id"] == $postInfos["user_id"])) {
+        if(($this->isAllowedToCRUD && ($this->userInfos["id"] == $postInfos["user_id"])) || $this->role == 1) {
             echo $this->twig->render("editpost.html.twig", array(
                 "title" => $this->title, 
                 "navtitle" => $this->title, 
-                "desciption" => $this->descriptions,
+                "descriptions" => $this->descriptions,
                 "keywords" => $this->keywords,
                 "role" => $this->role,
                 "user" => $this->userInfos,
@@ -194,7 +193,7 @@ class Controller {
         echo $this->twig->render("connect.html.twig", array(
             "title" => "Connexion - " . $this->title,
             "navtitle" => $this->title,
-            "desciption" => $this->descriptions,
+            "descriptions" => $this->descriptions,
             "keywords" => $this->keywords,
             "role" => $this->role
         ));
@@ -288,18 +287,16 @@ class Controller {
             $userInfos = $this->userInfos;
 
             if($userInfos != null) {
-                //todo get info from getUserFullInfos
-                $userId = (int)$userInfos["id"];
                 $social = new \Monsapp\Myblog\Models\Social();
                 $socials = $social->getAllSocials();
-                $userSocials = $user->getUserSocials($userId);
+                $userSocials = $user->getUserSocials((int)$this->userInfos["id"]);
                 echo $this->twig->render("panel/index.html.twig", array(
                     "title" => "Panneau de configation - " . $this->title,
                     "navtitle" => $this->title,
-                    "description" => $this->descriptions,
+                    "descriptions" => $this->descriptions,
                     "keywords" => $this->keywords,
                     "role" => $this->role,
-                    "user" => $userInfos,
+                    "user" => $this->userInfos,
                     "socials" => $socials,
                     "userSocials" => $userSocials
                 ));
@@ -315,9 +312,8 @@ class Controller {
     }
 
     function getEditProfilePage(array $postArray) {
-        $userInfos = $this->userInfos();
         // only confirmed users and user himself can update infos
-        if($this->role != -1 && $userInfos["id"] == $postArray["id"]) {
+        if($this->role != -1 && $this->userInfos["id"] == $postArray["id"]) {
             $user = new \Monsapp\Myblog\Models\User();
             $user->updateUser((int)$postArray["id"], $postArray["name"], $postArray["surname"], $postArray["hat"]);
 
@@ -330,9 +326,8 @@ class Controller {
     }
 
     function getUploadAvatarPage(array $files, array $postArray) {
-        $userInfos = $this->userInfos;
         // only confirmed users and user himself can upload avatar
-        if($this->role != -1 && $userInfos["id"] == $postArray["user_id"]) {
+        if($this->role != -1 && $this->userInfos["id"] == $postArray["user_id"]) {
             $image = new \Monsapp\Myblog\Models\Image();
             $uploadDir = "./public/uploads/";
             $mimeType = mime_content_type($files['avatar']['tmp_name']);
@@ -376,11 +371,8 @@ class Controller {
     }
 
     function getAddUserSocialsPage(array $postArray) {
-
-        $userInfos = $this->userInfos;
-
         // only confirmed user and user himself can add socials
-        if($this->role != -1 && $userInfos["id"] == $postArray["user_id"]) {
+        if($this->role != -1 && $this->userInfos["id"] == $postArray["user_id"]) {
             $user = new \Monsapp\Myblog\Models\User();
             //todo get userid
             for($i = 0; $i < count($postArray["social_id"]); $i++) {
@@ -395,10 +387,8 @@ class Controller {
     }
 
     function getUpdateUserSocialsPage(array $postArray) {
-
-        $userInfos = $this->userInfos;
         // only confirmed user and user himself can update socials
-        if($this->role != -1 && $userInfos["id"] == $postArray["user_id"]) {
+        if($this->role != -1 && $this->userInfos["id"] == $postArray["user_id"]) {
 
             $user = new \Monsapp\Myblog\Models\User();
 
@@ -414,9 +404,8 @@ class Controller {
     }
 
     function getDeleteUserSocialPage(int $userId, int $socialId) {
-        $userInfos = $this->userInfos;
         // only confirmed user and user himself can delete socials
-        if($this->role != -1 && $userInfos["id"] == $userId) {
+        if($this->role != -1 && $this->userInfos["id"] == $userId) {
             $user = new \Monsapp\Myblog\Models\User();
             $user->deleteSocial($socialId);
             Header("Location: ./index.php?page=panel");
@@ -469,10 +458,11 @@ class Controller {
             echo $this->twig->render("panel/settings.html.twig", array(
                 "title" => "Préférences générales - " . $this->title,
                 "navtitle" => $this->title,
-                "description" => $this->descriptions,
+                "descriptions" => $this->descriptions,
                 "keywords" => $this->keywords,
                 "role" => $this->role,
                 "authors" => $allUsers,
+                "user" => $this->userInfos,
                 "main_user_id" => $this->mainUser,
                 "socials" => $socials
             ));
@@ -517,9 +507,10 @@ class Controller {
             echo $this->twig->render("panel/comment.html.twig", array(
                 "title" => "Gestion des commentaires - " . $this->title,
                 "navtitle" => $this->title,
-                "description" => $this->descriptions,
+                "descriptions" => $this->descriptions,
                 "keywords" => $this->keywords,
                 "role" => $this->role,
+                "user" => $this->userInfos,
                 "comments" => $comments
             ));
         } else {
@@ -562,9 +553,10 @@ class Controller {
             echo $this->twig->render("panel/users.html.twig", array(
                 "title" => "Gestions des permissions - " . $this->title,
                 "navtitle" => $this->title,
-                "description" => $this->descriptions,
+                "descriptions" => $this->descriptions,
                 "keywords" => $this->keywords,
                 "role" => $this->role,
+                "user" => $this->userInfos,
                 "users" => $allUsers,
                 "main_user_id" => $this->mainUser,
                 "roles" => $allRoles
@@ -675,18 +667,16 @@ class Controller {
     }
 
     function getPostManagerPage() {
-        $userInfos = $this->userInfos;
-
         $post = new \Monsapp\Myblog\Models\Post();
         $posts = $post->getAllPosts();
         if($this->role >= 1) {
             echo $this->twig->render("panel/posts.html.twig", array(
                 "title" => "Gestions des articles - " . $this->title,
                 "navtitle" => $this->title,
-                "description" => $this->descriptions,
+                "descriptions" => $this->descriptions,
                 "keywords" => $this->keywords,
                 "role" => $this->role,
-                "user_id" => $userInfos["id"],
+                "user" => $this->userInfos,
                 "posts" => $posts
             ));
         } else {

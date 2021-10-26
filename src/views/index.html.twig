@@ -1,62 +1,72 @@
 {% extends "base.html.twig" %}
 
 {% block content %}
-<!-- Home -->
-<section>
-    <h1>édito</h1>
-    <div class="hero-container">
-        <div class="hero-infos">
-            {% if (main_user.path_name is empty) %}
-            <img src="./public/images/avatars/default.svg" alt="Photo de {{ main_user.name}} {{ main_user.surname }}" class="hero-avatar">
-            {% else %}
-            <img src="./public/uploads/{{ main_user.path_name }}" alt="Photo de {{ main_user.name}} {{ main_user.surname }}" class="hero-avatar">
-            {% endif %}
-            <div>
-                {{ main_user.name}} {{ main_user.surname }}
-            </div>
-        </div>
-        <div class="hero-more">
-            <div class="hero-quote">{{ main_user.user_hat }}</div>
-            <div class="hero-cv">
-                {% if (main_user.file_name is empty) %}
-                Aucun cv disponible
+<!-- Hero -->
+<section class="container">
+    <div class="row">
+        <div class="col text-center">
+            <div class="hero-avatar">
+                {% if (main_user.path_name is empty) %}
+                <img src="./public/images/avatars/default.svg" alt="Photo de {{ main_user.name}} {{ main_user.surname }}">
                 {% else %}
-                <a href="./public/uploads/{{ main_user.file_name }}">Consulter mon cv</a>
+                <img src="./public/uploads/{{ main_user.path_name }}" alt="Photo de {{ main_user.name}} {{ main_user.surname }}">
                 {% endif %}
             </div>
+        </div>
+    </div>
+        <div class="row">
+        <div class="col text-center">
+            {{ main_user.name}} {{ main_user.surname }}
+        </div>
+    </div>
+    <div class="row">
+        <div class="col text-center hero-quote">
+            {{ main_user.user_hat }}
+        </div>
+    </div>
+    <div class="row">
+        <div class="col text-center">
+            {% if (main_user.file_name is empty) %}
+            Aucun cv disponible
+            {% else %}
+            <a href="./public/uploads/{{ main_user.file_name }}" class="link-dark">Mon Curicullum Vit&aelig;</a>
+            {% endif %}
+        </div>
+    </div>
+    <div class="row">
+        <div class="col text-center">
+            Suivez-moi sur
             <div class="hero-social">
-                Suivez moi sur:
-                <div>
-                    {% for userSocial in userSocials %}
-                    <a href="{{ userSocial.meta }}"><img src="./public/images/socials/{{ userSocial.social_image }}" alt="Logo de {{ userSocial.name }}" style="max-width: 25px;"></a>
-                    {% endfor %}
-                </div>
-            </div>
+                {% for userSocial in userSocials %}
+                <a href="{{ userSocial.meta }}" target="_blank"><img src="./public/images/socials/{{ userSocial.social_image }}" alt="Logo de {{ userSocial.name }}"></a>
+                {% endfor %}
             </div>
         </div>
     </div>
 </section>
-<section>
+<section class="container">
     <h2>Contactez moi</h2>
-    <div class="contact-container">
-        <form action="" method="POST" class="contact-form">
-            <div>
-                <input type="text" name="name" id="name" required>
-                <label for="name">Nom</label>
+    <div class="row">
+        <form action="" method="POST">
+            <div class="col form-container">
+                    <div>
+                        <input type="text" name="name" id="name" required>
+                        <label for="name">Nom</label>
+                    </div>
+                    <div>
+                        <input type="text" name="surname" id="surname" required>
+                        <label for="surname">Pr&eacute;nom</label>
+                    </div>
+                    <div>
+                        <input type="email" name="email" id="email" required>
+                        <label for="email">Email</label>
+                    </div>
+                    <div class="form-textarea-container">
+                        <textarea name="message" required></textarea>
+                        <label for="message">Message</label>
+                    </div>
+                    <input type="submit" value="Envoyer">
             </div>
-            <div>
-                <input type="text" name="surname" id="surname" required>
-                <label for="surname">Pr&eacute;nom</label>
-            </div>
-            <div>
-                <input type="email" name="email" id="email" required>
-                <label for="email">Email</label>
-            </div>
-            <div class="contact-message">
-                <textarea name="message" required></textarea>
-                <label for="message">Message</label>
-            </div>
-            <input type="submit" value="Envoyer">
         </form> 
     </div>
 </section>

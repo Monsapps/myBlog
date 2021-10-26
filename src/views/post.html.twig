@@ -2,52 +2,91 @@
 
 {% block content %}
 <!-- Post  -->
-<section>
+<section class="container">
     <h1>{{ post.title }}</h1>
-    {{ post.hat }}<br />
-    {{ post.content }}<br />
-    écrit par {{ post.name }} {{ post.surname }} <br />
-
-    {% if (post.date == post.last_edited) %}
-    Ajouté: {{ post.date }}
-    {% else %}
-    Dernière modification: {{ post.last_edited }}
-    {% endif %}
-    {% if (is_allowed_to_crud) and (user.id == post.user_id) %}
-    <div>
-        <a href="./index.php?page=editpost&id={{ post.id }}">Modifier article</a>
+    {% if ((is_allowed_to_crud) and (user.id == post.user_id)) or (role == 1) %}
+    <div class="row">
+        <div class="col text-end">
+            <a href="./index.php?page=editpost&id={{ post.id }}" class="link-dark">Modifier l'article</a>
+        </div>
     </div>
     {% endif %}
+    <div class="post-container">
+        <div class="row">
+            <div class="col text-justify post-hat-size">
+                {{ post.hat }}
+            </div>
+        </div>
+        <div class="row">
+            <div class="col text-justify post-content-size">
+                {{ post.content }}
+            </div>
+        </div>
+        <div class="row">
+            <div class="col text-start post-author-size">
+                &Eacute;crit par {{ post.name }} {{ post.surname }}
+            </div>
+            <div class="col text-end post-date-size">
+                {% if (post.date == post.last_edited) %}
+                Ajouté: {{ post.date }}
+                {% else %}
+                Derni&egrave;re modification: {{ post.last_edited }}
+                {% endif %}
+            </div>
+        </div>
+    </div>
 </section>
-<section>
+<section class="container">
     <h2>Commentaires</h2>
     {% for comment in comments %}
-    <div>
-        {{ comment.content }}<br />
-        Par {{ comment.name }} {{ comment.surname }}
+    <div class="row comment-container">
+        <div class="col-3 col-lg-1 avatar-col">
+            {% if (comment.path_name is not empty) %}
+            <img src="./public/uploads/{{ comment.path_name }}" alt="Photo de {{ comment.name }} {{ comment.surname }}">
+            {% else %}
+            <img src="./public/images/avatars/default.svg" alt="Photo de {{ comment.name }} {{ comment.surname }}">
+            {% endif %}
+        </div>
+        <div class="col-9 col-lg-11">
+            <div class="row">
+                <div class="col">
+                    {{ comment.content }}
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    {{ comment.name }} {{ comment.surname }}
+                </div>
+                <div class="col text-end">
+                    &Eacute;crit le {{ comment.date }}
+                </div>
+            </div>
+        </div>
     </div>
     {% else %}
         Aucuns commentaires
     {% endfor %}
-</section>
-<section>
     {% if(status == "1") %}
+    <div class="box-status">
         Votre commentaire à bien été enregistré, cependant il sera affiché lorsque l'administrateur l'aura validé.
+    </div>
     {% endif %}
     {% if (role != -1) %}
-    <div class="contact-container">
-        <form action="./index.php?page=addcomment" method="post" class="contact-form">
+    <div class="row">
+        <form action="./index.php?page=addcomment" method="POST">
             <input type="hidden" name="post_id" value="{{ post.id }}">
-            <input type="hidden" name="user_id" value="{{ user_id }}">
-            <div class="contact-message">
-                <textarea name="comment" required></textarea>
-                <label for="content">Ajouter un commentaire</label>
+            <input type="hidden" name="user_id" value="{{ user.id }}">
+            <div class="col form-container">
+                    <div class="form-textarea-container">
+                        <textarea name="comment" required></textarea>
+                        <label for="comment">Ajouter un commentaire</label>
+                    </div>
+                    <input type="submit" value="Commenter">
             </div>
-            <input type="submit" value="Commenter">
-        </form>
+        </form> 
     </div>
     {% else %}
-        <a href="./index.php?page=connect">Inscrivez-vous pour pouvoir commenter cet article</a>
+        <a href="./index.php?page=connect" class="link-dark">Inscrivez-vous pour pouvoir commenter cet article</a>
     {% endif %}
 </section>
 {% endblock %}

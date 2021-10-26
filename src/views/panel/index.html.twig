@@ -4,28 +4,30 @@
 {% if(error != "0") %}
 <script>
     function closeWindow() {
-        document.getElementById("error-box").hidden = true;
+        document.getElementById("box-error").hidden = true;
     }
 </script>
-<div class="error-box" id="error-box">
-    {% if(error == "1") %}
-        Le type de fichier envoyer n'est pas au bon format
-    {% endif %}
-    {% if(error == "2") %}
-        Erreur lors de la copie du fichier, veuillez rééssayer plus tard
-    {% endif %}
-    <input type="button" value="Fermer" onclick="closeWindow()" >
-</div>
+<section class="container">
+    <div class="box-error" id="box-error">
+        {% if(error == "1") %}
+            Le type de fichier envoyer n'est pas au bon format
+        {% endif %}
+        {% if(error == "2") %}
+            Erreur lors de la copie du fichier, veuillez rééssayer plus tard
+        {% endif %}
+        <!-- <input type="button" value="Fermer" onclick="closeWindow()">-->
+    </div>
+</section>
 {% endif %}
 {% endblock %}
 
 {% block content %}
 {% if (role != -1) %}
 <!-- Panel -->
-<section>
+<section class="container">
     <h1>Profil</h1>
-        <div class="contact-container">
-            <form action="./index.php?page=editprofile" method="POST" class="contact-form">
+        <form action="./index.php?page=editprofile" method="post">
+        <div class="form-container">
                 <input type="hidden" name="id" value="{{ user.id }}">
                 <div>
                     <input type="text" name="name" value="{{ user.name }}" required>
@@ -43,19 +45,31 @@
             </form>
         </div>
     <h2>Avatar</h2>
-    {% if (user.path_name is empty) %}
-    <img src="./public/images/avatars/default.svg" alt="Avatar" style="width: 100px; height: 100px;">
-    {% else %}
-    <img src="./public/uploads/{{ user.path_name }}" alt="Avatar" style="width: 100px; height: 100px;">
-    {% endif %}
-    <div>
-        Changer d'avatar
+    <div class="row">
+        <div class="col">
+            {% if (user.path_name is empty) %}
+            <img src="./public/images/avatars/default.svg" alt="Avatar" style="width: 100px; height: 100px;">
+            {% else %}
+            <img src="./public/uploads/{{ user.path_name }}" alt="Avatar" style="width: 100px; height: 100px;">
+            {% endif %}
+        </div>
     </div>
     <form action="./index.php?page=uploadavatar" method="post" enctype="multipart/form-data">
-        <input type="hidden" name="user_id" value="{{ user.id }}">
-        <input type="hidden" name="user_image_file" value="{{ user.path_name }}">
-        <input type="file" name="avatar">
-        <input type="submit" value="Envoyer">
+        <div class="row">
+            <div class="col-2">
+                Changer d'avatar:
+            </div>
+            <div class="col-10">
+                <input type="hidden" name="user_id" value="{{ user.id }}">
+                <input type="hidden" name="user_image_file" value="{{ user.path_name }}">
+                <input type="file" name="avatar">
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <input type="submit" value="Envoyer">
+            </div>
+        </div>
     </form>
     {% if (socials is not empty) %}
     <h2>Réseaux Sociaux</h2>
@@ -63,14 +77,20 @@
         function addSocialNetwork() {
             index = index+1;
             var inputSocial =  `
-                        <div id="social-${index}">
-                            <input type="button" value="X" onclick="deleteSocial(${index})">
-                            <select name="social_id[]" id="social_id_${index}" onchange="saveInput(${index})">
-                                {% for social in socials %}
-                                    <option value="{{ social.id }}">{{ social.name }}</option>
-                                {% endfor %}
-                            </select>
-                            <input type="text" name="meta[]" id="social_meta_${index}" oninput="saveInput(${index})">
+                        <div class="row" id="social-${index}">
+                            <div class="col-1">
+                                <input type="button" value="X" onclick="deleteSocial(${index})">
+                            </div>
+                            <div class="col-1">
+                                <select name="social_id[]" id="social_id_${index}" onchange="saveInput(${index})">
+                                    {% for social in socials %}
+                                        <option value="{{ social.id }}">{{ social.name }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="col-10">
+                                <input type="text" name="meta[]" id="social_meta_${index}" placeholder="Adresse du profil" oninput="saveInput(${index})">
+                            </div>
                         </div>`;
             document.getElementById("profile_social").innerHTML += inputSocial;
             restoreInput();
@@ -78,37 +98,75 @@
     </script>
         {% if (userSocials is not empty) %}
         <form action="./index.php?page=updateusersocials" method="POST" class="contact-form">
-            <input type="hidden" name="user_id" value="{{ user.id }}">
-            {% for userSocial in userSocials %}
-            <div>
-                <img src="./public/images/socials/{{ userSocial.social_image }}" alt="Logo de {{ userSocial.name }}" style="max-width: 15px;">
-                {{ userSocial.name }}
-                <input type="hidden" name="social_id[]" value="{{ userSocial.id }}">
-                <input type="text" name="meta[]" value="{{ userSocial.meta }}">
-                <a href="index.php?page=deleteusersocial&social_id={{ userSocial.id }}&user_id={{ user.id }}">Supprimer</a>
+            <div class="row">
+                <div class="col">
+                    <input type="hidden" name="user_id" value="{{ user.id }}">
+                    {% for userSocial in userSocials %}
+                    <div class="row">
+                        <div class="col-2">
+                            <img src="./public/images/socials/{{ userSocial.social_image }}" alt="Logo de {{ userSocial.name }}" style="max-width: 30px;"> {{ userSocial.name }}
+                        </div>
+                        <div class="col">
+                            <input type="hidden" name="social_id[]" value="{{ userSocial.id }}">
+                            <input type="text" name="meta[]" value="{{ userSocial.meta }}">
+                        </div>
+                        <div class="col">
+                            <a href="index.php?page=deleteusersocial&social_id={{ userSocial.id }}&user_id={{ user.id }}" class="link-dark">Supprimer</a>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
             </div>
-            {% endfor %}
-            <input type="submit" value="Modifier">
+            <div class="row">
+                <div class="col">
+                    <input type="submit" value="Modifier">
+                </div>
+            </div>
         </form>
         {% endif %}
     {% endif %}
     <input type="button" value="Ajouter des réseaux sociaux" onclick="addSocialNetwork()">
-    <div>
-                <form action="./index.php?page=addusersocials" method="post">
-                <div class="social-network" id="profile_social">
-                    <input type="hidden" name="user_id" value="{{ user.id }}">
-                </div>
+    <form action="./index.php?page=addusersocials" method="post">
+        <div class="row">
+            <div class="col" id="profile_social">
+                <input type="hidden" name="user_id" value="{{ user.id }}">
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
                 <input type="submit" value="Ajouter">
-                </form>
-    </div>
+            </div>
+        </div>
+    </form>
 
     {% if (role == 1) %}
     <h2>Curriculum Vitae</h2>
+        {% if (user.file_name is not empty) %}
+        <div class="row">
+            <div class="col">
+                <div class="icon-file">
+                    <a href="./public/uploads/{{ user.file_name }}" class="link-dark">CV</a>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
     <form action="./index.php?page=uploadcv" method="post" enctype="multipart/form-data">
-        <input type="hidden" name="user_id" value="{{ user.id }}">
-        <input type="hidden" name="user_cv_name" value="{{ user.file_name }}">
-        <input type="file" name="cv">
-        <input type="submit" value="Envoyer">
+    <div class="row">
+        <div class="col-2">
+            Envoyer le CV:
+        </div>
+        <div class="col">
+            <input type="hidden" name="user_id" value="{{ user.id }}">
+            <input type="hidden" name="user_cv_name" value="{{ user.file_name }}">
+            <input type="file" name="cv">
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <input type="submit" value="Envoyer">
+        </div>
+    </div>
     </form>
     {% endif %}
 </section>

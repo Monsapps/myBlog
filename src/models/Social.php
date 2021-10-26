@@ -15,7 +15,7 @@ class Social {
     }
 
     function getAllSocials() {
-        $query = $this->db->query("SELECT * FROM `social`;");
+        $query = $this->db->query("SELECT * FROM `social` ORDER BY `name`ASC;");
         $results = $query->fetchAll();
         return $results;
     }

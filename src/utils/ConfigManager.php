@@ -14,18 +14,14 @@ class ConfigManager {
     function __construct() {
 
         $this->db = new DatabaseManager();
-
         // Load settings from database
         $query = $this->db->query("SELECT * FROM `config`");
-
         // Add $query to local $dbQuery
         $this->dbQuery = $query;
     }
 
     function getConfig(string $name) {
-
         if(!empty($name)) {
-
             // Find value for $name
             while($getValue = $this->dbQuery->fetch()) {
 
@@ -34,14 +30,10 @@ class ConfigManager {
                     // Return the value for $name
                     return $getValue["value"];
                 }
-
             }
-
             // We close the DB
             $this->dbQuery->closeCursor();
-
         }
-
     }
 
     function editConfig(string $setting, string $values) {
@@ -56,21 +48,4 @@ class ConfigManager {
         ));
         $query = null;
     }
-
-    // Create config table for first launch
-    function createConfig() {
-        //TODO
-        /* private $db
-        
-        */
-        $createTable = $db->query("CREATE...");
-
-    }
-
-    // Set setting
-    function setConfig(string $setting, string $value) {
-        //TODO
-        
-    }
-
 }
