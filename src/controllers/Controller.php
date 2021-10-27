@@ -75,6 +75,33 @@ class Controller {
     }
 
     /**
+     * Controller for contact form
+     */
+
+    function getContactPage(array $postArray) {
+        
+        if(!empty($postArray["name"]) && !empty($postArray["surname"]) && !empty($postArray["email"]) && !empty($postArray["message"])) {
+            $contact = new \Monsapp\Myblog\Controllers\ContactController();
+            $user = new \Monsapp\Myblog\Models\User();
+
+            $mainUser = $user->getUserInfos((int)$this->mainUser);
+
+            if($contact->sendMail($mainUser["email"], $postArray["message"], $postArray["email"], $postArray["name"], $postArray["surname"])) {
+                Header("Location: ./index.php?status=1");
+                exit;
+            } else {
+                $contact->sendMessage($postArray["message"], $postArray["email"], $postArray["name"], $postArray["surname"]);
+                Header("Location: ./index.php?status=1");
+                exit;
+            }
+        } else {
+            Header("Location: ./index.php?error=1");
+            exit;
+        }
+
+    }
+
+    /**
      * Controllers for Posts
      */
 
@@ -697,6 +724,37 @@ class Controller {
             Header("Location: ./index.php?page=postmanager");
             exit;
          }else {
+            Header("Location: ./index.php");
+            exit;
+        }
+    }
+
+    function getContactManagerPage() {
+        $contact = new \Monsapp\Myblog\Models\Contact();
+        $messages = $contact->getAllContactMessage();
+        if($this->role >= 1) {
+            echo $this->twig->render("panel/contact.html.twig", array(
+                "title" => "Contact - " . $this->title,
+                "navtitle" => $this->title,
+                "descriptions" => $this->descriptions,
+                "keywords" => $this->keywords,
+                "role" => $this->role,
+                "user" => $this->userInfos,
+                "messages" => $messages
+            ));
+        } else {
+            Header("Location: ./index.php");
+            exit;
+        }
+    }
+
+    function getReadMessagePage(int $id) {
+        if($this->role == 1) {
+            $contact = new \Monsapp\Myblog\Models\Contact();
+            $contact->updateStatus((int) $id);
+            Header("Location: ./index.php?page=contactmanager");
+            exit;
+        } else {
             Header("Location: ./index.php");
             exit;
         }

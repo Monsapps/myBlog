@@ -1,5 +1,21 @@
 {% extends "base.html.twig" %}
 
+{% block error %}
+{% if(error != "0") %}
+<section class="container">
+    <div class="box-error" id="box-error">
+        {% if(error == "1") %}
+        Tous les champs de sont pas renseigné
+        {% endif %}
+        {% if(error == "2") %}
+        Une erreur est survenu lors de l'envoi de l'email
+        {% endif %}
+        <!-- <input type="button" value="Fermer" onclick="closeWindow()">-->
+    </div>
+</section>
+{% endif %}
+{% endblock %}
+
 {% block content %}
 <!-- Hero -->
 <section class="container">
@@ -46,23 +62,28 @@
 </section>
 <section class="container">
     <h2>Contactez moi</h2>
+    {% if(status == "1") %}
+    <div class="box-status">
+        Merci de m'avoir contacté, je vous recontacterai le plus rapidement possible.
+    </div>
+    {% endif %}
     <div class="row">
-        <form action="" method="POST">
+        <form action="./index.php?page=contact" method="POST">
             <div class="col form-container">
                     <div>
                         <input type="text" name="name" id="name" required>
-                        <label for="name">Nom</label>
+                        <label for="name">Pr&eacute;nom</label>
                     </div>
                     <div>
                         <input type="text" name="surname" id="surname" required>
-                        <label for="surname">Pr&eacute;nom</label>
+                        <label for="surname">Nom</label>
                     </div>
                     <div>
                         <input type="email" name="email" id="email" required>
                         <label for="email">Email</label>
                     </div>
                     <div class="form-textarea-container">
-                        <textarea name="message" required></textarea>
+                        <textarea name="message" id="name" required></textarea>
                         <label for="message">Message</label>
                     </div>
                     <input type="submit" value="Envoyer">

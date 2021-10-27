@@ -1,0 +1,34 @@
+{% extends "/panel/base.html.twig" %}
+
+{% block content %}
+{% if (role == 1) %}
+<!-- Panel -->
+<section class="container">
+    <h1>Messages</h1>
+    {% for message in messages %}
+        <div class="row">
+            <div class="col">
+            Message de {{ message.name }} {{ message.surname }} @ {{ message.email }}:
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+            {{ message.message }}
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+            <a href="./index.php?page=readmessage&id={{ message.id }}" class="link-dark">Supprimer le message</a>
+            </div>
+        </div>
+        {% else %}
+        <div class="row">
+            <div class="col">
+                Aucuns messages
+            </div>
+        </div>
+
+    {% endfor %}
+</section>
+{% endif %}
+{% endblock %}
