@@ -36,6 +36,9 @@ if(isset($_GET["page"])) {
                 $controller->getConnectPage();
             }
         break;
+        case "contact":
+            $controller->getContactPage($_POST);
+        break;
         case "addpost":
             $controller->getAddPostPage();
         break;
@@ -100,6 +103,12 @@ if(isset($_GET["page"])) {
         break;
         case "settingsmanager":
             $controller->getSettingsManagerPage();
+        break;
+        case "contactmanager":
+            $controller->getContactManagerPage();
+        break;
+        case "readmessage":
+            $controller->getReadMessagePage($_GET["id"]);
         break;
         case "mainsettings":
             $controller->getMainSettingsPage($_POST);

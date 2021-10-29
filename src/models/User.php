@@ -34,7 +34,7 @@ class User {
 
         // if userId is present return infos by id
         if(is_int($emailOrInt)) {
-            $sql = "SELECT u.name, u.surname, u.user_hat, i.path_name, c.file_name
+            $sql = "SELECT  u.id, u.email, u.name, u.surname, u.password, u.user_hat, u.role_id, i.path_name, c.file_name
                 FROM `user` AS u
                 LEFT JOIN `image` AS i ON i.`user_id` = u.`id`
                 LEFT JOIN `curriculum_vitae` AS c ON c.`user_id` = u.`id`
