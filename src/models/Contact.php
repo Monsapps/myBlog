@@ -15,8 +15,8 @@ class Contact {
     }
 
     function addContactMessage(string $message, string $email, string $name, string $surname) {
-        $sql = "INSERT INTO `contact` (`name`, `surname`, `email`, `message`)
-            VALUES(:name, :surname, :email, :message);";
+        $sql = "INSERT INTO `contact` (`name`, `surname`, `email`, `message`, `status`)
+            VALUES(:name, :surname, :email, :message, 0);";
 
         $query = $this->db->prepare($sql, array(\PDO::ATTR_CURSOR => \PDO::CURSOR_FWDONLY));
         $query->execute(array(

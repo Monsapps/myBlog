@@ -506,7 +506,7 @@ class Controller {
                 $this->config->editConfig("site_title", $post["site_title"]);
             }
 
-            if(!empty($post["site_descriptions"]) && $this->descriptions != $post["site_descriptions"]) {
+            if(!empty($post["site_description"]) && $this->descriptions != $post["site_description"]) {
                 $this->config->editConfig("site_descriptions", $post["site_description"]);
             }
 
