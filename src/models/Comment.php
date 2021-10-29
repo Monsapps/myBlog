@@ -46,8 +46,8 @@ class Comment {
 
         $date = date("Y-m-d H:i:s");
 
-        $sql = "INSERT INTO `comment` (`user_id`, `post_id`, `content`, `date`)
-        VALUES(:user_id, :post_id, :content, :date);";
+        $sql = "INSERT INTO `comment` (`user_id`, `post_id`, `content`, `date`, `status`)
+        VALUES(:user_id, :post_id, :content, :date, 'Pending');";
 
         $query = $db->prepare($sql, array(\PDO::ATTR_CURSOR => \PDO::CURSOR_FWDONLY));
 
