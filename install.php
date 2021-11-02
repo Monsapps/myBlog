@@ -804,7 +804,7 @@ class MinimumRequirements {
             $this->databaseStatus = false;
         }
 
-        $socialsFolderPermission = substr(sprintf('%o', fileperms("./public/uploads")), -4);
+        $socialsFolderPermission = substr(sprintf('%o', fileperms("./public/images/socials")), -4);
         $uploadsFolderPermission = substr(sprintf('%o', fileperms("./public/uploads")), -4);
 
         if($socialsFolderPermission == 755) {

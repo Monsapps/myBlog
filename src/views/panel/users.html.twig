@@ -12,6 +12,7 @@
                 {{ user.name }} {{ user.surname }}
             </div>
             <div class="col">
+                <input type="hidden" name="token" value="{{ token }}">
                 <input type="hidden" name="user_id" value="{{ user.id }} ">
                 <select name="role_id">
                     <option value="0"{% if ("0" == role.id) %} selected {% endif %}>Membre</option>

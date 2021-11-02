@@ -52,6 +52,10 @@ class Controller {
             // securised userinfo with hashed string
             $this->userInfos = $userController->getUserInfos();
         }
+
+        if(!isset($_SESSION["token"])) {
+            $_SESSION["token"] = bin2hex(openssl_random_pseudo_bytes(6));
+        }
     }
 
     /**
@@ -116,7 +120,8 @@ class Controller {
             "keywords" => $this->keywords,
             "role" => $this->role,
             "user" => $this->userInfos,
-            "posts" => $posts
+            "posts" => $posts,
+            "token" => $_SESSION["token"]
         ));
     }
 
@@ -136,19 +141,21 @@ class Controller {
             "is_allowed_to_crud" => $this->isAllowedToCRUD, 
             "user" => $this->userInfos,
             "post" => $postInfos,
-            "comments" => $comments
+            "comments" => $comments,
+            "token" => $_SESSION["token"]
         ));
     }
 
     function getAddPostPage() {
-        if($this->isAllowedToCRUD) {
+        if((isset($_GET["token"]) && $_GET["token"] == $_SESSION["token"]) && $this->isAllowedToCRUD) {
             echo $this->twig->render("addpost.html.twig", array(
                 "title" => $this->title, 
                 "navtitle" => $this->title, 
                 "descriptions" => $this->descriptions,
                 "keywords" => $this->keywords,
                 "role" => $this->role,
-                "user" => $this->userInfos
+                "user" => $this->userInfos,
+                "token" => $_SESSION["token"]
             ));
         } else {
             Header("Location: ./index.php");
@@ -157,7 +164,7 @@ class Controller {
     }
 
     function getPublishPage(array $postArray) {
-        if($this->isAllowedToCRUD) {
+        if($this->isAllowedToCRUD && ($postArray["token"] == $_SESSION["token"])) {
             // We need to attach user id to a post
             $userInfos = $this->userInfos;
 
@@ -181,7 +188,7 @@ class Controller {
         $post = new \Monsapp\Myblog\Models\Post();
         $postInfos = $post->getPostInfos($id);
 
-        if(($this->isAllowedToCRUD && ($this->userInfos["id"] == $postInfos["user_id"])) || $this->role == 1) {
+        if((isset($_GET["token"]) && $_GET["token"] == $_SESSION["token"]) && ($this->isAllowedToCRUD && (($this->userInfos["id"] == $postInfos["user_id"])) || ($this->role == 1))) {
             echo $this->twig->render("editpost.html.twig", array(
                 "title" => $this->title, 
                 "navtitle" => $this->title, 
@@ -190,7 +197,8 @@ class Controller {
                 "role" => $this->role,
                 "user" => $this->userInfos,
                 "post" => $postInfos,
-                "authors" => $allUsers
+                "authors" => $allUsers,
+                "token" => $_SESSION["token"]
             ));
         } else {
             Header("Location: ./index.php?page=post&id". $id);
@@ -199,7 +207,7 @@ class Controller {
     }
 
     function getEditPostPublishPage(array $postArray) {
-        if($this->isAllowedToCRUD) {
+        if($this->isAllowedToCRUD && ($postArray["token"] == $_SESSION["token"])) {
             $post = new \Monsapp\Myblog\Models\Post();
             // IMPORTANT mettre le controlleur isAllowedToEditPost()
             $post->updatePost((int)$postArray["id"], (int)$postArray["author"], $postArray["title"], $postArray["hat"], $postArray["content"], $postArray["keywords"]);
@@ -266,6 +274,8 @@ class Controller {
         $hashedPassword = $userInfos["password"];
 
         if(password_verify($password, $hashedPassword)) {
+            // clear token
+            unset($_SESSION['token']);
             // Set cookies to store email and hashed pass
             setcookie("email", $email, time()+3600);
             // We store combination of userId & email hashed password to compare inside Autorisation Controller
@@ -280,6 +290,8 @@ class Controller {
     }
 
     function getDisconnectPage() {
+        // clear token
+        session_destroy();
         // Set cookies to store empty
         setcookie("email", "", time());
         setcookie("sessionid", "", time());
@@ -292,7 +304,7 @@ class Controller {
      */
 
     function getAddCommentPage(array $postArray) {
-        if($this->role != -1) {
+        if(($this->role != -1) && ($postArray["token"] == $_SESSION["token"])) {
             $comment = new \Monsapp\Myblog\Models\Comment();
             $comment->addComment((int)$postArray["post_id"], (int)$postArray["user_id"], $postArray["comment"]);
             Header("Location: ./index.php?page=post&id=". $postArray["post_id"] ."&status=1");
@@ -325,7 +337,8 @@ class Controller {
                     "role" => $this->role,
                     "user" => $this->userInfos,
                     "socials" => $socials,
-                    "userSocials" => $userSocials
+                    "userSocials" => $userSocials,
+                    "token" => $_SESSION["token"]
                 ));
             } else {
                 Header("Location: ./index.php");
@@ -340,7 +353,7 @@ class Controller {
 
     function getEditProfilePage(array $postArray) {
         // only confirmed users and user himself can update infos
-        if($this->role != -1 && $this->userInfos["id"] == $postArray["id"]) {
+        if((isset($postArray["token"]) && $postArray["token"] == $_SESSION["token"]) && ($this->role != -1 && $this->userInfos["id"] == $postArray["id"])) {
             $user = new \Monsapp\Myblog\Models\User();
             $user->updateUser((int)$postArray["id"], $postArray["name"], $postArray["surname"], $postArray["hat"]);
 
@@ -354,7 +367,7 @@ class Controller {
 
     function getUploadAvatarPage(array $files, array $postArray) {
         // only confirmed users and user himself can upload avatar
-        if($this->role != -1 && $this->userInfos["id"] == $postArray["user_id"]) {
+        if((isset($postArray["token"]) && $postArray["token"] == $_SESSION["token"]) && ($this->role != -1 && $this->userInfos["id"] == $postArray["user_id"])) {
             $image = new \Monsapp\Myblog\Models\Image();
             $uploadDir = "./public/uploads/";
             $mimeType = mime_content_type($files['avatar']['tmp_name']);
@@ -399,7 +412,7 @@ class Controller {
 
     function getAddUserSocialsPage(array $postArray) {
         // only confirmed user and user himself can add socials
-        if($this->role != -1 && $this->userInfos["id"] == $postArray["user_id"]) {
+        if((isset($postArray["token"]) && $postArray["token"] == $_SESSION["token"]) && ($this->role != -1 && $this->userInfos["id"] == $postArray["user_id"])) {
             $user = new \Monsapp\Myblog\Models\User();
             //todo get userid
             for($i = 0; $i < count($postArray["social_id"]); $i++) {
@@ -415,7 +428,7 @@ class Controller {
 
     function getUpdateUserSocialsPage(array $postArray) {
         // only confirmed user and user himself can update socials
-        if($this->role != -1 && $this->userInfos["id"] == $postArray["user_id"]) {
+        if((isset($postArray["token"]) && $postArray["token"] == $_SESSION["token"]) && ($this->role != -1 && $this->userInfos["id"] == $postArray["user_id"])) {
 
             $user = new \Monsapp\Myblog\Models\User();
 
@@ -432,7 +445,7 @@ class Controller {
 
     function getDeleteUserSocialPage(int $userId, int $socialId) {
         // only confirmed user and user himself can delete socials
-        if($this->role != -1 && $this->userInfos["id"] == $userId) {
+        if((isset($_GET["token"]) && $_GET["token"] == $_SESSION["token"]) && ($this->role != -1 && $this->userInfos["id"] == $userId)) {
             $user = new \Monsapp\Myblog\Models\User();
             $user->deleteSocial($socialId);
             Header("Location: ./index.php?page=panel");
@@ -445,7 +458,7 @@ class Controller {
 
     function getUploadCvPage(array $files, array $postArray) {
         // only admin can upload cv
-        if($this->role == 1) {
+        if((isset($postArray["token"]) && $postArray["token"] == $_SESSION["token"]) && $this->role == 1) {
             $image = new \Monsapp\Myblog\Models\CurriculumVitae();
             $uploadDir = "./public/uploads/";
     
@@ -458,12 +471,12 @@ class Controller {
                     if(empty($postArray["user_cv_name"])) {
                         $image->setCv((int)$postArray["user_id"], $encodedFileName);
                     }
+                    Header("Location: ./index.php?page=panel");
+                    exit;
                 } else {
                     Header("Location: ./index.php?page=panel&error=2");
                     exit;
                 }
-                Header("Location: ./index.php?page=panel");
-                exit;
             } else {
                 Header("Location: ./index.php?page=panel&error=1");
                 exit;
@@ -488,10 +501,11 @@ class Controller {
                 "descriptions" => $this->descriptions,
                 "keywords" => $this->keywords,
                 "role" => $this->role,
-                "authors" => $allUsers,
+                "users" => $allUsers,
                 "user" => $this->userInfos,
                 "main_user_id" => $this->mainUser,
-                "socials" => $socials
+                "socials" => $socials,
+                "token" => $_SESSION["token"]
             ));
         } else {
             Header("Location: ./index.php");
@@ -501,7 +515,7 @@ class Controller {
 
     function getMainSettingsPage(array $post) {
         // only admin can edit main settings
-        if($this->role == 1) {
+        if((isset($post["token"]) && $post["token"] == $_SESSION["token"]) && $this->role == 1) {
             if(!empty($post["site_title"]) && $this->title != $post["site_title"]) {
                 $this->config->editConfig("site_title", $post["site_title"]);
             }
@@ -538,7 +552,8 @@ class Controller {
                 "keywords" => $this->keywords,
                 "role" => $this->role,
                 "user" => $this->userInfos,
-                "comments" => $comments
+                "comments" => $comments,
+                "token" => $_SESSION["token"]
             ));
         } else {
             Header("Location: ./index.php");
@@ -547,7 +562,7 @@ class Controller {
     }
 
     function getActivateCommentPage(int $commentId) {
-        if($this->role == 1) {
+        if((isset($_GET["token"]) && $_GET["token"] == $_SESSION["token"]) && $this->role == 1) {
             $comment = new \Monsapp\Myblog\Models\Comment();
             $comment->activateComment($commentId);
             Header("Location: ./index.php?page=commentmanager");
@@ -559,7 +574,7 @@ class Controller {
     }
 
     function getRejectCommentPage(int $commentId) {
-        if($this->role == 1) {
+        if((isset($_GET["token"]) && $_GET["token"] == $_SESSION["token"]) && $this->role == 1) {
             $comment = new \Monsapp\Myblog\Models\Comment();
             $comment->rejectComment($commentId);
             Header("Location: ./index.php?page=commentmanager");
@@ -586,7 +601,8 @@ class Controller {
                 "user" => $this->userInfos,
                 "users" => $allUsers,
                 "main_user_id" => $this->mainUser,
-                "roles" => $allRoles
+                "roles" => $allRoles,
+                "token" => $_SESSION["token"]
             ));
         } else {
             Header("Location: ./index.php");
@@ -595,7 +611,7 @@ class Controller {
     }
 
     function getSetPermissionPage(array $postArray) {
-        if($this->role == 1) {
+        if((isset($postArray["token"]) && $postArray["token"] == $_SESSION["token"]) && $this->role == 1) {
             $user = new \Monsapp\Myblog\Models\User();
             $user->setPermission((int)$postArray["user_id"], (int)$postArray["role_id"]);
             Header("Location: ./index.php?page=permissionmanager");
@@ -607,7 +623,7 @@ class Controller {
     }
 
     function getDeleteSocialPage(int $id) {
-        if($this->role == 1) {
+        if((isset($_GET["token"]) && $_GET["token"] == $_SESSION["token"]) && $this->role == 1) {
             $social = new \Monsapp\Myblog\Models\Social();
             $social->deleteSocial($id);
             Header("Location: ./index.php?page=settingsmanager");
@@ -619,7 +635,7 @@ class Controller {
     }
 
     function getUpdateSocialPage(array $files, array $postArray) {
-        if($this->role == 1) {
+        if((isset($postArray["token"]) && $postArray["token"] == $_SESSION["token"]) && $this->role == 1) {
             $social = new \Monsapp\Myblog\Models\Social();
 
             $uploadDir = "./public/images/socials/";
@@ -704,7 +720,8 @@ class Controller {
                 "keywords" => $this->keywords,
                 "role" => $this->role,
                 "user" => $this->userInfos,
-                "posts" => $posts
+                "posts" => $posts,
+                "token" => $_SESSION["token"]
             ));
         } else {
             Header("Location: ./index.php");
@@ -715,14 +732,14 @@ class Controller {
     function getDeletePostPage(int $id) {
         $post = new \Monsapp\Myblog\Models\Post();
         $postInfo = $post->getPostInfos($id);
-        if($this->role == 1) {
+        if((isset($_GET["token"]) && $_GET["token"] == $_SESSION["token"]) && (($this->role == 1) || (($this->role == 2) && ($this->userInfos == $postInfo["used_id"])))) {
             $post->deletePost((int)$id);
             Header("Location: ./index.php?page=postmanager");
             exit;
-        } elseif($this->role == 2 && $this->userInfos == $postInfo["used_id"]) {
+        /*} elseif($this->role == 2 && $this->userInfos == $postInfo["used_id"]) {
             $post->deletePost((int)$id);
             Header("Location: ./index.php?page=postmanager");
-            exit;
+            exit;*/
          }else {
             Header("Location: ./index.php");
             exit;
@@ -740,7 +757,8 @@ class Controller {
                 "keywords" => $this->keywords,
                 "role" => $this->role,
                 "user" => $this->userInfos,
-                "messages" => $messages
+                "messages" => $messages,
+                "token" => $_SESSION["token"]
             ));
         } else {
             Header("Location: ./index.php");
@@ -749,7 +767,7 @@ class Controller {
     }
 
     function getReadMessagePage(int $id) {
-        if($this->role == 1) {
+        if((isset($_GET["token"]) && $_GET["token"] == $_SESSION["token"]) && ($this->role == 1)) {
             $contact = new \Monsapp\Myblog\Models\Contact();
             $contact->updateStatus((int) $id);
             Header("Location: ./index.php?page=contactmanager");

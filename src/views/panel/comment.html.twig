@@ -11,10 +11,10 @@
             {{ comment.content }} écrit par {{ comment.name }} {{ comment.surname }} dans l'article <b>{{ comment.title }}</b> 
         </div>
         <div class="col-2">
-            <a href="./index.php?page=confirmcomment&id={{ comment.id }}" class="link-dark">Confirmer</a>
+            <a href="./index.php?page=confirmcomment&id={{ comment.id }}&token={{ token }}" class="link-dark">Confirmer</a>
         </div>
         <div class="col-2">
-            <a href="./index.php?page=rejectcomment&id={{ comment.id }}" class="link-dark">Rejeter</a>
+            <a href="./index.php?page=rejectcomment&id={{ comment.id }}&token={{ token }}" class="link-dark">Rejeter</a>
         </div>
     </div>
     {% else %}

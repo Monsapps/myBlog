@@ -12,7 +12,7 @@
             {{ post.title }}
             </div>
             <div class="col text-end">
-                <a href="./index.php?page=editpost&id={{ post.id }}" class="link-dark">Modifier l'article</a> | <a href="./index.php?page=deletepost&id={{ post.id }}" class="link-dark">Supprimer l'article</a>
+                <a href="./index.php?page=editpost&id={{ post.id }}&token={{ token }}" class="link-dark">Modifier l'article</a> | <a href="./index.php?page=deletepost&id={{ post.id }}&token={{ token }}" class="link-dark">Supprimer l'article</a>
             </div>
         </div>
         {% elseif (role == 1) %}
@@ -24,9 +24,8 @@
                     &eacute;crit par {{ post.name }} {{ post.surname }} 
                 </div>
                 <div class="col text-end">
-                    <a href="./index.php?page=editpost&id={{ post.id }}" class="link-dark">Modifier l'article</a> | <a href="./index.php?page=deletepost&id={{ post.id }}" class="link-dark">Supprimer l'article</a>
+                    <a href="./index.php?page=editpost&id={{ post.id }}&token={{ token }}" class="link-dark">Modifier l'article</a> | <a href="./index.php?page=deletepost&id={{ post.id }}&token={{ token }}" class="link-dark">Supprimer l'article</a>
                 </div>
-            </div>
         </div>
         {% endif %}
     {% endfor %}

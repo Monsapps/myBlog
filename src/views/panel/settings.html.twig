@@ -1,7 +1,7 @@
 {% extends "/panel/base.html.twig" %}
 
 {% block head %}
-<script type="text/javascript">
+<script>
 function loadSocial() {
 
     {% if (socials is not empty) %}
@@ -20,7 +20,7 @@ function loadSocial() {
                     <input type="file" name="image[]" id="social_image_${index}" value="" oninput="saveInput(${index})">
                 </div>
                 <div class="col-6">
-                    <a href="./index.php?page=deletesocial&id={{ social.id }}" class="link-dark">Supprimer</a>
+                    <a href="./index.php?page=deletesocial&id={{ social.id }}&token={{ token }}" class="link-dark">Supprimer</a>
                 </div>
             </div>`;
         document.getElementById("social_form").innerHTML += inputHtml;
@@ -60,32 +60,32 @@ onload="loadSocial()"
 <section class="container">
     <h1>Configurations Générales</h1>
     <form action="./index.php?page=mainsettings" method="post">
+        <input type="hidden" name="token" value="{{ token }}">
         <div class="form-container">
-                <div>
-                    <input type="text" name="site_title" value="{{ navtitle }}" required>
-                    <label for="site_title">Nom de site</label>
-                </div>
-                <div>
-                    <input type="text" name="site_keywords" value="{{ keywords }}" required>
-                    <label for="site_title">Mots-clefs généraux</label>
-                </div>
-                <div>
-                    <input type="text" name="site_description" value="{{ descriptions }}" required>
-                    <label for="site_title">Description du site</label>
-                </div>
-                <div>
-                    <select name="main_user">
-                        {% for author in authors %}
-                        <option value="{{ author.id }}"{% if (main_user_id == author.id) %} selected {% endif %}>{{ author.name }} {{ author.surname }}</option>
-                        {% endfor %}
-                    </select>
-                    <label for="author">Héro du site</label>
-                </div>
-                <input type="submit" value="Modifier">
-            </form>
+            <div>
+                <input type="text" name="site_title" id="site_title" value="{{ navtitle }}" required>
+                <label for="site_title">Nom de site</label>
+            </div>
+            <div>
+                <input type="text" name="site_keywords" id="site_keywords" value="{{ keywords }}" required>
+                <label for="site_keywords">Mots-clefs généraux</label>
+            </div>
+            <div>
+                <input type="text" name="site_description" id="site_description" value="{{ descriptions }}" required>
+                <label for="site_description">Description du site</label>
+            </div>
+            <div>
+                <select name="main_user" id="main_user">
+                    {% for user in users %}
+                    <option value="{{ user.id }}"{% if (main_user_id == user.id) %} selected {% endif %}>{{ user.name }} {{ user.surname }}</option>
+                    {% endfor %}
+                </select>
+                <label for="main_user">Héro du site</label>
+            </div>
+            <input type="submit" value="Modifier">
         </div>
     </form>
-    <script type="text/javascript">
+    <script>
         function addSocial() {
             index = index+1;
             var inputSocial = `
@@ -110,11 +110,14 @@ onload="loadSocial()"
     <h2>Réseaux Sociaux</h2>
     <input type="button" value="Ajouter" onclick="addSocial()">
     <form action="./index.php?page=updatesocial" method="post" enctype="multipart/form-data">
-        <div class="social-network" id="social_form">
-        </div>
-        <input type="submit" value="Modifier">
+        <input type="hidden" name="token" value="{{ token }}">
         <div class="row">
-            <div class="col" id="social_form">
+            <div class="colsocial-network" id="social_form">
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <input type="submit" value="Modifier">
             </div>
         </div>
     </form>
