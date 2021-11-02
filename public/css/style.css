@@ -1,5 +1,5 @@
 body {
-    font-family: 'Times New Roman', Times, serif;
+      font-family: 'Times New Roman', Times, serif;
 }
 
 /* Navigation style */
@@ -11,8 +11,8 @@ body {
 .navbar-user-avatar {
     position: absolute;
     top: 10px;
-    right:10px;
-    width:35px;
+    right: 10px;
+    width: 35px;
 }
 
 .navbar-user-avatar img {
@@ -27,19 +27,22 @@ section {
     margin-bottom: 2%;
 }
 
-section h1, article h1 {
+section h1,
+article h1 {
     font-weight: lighter;
     font-size: 2em;
 }
 
-section h1::after, article h1::after {
+section h1::after,
+article h1::after {
     display: block;
     content: "";
     width: 10%;
     border-bottom: 3px solid grey;
 }
 
-section h1::first-letter, article h1::first-letter {
+section h1::first-letter,
+article h1::first-letter {
     font-weight: bold;
     text-transform: uppercase;
 }
@@ -79,11 +82,11 @@ section h2::first-letter {
     margin: auto;
     min-width: 275px;
     min-height: 275px;
-    transition: transform ease .7s;
-    -webkit-transition: -webkit-transform ease .7s;
-    -moz-transition: -moz-transform ease .7s;
-    -ms-transition: -ms-transform ease .7s;
-    -o-transition: -o-transform ease .7s;
+    transition: transform ease 0.7s;
+    -webkit-transition: -webkit-transform ease 0.7s;
+    -moz-transition: -moz-transform ease 0.7s;
+    -ms-transition: -ms-transform ease 0.7s;
+    -o-transition: -o-transform ease 0.7s;
 }
 
 .hero-avatar img:hover {
