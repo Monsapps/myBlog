@@ -19,16 +19,13 @@ class UserController {
         $user = new \Monsapp\Myblog\Models\User();
         $userInfos = $user->getUserInfos($email);
         
-        if(empty($userInfos)) {
-            $this->userRole = -1;
-            $this->userInfos = null;
+        $this->userRole = -1;
+        $this->userInfos = null;
+        if(password_verify($userInfos["id"] . $userInfos["email"], $hashed)) {
+            $this->userInfos = $userInfos;
+            $this->userRole = (int)$userInfos['role_id'];
         } else {
-            if(password_verify($userInfos["id"] . $userInfos["email"], $hashed)) {
-                $this->userInfos = $userInfos;
-                $this->userRole = (int)$userInfos['role_id'];
-            } else {
-                $this->userRole = -1;
-            }
+            $this->userRole = -1;
         }
     }
 

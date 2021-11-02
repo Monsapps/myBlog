@@ -15,36 +15,35 @@
 
     var edited = false;
 
-    var social_id = 0;
-    var social_name = "";
-    var social_image = "";
-    var social_meta = "";
+    var socialId;
+    var socialName;
+    var socialImage;
+    var socialMeta;
 
     if(document.getElementById(`social_id_${id}`)) {
-        var social_id = document.getElementById(`social_id_${id}`).value;
+        socialId = document.getElementById(`social_id_${id}`).value;
     }
 
     if(document.getElementById(`social_name_${id}`)) {
-        var social_name = document.getElementById(`social_name_${id}`).value;
+        socialName = document.getElementById(`social_name_${id}`).value;
     }
 
     if(document.getElementById(`social_image_${id}`)) {
-        var social_image = document.getElementById(`social_image_${id}`).value;
+        socialImage = document.getElementById(`social_image_${id}`).value;
     }
     
     if(document.getElementById(`social_meta_${id}`)) {
-        var social_meta = document.getElementById(`social_meta_${id}`).value;
+        socialMeta = document.getElementById(`social_meta_${id}`).value;
     }
 
     // save input with index==id
     saveInputArray.forEach((input) => {
         if(input.index === id) {
             input.index = id;
-            input.social_id = social_id;
-            input.social_name = social_name;
-            input.social_image = social_image;
-            input.social_meta = social_meta;
-            console.log("Modification des valeurs de l'input");
+            input.social_id = socialId;
+            input.social_name = socialName;
+            input.social_image = socialImage;
+            input.social_meta = socialMeta;
             edited = true;
         }
     })
@@ -53,18 +52,17 @@
     if(!edited) {
         saveInputArray.push({ 
                     "index": id,
-                    "id": social_id,
-                    "social_name" : social_name,
-                    "social_image": social_image,
-                    "social_meta": social_meta
-                    });
-        console.log("Ajout des valeurs de l'input dans le tableau");      
+                    "id": socialId,
+                    "social_name" : socialName,
+                    "social_image": socialImage,
+                    "social_meta": socialMeta
+                    });     
     }
 }
 
 function restoreInput() {
     console.log(`Restauration des valeurs des inp`);
-    saveInputArray.forEach(input => {
+    saveInputArray.forEach((input) => {
         if(document.getElementById(`social_id_${input.index}`)) {
             document.getElementById(`social_id_${input.index}`).value = input.id;
         }
