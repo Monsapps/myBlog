@@ -28,22 +28,23 @@
     <h1>Profil</h1>
         <form action="./index.php?page=editprofile" method="post">
         <div class="form-container">
-                <input type="hidden" name="id" value="{{ user.id }}">
-                <div>
-                    <input type="text" name="name" value="{{ user.name }}" required>
-                    <label for="site_title">Prénom</label>
-                </div>
-                <div>
-                    <input type="text" name="surname" value="{{ user.surname }}" required>
-                    <label for="site_title">Nom</label>
-                </div>
-                <div>
-                    <input type="text" name="hat" value="{{ user.user_hat }}" required>
-                    <label for="site_title">Phrase d'accroche</label>
-                </div>
-                <input type="submit" value="Modifier">
-            </form>
-        </div>
+            <input type="hidden" name="token" value="{{ token }}">
+            <input type="hidden" name="id" value="{{ user.id }}">
+            <div>
+                <input type="text" name="name" id="name" value="{{ user.name }}" required>
+                <label for="name">Prénom</label>
+            </div>
+            <div>
+                <input type="text" name="surname" id="surname" value="{{ user.surname }}" required>
+                <label for="surname">Nom</label>
+            </div>
+            <div>
+                <input type="text" name="hat" id="hat" value="{{ user.user_hat }}" required>
+                <label for="hat">Phrase d'accroche</label>
+            </div>
+            <input type="submit" value="Modifier">
+            </div>
+        </form>
     <h2>Avatar</h2>
     <div class="row">
         <div class="col">
@@ -60,6 +61,7 @@
                 Changer d'avatar:
             </div>
             <div class="col-10">
+                <input type="hidden" name="token" value="{{ token }}">
                 <input type="hidden" name="user_id" value="{{ user.id }}">
                 <input type="hidden" name="user_image_file" value="{{ user.path_name }}">
                 <input type="file" name="avatar">
@@ -73,7 +75,7 @@
     </form>
     {% if (socials is not empty) %}
     <h2>Réseaux Sociaux</h2>
-    <script type="text/javascript">
+    <script>
         function addSocialNetwork() {
             index = index+1;
             var inputSocial =  `
@@ -100,6 +102,7 @@
         <form action="./index.php?page=updateusersocials" method="POST" class="contact-form">
             <div class="row">
                 <div class="col">
+                    <input type="hidden" name="token" value="{{ token }}">
                     <input type="hidden" name="user_id" value="{{ user.id }}">
                     {% for userSocial in userSocials %}
                     <div class="row">
@@ -111,7 +114,7 @@
                             <input type="text" name="meta[]" value="{{ userSocial.meta }}">
                         </div>
                         <div class="col">
-                            <a href="index.php?page=deleteusersocial&social_id={{ userSocial.id }}&user_id={{ user.id }}" class="link-dark">Supprimer</a>
+                            <a href="index.php?page=deleteusersocial&social_id={{ userSocial.id }}&user_id={{ user.id }}&token={{ token }}" class="link-dark">Supprimer</a>
                         </div>
                     </div>
                     {% endfor %}
@@ -129,6 +132,7 @@
     <form action="./index.php?page=addusersocials" method="post">
         <div class="row">
             <div class="col" id="profile_social">
+                <input type="hidden" name="token" value="{{ token }}">
                 <input type="hidden" name="user_id" value="{{ user.id }}">
             </div>
         </div>
@@ -157,6 +161,7 @@
             Envoyer le CV:
         </div>
         <div class="col">
+            <input type="hidden" name="token" value="{{ token }}">
             <input type="hidden" name="user_id" value="{{ user.id }}">
             <input type="hidden" name="user_cv_name" value="{{ user.file_name }}">
             <input type="file" name="cv">
