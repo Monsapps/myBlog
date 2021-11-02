@@ -17,13 +17,13 @@ class Controller {
     private $role;
     private $isAllowedToCRUD;
     private $userInfos;
-    private $dollar;
+    private $superGlobal;
 
     function __construct() {
 
         $this->config = new \Monsapp\Myblog\Utils\ConfigManager();
 
-        $this->dollar = new \Monsapp\Myblog\Utils\Dollar();
+        $this->superGlobal = new \Monsapp\Myblog\Utils\SuperGlobal();
 
         $this->title = $this->config->getConfig("site_title");
         $this->keywords = $this->config->getConfig("site_keywords");
@@ -34,15 +34,15 @@ class Controller {
         $this->twig = new \Twig\Environment($loader);
 
         // add variable currentPage for navigation menu
-        $currentPage = (empty($this->dollar->inputGet("page"))) ? "" : $this->dollar->inputGet("page");
+        $currentPage = (empty($this->superGlobal->getGetValue("page"))) ? "" : $this->superGlobal->getGetValue("page");
         $this->twig->addGlobal("currentPage", $currentPage);
 
         // add variable id_error if present (default: 0)
-        $idError = (empty($this->dollar->inputGet("error"))) ? "0" : $this->dollar->inputGet("error");
+        $idError = (empty($this->superGlobal->getGetValue("error"))) ? "0" : $this->superGlobal->getGetValue("error");
         $this->twig->addGlobal("error", $idError);
 
         // add variable id_status if present (default: 0)
-        $idStatus = (empty($this->dollar->inputGet("status"))) ? "0" : $this->dollar->inputGet("status");
+        $idStatus = (empty($this->superGlobal->getGetValue("status"))) ? "0" : $this->superGlobal->getGetValue("status");
         $this->twig->addGlobal("status", $idStatus);
 
         $this->isAllowedToCRUD = false;
@@ -124,7 +124,7 @@ class Controller {
             "role" => $this->role,
             "user" => $this->userInfos,
             "posts" => $posts,
-            "token" => $this->dollar->getSession("token")
+            "token" => $this->superGlobal->getSessionValue("token")
         ));
     }
 
@@ -145,12 +145,12 @@ class Controller {
             "user" => $this->userInfos,
             "post" => $postInfos,
             "comments" => $comments,
-            "token" => $this->dollar->getSession("token")
+            "token" => $this->superGlobal->getSessionValue("token")
         ));
     }
 
     function getAddPostPage() {
-        if((!empty($this->dollar->inputGet("token")) && $this->dollar->inputGet("token") == $this->dollar->getSession("token")) && $this->isAllowedToCRUD) {
+        if((!empty($this->superGlobal->getGetValue("token")) && $this->superGlobal->getGetValue("token") == $this->superGlobal->getSessionValue("token")) && $this->isAllowedToCRUD) {
             echo $this->twig->render("addpost.html.twig", array(
                 "title" => $this->title, 
                 "navtitle" => $this->title, 
@@ -158,7 +158,7 @@ class Controller {
                 "keywords" => $this->keywords,
                 "role" => $this->role,
                 "user" => $this->userInfos,
-                "token" => $this->dollar->getSession("token")
+                "token" => $this->superGlobal->getSessionValue("token")
             ));
         } else {
             Header("Location: ./index.php");
@@ -167,7 +167,7 @@ class Controller {
     }
 
     function getPublishPage(array $postArray) {
-        if($this->isAllowedToCRUD && ($postArray["token"] == $this->dollar->getSession("token"))) {
+        if($this->isAllowedToCRUD && ($postArray["token"] == $this->superGlobal->getSessionValue("token"))) {
             // We need to attach user id to a post
             $userInfos = $this->userInfos;
 
@@ -191,7 +191,7 @@ class Controller {
         $post = new \Monsapp\Myblog\Models\Post();
         $postInfos = $post->getPostInfos($id);
 
-        if((!empty($this->dollar->inputGet("token")) && $this->dollar->inputGet("token") == $this->dollar->getSession("token")) && ($this->isAllowedToCRUD && (($this->userInfos["id"] == $postInfos["user_id"])) || ($this->role == 1))) {
+        if((!empty($this->superGlobal->getGetValue("token")) && $this->superGlobal->getGetValue("token") == $this->superGlobal->getSessionValue("token")) && ($this->isAllowedToCRUD && (($this->userInfos["id"] == $postInfos["user_id"])) || ($this->role == 1))) {
             echo $this->twig->render("editpost.html.twig", array(
                 "title" => $this->title, 
                 "navtitle" => $this->title, 
@@ -201,7 +201,7 @@ class Controller {
                 "user" => $this->userInfos,
                 "post" => $postInfos,
                 "authors" => $allUsers,
-                "token" => $this->dollar->getSession("token")
+                "token" => $this->superGlobal->getSessionValue("token")
             ));
         } else {
             Header("Location: ./index.php?page=post&id". $id);
@@ -210,7 +210,7 @@ class Controller {
     }
 
     function getEditPostPublishPage(array $postArray) {
-        if($this->isAllowedToCRUD && ($postArray["token"] == $this->dollar->getSession("token"))) {
+        if($this->isAllowedToCRUD && ($postArray["token"] == $this->superGlobal->getSessionValue("token"))) {
             $post = new \Monsapp\Myblog\Models\Post();
             // IMPORTANT mettre le controlleur isAllowedToEditPost()
             $post->updatePost((int)$postArray["id"], (int)$postArray["author"], $postArray["title"], $postArray["hat"], $postArray["content"], $postArray["keywords"]);
@@ -307,7 +307,7 @@ class Controller {
      */
 
     function getAddCommentPage(array $postArray) {
-        if(($this->role != -1) && ($postArray["token"] == $this->dollar->getSession("token"))) {
+        if(($this->role != -1) && ($postArray["token"] == $this->superGlobal->getSessionValue("token"))) {
             $comment = new \Monsapp\Myblog\Models\Comment();
             $comment->addComment((int)$postArray["post_id"], (int)$postArray["user_id"], $postArray["comment"]);
             Header("Location: ./index.php?page=post&id=". $postArray["post_id"] ."&status=1");
@@ -341,7 +341,7 @@ class Controller {
                     "user" => $this->userInfos,
                     "socials" => $socials,
                     "userSocials" => $userSocials,
-                    "token" => $this->dollar->getSession("token")
+                    "token" => $this->superGlobal->getSessionValue("token")
                 ));
             } else {
                 Header("Location: ./index.php");
@@ -356,7 +356,7 @@ class Controller {
 
     function getEditProfilePage(array $postArray) {
         // only confirmed users and user himself can update infos
-        if((isset($postArray["token"]) && $postArray["token"] == $this->dollar->getSession("token")) && ($this->role != -1 && $this->userInfos["id"] == $postArray["id"])) {
+        if((isset($postArray["token"]) && $postArray["token"] == $this->superGlobal->getSessionValue("token")) && ($this->role != -1 && $this->userInfos["id"] == $postArray["id"])) {
             $user = new \Monsapp\Myblog\Models\User();
             $user->updateUser((int)$postArray["id"], $postArray["name"], $postArray["surname"], $postArray["hat"]);
 
@@ -370,7 +370,7 @@ class Controller {
 
     function getUploadAvatarPage(array $files, array $postArray) {
         // only confirmed users and user himself can upload avatar
-        if((isset($postArray["token"]) && $postArray["token"] == $this->dollar->getSession("token")) && ($this->role != -1 && $this->userInfos["id"] == $postArray["user_id"])) {
+        if((isset($postArray["token"]) && $postArray["token"] == $this->superGlobal->getSessionValue("token")) && ($this->role != -1 && $this->userInfos["id"] == $postArray["user_id"])) {
             $image = new \Monsapp\Myblog\Models\Image();
             $uploadDir = "./public/uploads/";
             $mimeType = mime_content_type($files['avatar']['tmp_name']);
@@ -415,7 +415,7 @@ class Controller {
 
     function getAddUserSocialsPage(array $postArray) {
         // only confirmed user and user himself can add socials
-        if((isset($postArray["token"]) && $postArray["token"] == $this->dollar->getSession("token")) && ($this->role != -1 && $this->userInfos["id"] == $postArray["user_id"])) {
+        if((isset($postArray["token"]) && $postArray["token"] == $this->superGlobal->getSessionValue("token")) && ($this->role != -1 && $this->userInfos["id"] == $postArray["user_id"])) {
             $user = new \Monsapp\Myblog\Models\User();
             //todo get userid
             for($i = 0; $i < count($postArray["social_id"]); $i++) {
@@ -431,7 +431,7 @@ class Controller {
 
     function getUpdateUserSocialsPage(array $postArray) {
         // only confirmed user and user himself can update socials
-        if((isset($postArray["token"]) && $postArray["token"] == $this->dollar->getSession("token")) && ($this->role != -1 && $this->userInfos["id"] == $postArray["user_id"])) {
+        if((isset($postArray["token"]) && $postArray["token"] == $this->superGlobal->getSessionValue("token")) && ($this->role != -1 && $this->userInfos["id"] == $postArray["user_id"])) {
 
             $user = new \Monsapp\Myblog\Models\User();
 
@@ -448,7 +448,7 @@ class Controller {
 
     function getDeleteUserSocialPage(int $userId, int $socialId) {
         // only confirmed user and user himself can delete socials
-        if((!empty($this->dollar->inputGet("token")) && $this->dollar->inputGet("token") == $this->dollar->getSession("token")) && ($this->role != -1 && $this->userInfos["id"] == $userId)) {
+        if((!empty($this->superGlobal->getGetValue("token")) && $this->superGlobal->getGetValue("token") == $this->superGlobal->getSessionValue("token")) && ($this->role != -1 && $this->userInfos["id"] == $userId)) {
             $user = new \Monsapp\Myblog\Models\User();
             $user->deleteSocial($socialId);
             Header("Location: ./index.php?page=panel");
@@ -461,7 +461,7 @@ class Controller {
 
     function getUploadCvPage(array $files, array $postArray) {
         // only admin can upload cv
-        if((isset($postArray["token"]) && $postArray["token"] == $this->dollar->getSession("token")) && $this->role == 1) {
+        if((isset($postArray["token"]) && $postArray["token"] == $this->superGlobal->getSessionValue("token")) && $this->role == 1) {
             $image = new \Monsapp\Myblog\Models\CurriculumVitae();
             $uploadDir = "./public/uploads/";
     
@@ -508,7 +508,7 @@ class Controller {
                 "user" => $this->userInfos,
                 "main_user_id" => $this->mainUser,
                 "socials" => $socials,
-                "token" => $this->dollar->getSession("token")
+                "token" => $this->superGlobal->getSessionValue("token")
             ));
         } else {
             Header("Location: ./index.php");
@@ -518,7 +518,7 @@ class Controller {
 
     function getMainSettingsPage(array $post) {
         // only admin can edit main settings
-        if((isset($post["token"]) && $post["token"] == $this->dollar->getSession("token")) && $this->role == 1) {
+        if((isset($post["token"]) && $post["token"] == $this->superGlobal->getSessionValue("token")) && $this->role == 1) {
             if(!empty($post["site_title"]) && $this->title != $post["site_title"]) {
                 $this->config->editConfig("site_title", $post["site_title"]);
             }
@@ -556,7 +556,7 @@ class Controller {
                 "role" => $this->role,
                 "user" => $this->userInfos,
                 "comments" => $comments,
-                "token" => $this->dollar->getSession("token")
+                "token" => $this->superGlobal->getSessionValue("token")
             ));
         } else {
             Header("Location: ./index.php");
@@ -565,7 +565,7 @@ class Controller {
     }
 
     function getActivateCommentPage(int $commentId) {
-        if((!empty($this->dollar->inputGet("token")) && $this->dollar->inputGet("token") == $this->dollar->getSession("token")) && $this->role == 1) {
+        if((!empty($this->superGlobal->getGetValue("token")) && $this->superGlobal->getGetValue("token") == $this->superGlobal->getSessionValue("token")) && $this->role == 1) {
             $comment = new \Monsapp\Myblog\Models\Comment();
             $comment->activateComment($commentId);
             Header("Location: ./index.php?page=commentmanager");
@@ -577,7 +577,7 @@ class Controller {
     }
 
     function getRejectCommentPage(int $commentId) {
-        if((!empty($this->dollar->inputGet("token")) && $this->dollar->inputGet("token") == $this->dollar->getSession("token")) && $this->role == 1) {
+        if((!empty($this->superGlobal->getGetValue("token")) && $this->superGlobal->getGetValue("token") == $this->superGlobal->getSessionValue("token")) && $this->role == 1) {
             $comment = new \Monsapp\Myblog\Models\Comment();
             $comment->rejectComment($commentId);
             Header("Location: ./index.php?page=commentmanager");
@@ -605,7 +605,7 @@ class Controller {
                 "users" => $allUsers,
                 "main_user_id" => $this->mainUser,
                 "roles" => $allRoles,
-                "token" => $this->dollar->getSession("token")
+                "token" => $this->superGlobal->getSessionValue("token")
             ));
         } else {
             Header("Location: ./index.php");
@@ -614,7 +614,7 @@ class Controller {
     }
 
     function getSetPermissionPage(array $postArray) {
-        if((isset($postArray["token"]) && $postArray["token"] == $this->dollar->getSession("token")) && $this->role == 1) {
+        if((isset($postArray["token"]) && $postArray["token"] == $this->superGlobal->getSessionValue("token")) && $this->role == 1) {
             $user = new \Monsapp\Myblog\Models\User();
             $user->setPermission((int)$postArray["user_id"], (int)$postArray["role_id"]);
             Header("Location: ./index.php?page=permissionmanager");
@@ -626,7 +626,7 @@ class Controller {
     }
 
     function getDeleteSocialPage(int $id) {
-        if((!empty($this->dollar->inputGet("token")) && $this->dollar->inputGet("token") == $this->dollar->getSession("token")) && $this->role == 1) {
+        if((!empty($this->superGlobal->getGetValue("token")) && $this->superGlobal->getGetValue("token") == $this->superGlobal->getSessionValue("token")) && $this->role == 1) {
             $social = new \Monsapp\Myblog\Models\Social();
             $social->deleteSocial($id);
             Header("Location: ./index.php?page=settingsmanager");
@@ -638,7 +638,7 @@ class Controller {
     }
 
     function getUpdateSocialPage(array $files, array $postArray) {
-        if((isset($postArray["token"]) && $postArray["token"] == $this->dollar->getSession("token")) && $this->role == 1) {
+        if((isset($postArray["token"]) && $postArray["token"] == $this->superGlobal->getSessionValue("token")) && $this->role == 1) {
             $social = new \Monsapp\Myblog\Models\Social();
 
             $uploadDir = "./public/images/socials/";
@@ -724,7 +724,7 @@ class Controller {
                 "role" => $this->role,
                 "user" => $this->userInfos,
                 "posts" => $posts,
-                "token" => $this->dollar->getSession("token")
+                "token" => $this->superGlobal->getSessionValue("token")
             ));
         } else {
             Header("Location: ./index.php");
@@ -735,7 +735,7 @@ class Controller {
     function getDeletePostPage(int $id) {
         $post = new \Monsapp\Myblog\Models\Post();
         $postInfo = $post->getPostInfos($id);
-        if((!empty($this->dollar->inputGet("token")) && $this->dollar->inputGet("token") == $this->dollar->getSession("token")) && (($this->role == 1) || (($this->role == 2) && ($this->userInfos == $postInfo["used_id"])))) {
+        if((!empty($this->superGlobal->getGetValue("token")) && $this->superGlobal->getGetValue("token") == $this->superGlobal->getSessionValue("token")) && (($this->role == 1) || (($this->role == 2) && ($this->userInfos == $postInfo["used_id"])))) {
             $post->deletePost((int)$id);
             Header("Location: ./index.php?page=postmanager");
             exit;
@@ -761,7 +761,7 @@ class Controller {
                 "role" => $this->role,
                 "user" => $this->userInfos,
                 "messages" => $messages,
-                "token" => $this->dollar->getSession("token")
+                "token" => $this->superGlobal->getSessionValue("token")
             ));
         } else {
             Header("Location: ./index.php");
@@ -770,7 +770,7 @@ class Controller {
     }
 
     function getReadMessagePage(int $id) {
-        if((!empty($this->dollar->inputGet("token")) && $this->dollar->inputGet("token") == $this->dollar->getSession("token")) && ($this->role == 1)) {
+        if((!empty($this->superGlobal->getGetValue("token")) && $this->superGlobal->getGetValue("token") == $this->superGlobal->getSessionValue("token")) && ($this->role == 1)) {
             $contact = new \Monsapp\Myblog\Models\Contact();
             $contact->updateStatus((int) $id);
             Header("Location: ./index.php?page=contactmanager");
