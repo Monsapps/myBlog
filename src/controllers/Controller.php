@@ -212,7 +212,6 @@ class Controller {
     function getEditPostPublishPage(array $postArray) {
         if($this->isAllowedToCRUD && ($postArray["token"] == $this->superGlobal->getSessionValue("token"))) {
             $post = new \Monsapp\Myblog\Models\Post();
-            // IMPORTANT mettre le controlleur isAllowedToEditPost()
             $post->updatePost((int)$postArray["id"], (int)$postArray["author"], $postArray["title"], $postArray["hat"], $postArray["content"], $postArray["keywords"]);
             Header("Location: ./index.php?page=post&id=". $postArray["id"]);
             exit;

@@ -71,7 +71,7 @@ if(!empty($superGlobal->getGetValue("page"))) {
         case "editprofile":
             $controller->getEditProfilePage($superGlobal->getPostValue());
         case "uploadavatar":
-            $controller->getUploadAvatarPage($_FILES, $superGlobal->getPostValue());
+            $controller->getUploadAvatarPage($superGlobal->getFilesValue(), $superGlobal->getPostValue());
         break;
         case "addusersocials":
             $controller->getAddUserSocialsPage($superGlobal->getPostValue());
@@ -83,7 +83,7 @@ if(!empty($superGlobal->getGetValue("page"))) {
             $controller->getDeleteUserSocialPage($superGlobal->getGetValue("user_id"), $superGlobal->getGetValue("social_id"));
         break;
         case "uploadcv":
-            $controller->getUploadCvPage($_FILES, $superGlobal->getPostValue());
+            $controller->getUploadCvPage($superGlobal->getFilesValue(), $superGlobal->getPostValue());
         break;
         case "commentmanager":
             $controller->getCommentManagerPage();
@@ -124,7 +124,7 @@ if(!empty($superGlobal->getGetValue("page"))) {
             $controller->getDeleteSocialPage($superGlobal->getGetValue("id"));
         break;
         case "updatesocial":
-            $controller->getUpdateSocialPage($_FILES, $superGlobal->getPostValue());
+            $controller->getUpdateSocialPage($superGlobal->getFilesValue(), $superGlobal->getPostValue());
         break;
         case "postmanager":
             $controller->getPostManagerPage();
