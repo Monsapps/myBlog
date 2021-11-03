@@ -284,8 +284,9 @@ class Controller {
             // We store combination of userId & email hashed password to compare inside Autorisation Controller
             $hashedInfos = password_hash($userInfos["id"] . $userInfos["email"], PASSWORD_DEFAULT);
             setcookie("sessionid", $hashedInfos, time()+3600);
-            Header("Location: ./index.php");
-            exit;
+            //Header("Location: ./index.php");
+            //exit;
+            $this->redirectTo("./index.php");
         } else {
             Header("Location: ./index.php?page=connect&error=3");
             exit;
@@ -784,6 +785,25 @@ class Controller {
     function escHtml(string $content) {
         ?>
             <?= $content ?>
+        <?php
+    }
+
+    function redirectTo(string $urlAddress) {
+        ?>
+            <script>
+                document.window.location.href = "<?= htmlspecialchars($urlAddress)?>";
+            </script>
+            <html>
+            <head>
+                <script>
+                function Redirection(){
+                    document.location.href="<?= htmlspecialchars($urlAddress)?>";
+                }
+                </script>
+            </head>
+            <body onLoad="Redirection()">
+            </body>
+            </html>
         <?php
     }
 }
