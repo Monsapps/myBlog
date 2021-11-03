@@ -40,40 +40,39 @@
     saveInputArray.forEach((input) => {
         if(input.index === id) {
             input.index = id;
-            input.social_id = socialId;
-            input.social_name = socialName;
-            input.social_image = socialImage;
-            input.social_meta = socialMeta;
+            input.socialId = socialId;
+            input.socialName = socialName;
+            input.socialImage = socialImage;
+            input.socialMeta = socialMeta;
             edited = true;
         }
-    })
+    });
 
     // if not edited create one
     if(!edited) {
         saveInputArray.push({ 
                     "index": id,
                     "id": socialId,
-                    "social_name" : socialName,
-                    "social_image": socialImage,
-                    "social_meta": socialMeta
+                    "socialName" : socialName,
+                    "socialImage": socialImage,
+                    "socialMeta": socialMeta
                     });     
     }
 }
 
 function restoreInput() {
-    console.log(`Restauration des valeurs des inp`);
     saveInputArray.forEach((input) => {
         if(document.getElementById(`social_id_${input.index}`)) {
             document.getElementById(`social_id_${input.index}`).value = input.id;
         }
         if(document.getElementById(`social_name_${input.index}`)) {
-            document.getElementById(`social_name_${input.index}`).value = input.social_name;
+            document.getElementById(`social_name_${input.index}`).value = input.socialName;
         }
         if(document.getElementById(`social_image_${input.index}`)) {
-            document.getElementById(`social_image_${input.index}`).value = input.social_image;
+            document.getElementById(`social_image_${input.index}`).value = input.socialImage;
         }
         if(document.getElementById(`social_meta_${input.index}`)) {
-            document.getElementById(`social_meta_${input.index}`).value = input.social_meta;
+            document.getElementById(`social_meta_${input.index}`).value = input.socialMeta;
         }
     });
 }
