@@ -737,7 +737,6 @@ class Html {
 
         $this->head($title);
         ?>
-
         <?= $content ?>
         <?php
         $this->foot();
