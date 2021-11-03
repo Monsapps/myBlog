@@ -53,10 +53,10 @@
         saveInputArray.push({ 
                     "index": id,
                     "id": socialId,
-                    "socialName" : socialName,
+                    "socialName": socialName,
                     "socialImage": socialImage,
                     "socialMeta": socialMeta
-                    });     
+                    });
     }
 }
 
