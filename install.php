@@ -21,8 +21,10 @@ $warningMarkImage = '<img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADA
         
 $page = new Page();
 
-if(isset($_GET["step"])) {
-    switch($_GET["step"]) {
+$getArray = filter_input_array(INPUT_GET);
+
+if(isset($getArray["step"])) {
+    switch($getArray["step"]) {
         case 1:
             $page->firstStep();
         break;
@@ -33,7 +35,8 @@ if(isset($_GET["step"])) {
             $page->thirdStep();
         break;
         case 4:
-            $page->fourthStep($_POST);
+            $postArray = filter_input_array(INPUT_POST);
+            $page->fourthStep($postArray);
         break;
         default:
             $page->firstStep();
@@ -75,12 +78,12 @@ class Page {
             ';
         } else {
             $content .= '
-            <div class="row">
-                <div class="col lead">
-                '. $crossMarkImage .' Fichier config.ini: vous devez ajouter le fichier config.ini avec les identifiants de votre base de donn&eacute;es dans le dossier &laquo; config &raquo; (prenez l\'exemple de config.ini.example)  
+                <div class="row">
+                    <div class="col lead">
+                    '. $crossMarkImage .' Fichier config.ini: vous devez ajouter le fichier config.ini avec les identifiants de votre base de donn&eacute;es dans le dossier &laquo; config &raquo; (prenez l\'exemple de config.ini.example)  
+                    </div>
                 </div>
-            </div>
-        ';
+            ';
         }
 
         if($minimumRequirements->databaseStatus) {
@@ -621,7 +624,7 @@ class Page {
                 </div>
             </div>
         </section>';
-        $error = empty($_GET["error"]) ? 0: $_GET["error"];
+        $error = empty($getArray["error"]) ? 0: $getArray["error"];
         if($error == 1) {
             $content .= '
             <section class="container">
@@ -722,7 +725,6 @@ class Page {
 
         } else {
             Header("Location: ./install.php?step=3&error=1");
-            exit;
         }
     }
 }
@@ -804,25 +806,25 @@ class MinimumRequirements {
             $this->databaseStatus = false;
         }
 
-        $socialsFolderPermission = substr(sprintf('%o', fileperms("./public/images/socials")), -4);
-        $uploadsFolderPermission = substr(sprintf('%o', fileperms("./public/uploads")), -4);
+        $socialsFolderPerm = substr(sprintf('%o', fileperms("./public/images/socials")), -4);
+        $uploadsFolderPerm = substr(sprintf('%o', fileperms("./public/uploads")), -4);
 
-        if($socialsFolderPermission == 755) {
+        if($socialsFolderPerm == 755) {
             $this->socialsFolderStatus  = true;
         }
 
-        if($uploadsFolderPermission == 755) {
+        if($uploadsFolderPerm == 755) {
             $this->uploadsFolderStatus = true;
         }
 
-        if(file_exists("./vendor/autoload.php")) {
+        if(is_file("./vendor/autoload.php")) {
             $this->composerStatus = true;
         }
 
-        if(file_exists("./vendor/twig")) {
+        if(is_dir("./vendor/twig")) {
             $this->twigStatus = true;
         }
-        if(file_exists("./config/config.ini")) {
+        if(is_file("./config/config.ini")) {
             $this->configIniStatus = true;
         }
     }

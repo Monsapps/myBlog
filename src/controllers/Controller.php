@@ -783,14 +783,11 @@ class Controller {
 
     function redirectTo(string $urlAddress) {
         ?>
-            <script>
-                document.window.location.href = "<?= htmlspecialchars($urlAddress)?>";
-            </script>
             <html>
             <head>
                 <script>
                 function Redirection(){
-                    document.location.href="<?= htmlspecialchars($urlAddress)?>";
+                    document.location.href="<?= filter_var($urlAddress, FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?>";
                 }
                 </script>
             </head>
