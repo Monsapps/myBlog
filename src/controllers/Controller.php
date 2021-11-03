@@ -782,6 +782,8 @@ class Controller {
     }
 
     function escHtml(string $content) {
-        print_r($content);
+        ?>
+            <?= $content ?>
+        <?php
     }
 }

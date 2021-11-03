@@ -737,14 +737,15 @@ class Html {
     function buildPage(string $content, string $title) {
 
         $this->head($title);
+        ?>
 
-        echo $content;
-
+        <?= $content ?>
+        <?php
         $this->foot();
     }
 
     function head(string $title) {
-        echo '
+        ?>
         <!DOCTYPE html>
         <html lang="fr">
             <head>
@@ -753,7 +754,7 @@ class Html {
                 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-U1DAWAznBHeqEIlVSCgzq+c9gqGAJn5c/t99JyeKa9xxaYpSvHU5awsuZVVFIhvj" crossorigin="anonymous"></script>
                 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/css/bootstrap.min.css" integrity="sha384-KyZXEAg3QhqLMpG8r+8fhAXLRk2vvoC2f3B09zVXn8CA5QIVfZOJ3BCsw2P0p/We" crossorigin="anonymous">
                 <link rel="stylesheet" type="text/css" href="./public/css/style.css">
-                <title>'. $title .'</title>
+                <title><?= $title ?></title>
             </head>
             <body>
             <header class="container">
@@ -771,15 +772,16 @@ class Html {
                     </div>
                 </nav>
             </header>
-        <div class="container">';
+        <div class="container">
+            <?php
     }
 
     function foot() {
-        echo '
+        ?>
         </div>
             </body>
         </html>
-        ' ;
+        <?php
     }
 }
 
