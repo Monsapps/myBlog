@@ -242,7 +242,7 @@ class Page {
                 PRIMARY KEY (`id`))
             ENGINE = InnoDB;";
 
-        $curriculumVitaeTableSql = "
+        $cvTableSql = "
             CREATE TABLE IF NOT EXISTS `curriculum_vitae` (
                 `id` INT(11) NOT NULL AUTO_INCREMENT,
                 `user_id` INT(11) NULL,
@@ -440,7 +440,7 @@ class Page {
         ';
         }
 
-        if($db->query($curriculumVitaeTableSql)) {
+        if($db->query($cvTableSql)) {
             $content .= '
                 <div class="row">
                     <div class="col lead">

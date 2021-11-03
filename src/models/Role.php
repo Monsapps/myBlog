@@ -8,14 +8,14 @@ namespace Monsapp\Myblog\Models;
 
 class Role {
 
-    private $db;
+    private $dbManager;
 
     function __construct() {
-        $this->db = new \Monsapp\Myblog\Utils\DatabaseManager();
+        $this->dbManager = new \Monsapp\Myblog\Utils\DatabaseManager();
     }
 
     function getRoles() {
-        $query = $this->db->query("SELECT * FROM `role`;");
+        $query = $this->dbManager->query("SELECT * FROM `role`;");
         $results = $query->fetchAll();
         return $results;
     }

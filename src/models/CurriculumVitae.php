@@ -8,17 +8,17 @@ namespace Monsapp\Myblog\Models;
 
 class CurriculumVitae {
 
-    private $db;
+    private $dbManager;
 
     function __construct() {
-        $this->db = new \Monsapp\Myblog\Utils\DatabaseManager();
+        $this->dbManager = new \Monsapp\Myblog\Utils\DatabaseManager();
     }
 
     function setCv(int $userId, string $fileName) {
         $sql = "INSERT INTO `curriculum_vitae` (`user_id`, `file_name`)
         VALUES(:user_id, :file_name);";
 
-        $query = $this->db->prepare($sql, array(\PDO::ATTR_CURSOR => \PDO::CURSOR_FWDONLY));
+        $query = $this->dbManager->prepare($sql, array(\PDO::ATTR_CURSOR => \PDO::CURSOR_FWDONLY));
         $query->execute(array(
             ":user_id" => $userId,
             ":file_name" => $fileName

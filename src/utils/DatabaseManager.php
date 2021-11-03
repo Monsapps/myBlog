@@ -19,7 +19,7 @@ class DatabaseManager extends \PDO {
         try {
             parent::__construct($dns, $this->iniConfig["database"]["db_user"], $this->iniConfig["database"]["db_password"]);
         } catch(PDOException $e) {
-            die("Erreur". $e->getMessage());
+            $this->errorException($e->getMessage());
         }
     }
 
@@ -28,5 +28,9 @@ class DatabaseManager extends \PDO {
             throw new Exception("Impossible d'ouvrir le fichier de configuration de la base de données");
 
         $this->iniConfig = $iniConfig;
+    }
+
+    function errorException($error) {
+        die("Erreur". $error);
     }
 }

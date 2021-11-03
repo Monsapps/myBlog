@@ -8,10 +8,10 @@ namespace Monsapp\Myblog\Models;
 
 class User {
 
-    private $db;
+    private $dbManager;
 
     function __construct() {
-        $this->db = new \Monsapp\Myblog\Utils\DatabaseManager();
+        $this->dbManager = new \Monsapp\Myblog\Utils\DatabaseManager();
     }
 
     function getUserInfos($emailOrInt) {
@@ -24,7 +24,7 @@ class User {
                 LEFT JOIN `curriculum_vitae` AS c ON c.`user_id` = u.`id`
                 WHERE u.`email` = :email
                 LIMIT 1;";
-            $query = $this->db->prepare($sql, array(\PDO::ATTR_CURSOR => \PDO::CURSOR_FWDONLY));
+            $query = $this->dbManager->prepare($sql, array(\PDO::ATTR_CURSOR => \PDO::CURSOR_FWDONLY));
             $query->execute(array(":email" => $emailOrInt));
         
             $userInfos = $query->fetch();
@@ -41,7 +41,7 @@ class User {
                 WHERE u.`id` = :id
                 LIMIT 1;";
 
-            $query = $this->db->prepare($sql, array(\PDO::ATTR_CURSOR => \PDO::CURSOR_FWDONLY));
+            $query = $this->dbManager->prepare($sql, array(\PDO::ATTR_CURSOR => \PDO::CURSOR_FWDONLY));
             $query->execute(array(":id" => $emailOrInt));
             $userInfos = $query->fetch();
             $query = null;
@@ -50,7 +50,7 @@ class User {
      }
     
     function getAllUsers() {
-    $query = $this->db->query("SELECT * FROM `user`;");
+    $query = $this->dbManager->query("SELECT * FROM `user`;");
     $results = $query->fetchAll();
     return $results;
     }
@@ -61,7 +61,7 @@ class User {
         FROM `user`
         WHERE email = :email;";
     
-    $query = $this->db->prepare($sql, array(\PDO::ATTR_CURSOR => \PDO::CURSOR_FWDONLY));
+    $query = $this->dbManager->prepare($sql, array(\PDO::ATTR_CURSOR => \PDO::CURSOR_FWDONLY));
     $query->execute(array(":email" => $email));
 
     $resultCount = $query->rowCount();
@@ -76,7 +76,7 @@ class User {
     $sql = "INSERT INTO `user` (`name`, `surname`, `email`, `password`, `registration_date`, `user_hat`, `role_id`)
         VALUES(:name, :surname, :email, :password, :date, :user_hat, 0);";
 
-    $query = $this->db->prepare($sql, array(\PDO::ATTR_CURSOR => \PDO::CURSOR_FWDONLY));
+    $query = $this->dbManager->prepare($sql, array(\PDO::ATTR_CURSOR => \PDO::CURSOR_FWDONLY));
     $query->execute(array(
         ":name" => $name,
         ":surname" => $surname,
@@ -95,7 +95,7 @@ class User {
         `user_hat`= :hat 
         WHERE `id` = :id;";
 
-        $query = $this->db->prepare($sql, array(\PDO::ATTR_CURSOR => \PDO::CURSOR_FWDONLY));
+        $query = $this->dbManager->prepare($sql, array(\PDO::ATTR_CURSOR => \PDO::CURSOR_FWDONLY));
         $query->execute(array(
             ":id" => $userId,
             ":name" => $name,
@@ -121,7 +121,7 @@ class User {
             FROM `user_social` AS us
             LEFT JOIN `social` AS s ON s.`id` = us.`social_id`
             WHERE `user_id` = :id";
-        $query = $this->db->prepare($sql, array(\PDO::ATTR_CURSOR => \PDO::CURSOR_FWDONLY));
+        $query = $this->dbManager->prepare($sql, array(\PDO::ATTR_CURSOR => \PDO::CURSOR_FWDONLY));
         $query->execute(array(":id" => $userId));
         $socials = $query->fetchAll();
         $query = null;
@@ -141,14 +141,14 @@ class User {
     function updateSocial(int $socialId, string $socialMeta) {
         $sql = "UPDATE `user_social` SET `meta` = :meta WHERE `id` = :id;";
 
-        $query = $this->db->prepare($sql, array(\PDO::ATTR_CURSOR => \PDO::CURSOR_FWDONLY));
+        $query = $this->dbManager->prepare($sql, array(\PDO::ATTR_CURSOR => \PDO::CURSOR_FWDONLY));
         $query->execute(array(":meta" => $socialMeta, ":id" => $socialId));
         $query = null;
     }
 
     function deleteSocial(int $socialId) {
         $sql = "DELETE FROM `user_social` WHERE `id` = :id;";
-        $query = $this->db->prepare($sql, array(\PDO::ATTR_CURSOR => \PDO::CURSOR_FWDONLY));
+        $query = $this->dbManager->prepare($sql, array(\PDO::ATTR_CURSOR => \PDO::CURSOR_FWDONLY));
         $query->execute(array(":id" =>$socialId));
         $query = null;
     }

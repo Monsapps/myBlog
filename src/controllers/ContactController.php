@@ -8,7 +8,7 @@ namespace Monsapp\Myblog\Controllers;
 
 class ContactController {
 
-    function sendMail(string $to, string $message, string $from, string $senderName, string $senderSurname): Bool {
+    function sendMail(string $toAdmin, string $message, string $from, string $senderName, string $senderSurname): Bool {
 
         $subject = $senderName . " " . $senderSurname . "vous à contacter";
         $headers = array(
@@ -17,9 +17,7 @@ class ContactController {
             "X-Mailer" => "PHP/" . phpversion()
         );
 
-        if(mail($to, $subject, $message, $headers)) {
-            return true;
-        } else {
+        if(!mail($toAdmin, $subject, $message, $headers)) {
             return false;
         }
     }
