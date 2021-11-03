@@ -115,7 +115,7 @@ section h2::first-letter {
   font-size: 1.5em;
 }
 
-.hero-social > a > img {
+.hero-social > a img {
   max-width: 35px;
   max-height: 35px;
 }
@@ -136,11 +136,11 @@ section h2::first-letter {
   position: absolute;
   top: 0;
   font-size: 1.5em;
-  transition: all ease-in 0.20s;
-  -webkit-transition: all ease-in 0.20s;
-  -moz-transition: all ease-in 0.20s;
-  -ms-transition: all ease-in 0.20s;
-  -o-transition: all ease-in 0.20s;
+  transition: all ease-in 0.2s;
+  -webkit-transition: all ease-in 0.2s;
+  -moz-transition: all ease-in 0.2s;
+  -ms-transition: all ease-in 0.2s;
+  -o-transition: all ease-in 0.2s;
 }
 
 .form-container > div > input[type=text],
@@ -187,14 +187,6 @@ section h2::first-letter {
 
 /* Post page style */
 
-/*.post-container::after {
-  display: block;
-  margin: auto;
-  content: "";
-  width: 25%;
-  border-bottom: 2px solid black;
-} */
-
 .post-title-size {
   font-size: 1.5em;
 }
@@ -203,7 +195,8 @@ section h2::first-letter {
   font-size: 1.2em;
 }
 
-.post-author-size, .post-date-size {
+.post-author-size,
+.post-date-size {
   font-size: 0.9em;
 }
 
@@ -222,7 +215,7 @@ section h2::first-letter {
   margin-top: 1%;
 }
 
-/* Status style */ 
+/* Status style */
 .box-status {
   width: 100%;
   height: 50px;
