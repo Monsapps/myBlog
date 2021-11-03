@@ -610,7 +610,6 @@ class Page {
     }
 
     function thirdStep() {
-        global $crossMarkImage;
 
         $html = new Html();
 

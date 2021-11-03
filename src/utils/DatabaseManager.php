@@ -31,6 +31,15 @@ class DatabaseManager extends \PDO {
     }
 
     function errorException($error) {
-        die("Erreur". $error);
+        ?>
+        <html>
+        <head>
+            <title>Erreur</title>
+        </head>
+        <body>
+            <?= filter_var($error, FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?>
+        </body>
+        </html>
+    <?php
     }
 }

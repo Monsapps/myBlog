@@ -48,16 +48,16 @@ class Controller {
         $this->isAllowedToCRUD = false;
         $this->role = -1;
         $this->userInfos = null;
-        if(((isset($_COOKIE["email"])) && !empty($_COOKIE["email"])) && (isset($_COOKIE["sessionid"])) ) {
-            $userController = new UserController($_COOKIE["email"], $_COOKIE["sessionid"]);
+        if((!empty($this->superGlobal->getCookieValue("email"))) && (!empty($this->superGlobal->getCookieValue("sessionid"))) ) {
+            $userController = new UserController($this->superGlobal->getCookieValue("email"), $this->superGlobal->getCookieValue("sessionid"));
             $this->role = $userController->getUserRole();
             $this->isAllowedToCRUD = $userController->isAllowedToCrud();
             // securised userinfo with hashed string
             $this->userInfos = $userController->getUserInfos();
         }
 
-        if(!isset($_SESSION["token"])) {
-            $_SESSION["token"] = bin2hex(openssl_random_pseudo_bytes(6));
+        if(empty($this->superGlobal->getSessionValue("token"))) {
+            $this->superGlobal->setSessionValue("token", bin2hex(openssl_random_pseudo_bytes(6)));
         }
     }
 
@@ -276,8 +276,7 @@ class Controller {
 
         if(password_verify($password, $hashedPassword)) {
             // clear token
-            $token = $_SESSION["token"];
-            unset($token);
+            $this->superGlobal->unsetSession("token");
             // Set cookies to store email and hashed pass
             setcookie("email", $email, time()+3600);
             // We store combination of userId & email hashed password to compare inside Autorisation Controller
