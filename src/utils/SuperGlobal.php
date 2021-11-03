@@ -62,7 +62,7 @@ class SuperGlobal {
         $this->post = (isset($_POST)) ? $_POST : null;
     }
 
-    private function geFiles() {
+    private function getFiles() {
         $this->files = (isset($_FILES)) ? $_FILES : null;
     }
 
