@@ -41,9 +41,9 @@
         if(input.index === id) {
             input.index = id;
             input.socialId = socialId;
-            input.socialName = socialName;
-            input.socialImage = socialImage;
-            input.socialMeta = socialMeta;
+            input.socialNameData = socialName;
+            input.socialImageData = socialImage;
+            input.socialMetaData = socialMeta;
             edited = true;
         }
     });
@@ -53,9 +53,9 @@
         saveInputArray.push({ 
                     "index": id,
                     "id": socialId,
-                    "socialName": socialName,
-                    "socialImage": socialImage,
-                    "socialMeta": socialMeta
+                    "socialNameData": socialName,
+                    "socialImageData": socialImage,
+                    "socialMetaData": socialMeta
                     });
     }
 }
@@ -66,13 +66,13 @@ function restoreInput() {
             document.getElementById(`social_id_${input.index}`).value = input.id;
         }
         if(document.getElementById(`social_name_${input.index}`)) {
-            document.getElementById(`social_name_${input.index}`).value = input.socialName;
+            document.getElementById(`social_name_${input.index}`).value = input.socialNameData;
         }
         if(document.getElementById(`social_image_${input.index}`)) {
-            document.getElementById(`social_image_${input.index}`).value = input.socialImage;
+            document.getElementById(`social_image_${input.index}`).value = input.socialImageData;
         }
         if(document.getElementById(`social_meta_${input.index}`)) {
-            document.getElementById(`social_meta_${input.index}`).value = input.socialMeta;
+            document.getElementById(`social_meta_${input.index}`).value = input.socialMetaData;
         }
     });
 }
