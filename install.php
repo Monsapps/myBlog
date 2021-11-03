@@ -805,8 +805,8 @@ class MinimumRequirements {
             $this->databaseStatus = false;
         }
 
-        $socialsFolderPerm = substr(sprintf('%o', fileperms("./public/images/socials")), -4);
-        $uploadsFolderPerm = substr(sprintf('%o', fileperms("./public/uploads")), -4);
+        $socialsFolderPerm = substr(sprintf('%o', $this->filePerms("./public/images/socials")), -4);
+        $uploadsFolderPerm = substr(sprintf('%o', $this->filePerms("./public/uploads")), -4);
 
         if($socialsFolderPerm == 755) {
             $this->socialsFolderStatus  = true;
@@ -816,15 +816,23 @@ class MinimumRequirements {
             $this->uploadsFolderStatus = true;
         }
 
-        if(is_file("./vendor/autoload.php")) {
+        if($this->fileExists("./vendor/autoload.php")) {
             $this->composerStatus = true;
         }
 
-        if(is_dir("./vendor/twig")) {
+        if($this->fileExists("./vendor/twig")) {
             $this->twigStatus = true;
         }
-        if(is_file("./config/config.ini")) {
+        if($this->fileExists("./config/config.ini")) {
             $this->configIniStatus = true;
         }
+    }
+
+    private function fileExists(string $path) {
+        return file_exists($path);
+    }
+
+    private function filePerms(string $path) {
+        return fileperms($path);
     }
 }
