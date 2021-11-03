@@ -31,7 +31,7 @@ if(!empty($superGlobal->getGetValue("page"))) {
             $controller->getLoginPage($superGlobal->getPostValue());
         break;
         case "register":
-            if(isset($_POST)) {
+            if(!empty($superGlobal->getPostValue())) {
                 $controller->getRegistrationPage($superGlobal->getPostValue());
             } else {
                 $controller->getConnectPage();

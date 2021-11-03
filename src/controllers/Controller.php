@@ -69,7 +69,7 @@ class Controller {
         $user = new \Monsapp\Myblog\Models\User();
         $mainUser = $user->getUserInfos((int)$this->mainUser);
         $userSocials = $user->getUserSocials((int)$this->mainUser);
-        echo $this->twig->render("index.html.twig", array(
+        $this->escHtml($this->twig->render("index.html.twig", array(
                 "title" => $this->title, 
                 "navtitle" => $this->title, 
                 "descriptions" => $this->descriptions,
@@ -78,7 +78,7 @@ class Controller {
                 "user" => $this->userInfos,
                 "main_user" => $mainUser,
                 "userSocials" => $userSocials
-            ));
+            )));
     }
 
     /**
@@ -116,7 +116,7 @@ class Controller {
         $post = new \Monsapp\Myblog\Models\Post();
         $posts = $post->getAllPosts();
 
-        echo $this->twig->render("posts.html.twig", array(
+        $this->escHtml($this->twig->render("posts.html.twig", array(
             "title" => "Articles - " . $this->title, 
             "navtitle" => $this->title, 
             "descriptions" => $this->descriptions,
@@ -125,7 +125,7 @@ class Controller {
             "user" => $this->userInfos,
             "posts" => $posts,
             "token" => $this->superGlobal->getSessionValue("token")
-        ));
+        )));
     }
 
     function getPostPage(int $id) {
@@ -135,7 +135,7 @@ class Controller {
         $comment = new \Monsapp\Myblog\Models\Comment();
         $comments = $comment->getComments($id);
 
-        echo $this->twig->render("post.html.twig", array(
+        $this->escHtml($this->twig->render("post.html.twig", array(
             "title" => $postInfos["title"] . " - " . $this->title, 
             "navtitle" => $this->title, 
             "descriptions" => $this->descriptions,
@@ -146,12 +146,12 @@ class Controller {
             "post" => $postInfos,
             "comments" => $comments,
             "token" => $this->superGlobal->getSessionValue("token")
-        ));
+        )));
     }
 
     function getAddPostPage() {
         if((!empty($this->superGlobal->getGetValue("token")) && $this->superGlobal->getGetValue("token") == $this->superGlobal->getSessionValue("token")) && $this->isAllowedToCRUD) {
-            echo $this->twig->render("addpost.html.twig", array(
+            $this->escHtml($this->twig->render("addpost.html.twig", array(
                 "title" => $this->title, 
                 "navtitle" => $this->title, 
                 "descriptions" => $this->descriptions,
@@ -159,7 +159,7 @@ class Controller {
                 "role" => $this->role,
                 "user" => $this->userInfos,
                 "token" => $this->superGlobal->getSessionValue("token")
-            ));
+            )));
         } else {
             Header("Location: ./index.php");
             exit;
@@ -192,7 +192,7 @@ class Controller {
         $postInfos = $post->getPostInfos($id);
 
         if((!empty($this->superGlobal->getGetValue("token")) && $this->superGlobal->getGetValue("token") == $this->superGlobal->getSessionValue("token")) && ($this->isAllowedToCRUD && (($this->userInfos["id"] == $postInfos["user_id"])) || ($this->role == 1))) {
-            echo $this->twig->render("editpost.html.twig", array(
+            $this->escHtml($this->twig->render("editpost.html.twig", array(
                 "title" => $this->title, 
                 "navtitle" => $this->title, 
                 "descriptions" => $this->descriptions,
@@ -202,7 +202,7 @@ class Controller {
                 "post" => $postInfos,
                 "authors" => $allUsers,
                 "token" => $this->superGlobal->getSessionValue("token")
-            ));
+            )));
         } else {
             Header("Location: ./index.php?page=post&id". $id);
             exit;
@@ -228,13 +228,13 @@ class Controller {
 
     function getConnectPage() {
 
-        echo $this->twig->render("connect.html.twig", array(
+        $this->escHtml($this->twig->render("connect.html.twig", array(
             "title" => "Connexion - " . $this->title,
             "navtitle" => $this->title,
             "descriptions" => $this->descriptions,
             "keywords" => $this->keywords,
             "role" => $this->role
-        ));
+        )));
     }
 
     function getRegistrationPage(array $post) {
@@ -278,7 +278,8 @@ class Controller {
 
         if(password_verify($password, $hashedPassword)) {
             // clear token
-            unset($_SESSION['token']);
+            $token = $_SESSION["token"];
+            unset($token);
             // Set cookies to store email and hashed pass
             setcookie("email", $email, time()+3600);
             // We store combination of userId & email hashed password to compare inside Autorisation Controller
@@ -332,7 +333,7 @@ class Controller {
                 $social = new \Monsapp\Myblog\Models\Social();
                 $socials = $social->getAllSocials();
                 $userSocials = $user->getUserSocials((int)$this->userInfos["id"]);
-                echo $this->twig->render("panel/index.html.twig", array(
+                $this->escHtml($this->twig->render("panel/index.html.twig", array(
                     "title" => "Panneau de configation - " . $this->title,
                     "navtitle" => $this->title,
                     "descriptions" => $this->descriptions,
@@ -342,7 +343,7 @@ class Controller {
                     "socials" => $socials,
                     "userSocials" => $userSocials,
                     "token" => $this->superGlobal->getSessionValue("token")
-                ));
+                )));
             } else {
                 Header("Location: ./index.php");
                 exit;
@@ -498,7 +499,7 @@ class Controller {
             $allUsers = $user->getAllUsers();
             $social = new \Monsapp\Myblog\Models\Social();
             $socials = $social->getAllSocials();
-            echo $this->twig->render("panel/settings.html.twig", array(
+            $this->escHtml($this->twig->render("panel/settings.html.twig", array(
                 "title" => "Préférences générales - " . $this->title,
                 "navtitle" => $this->title,
                 "descriptions" => $this->descriptions,
@@ -509,7 +510,7 @@ class Controller {
                 "main_user_id" => $this->mainUser,
                 "socials" => $socials,
                 "token" => $this->superGlobal->getSessionValue("token")
-            ));
+            )));
         } else {
             Header("Location: ./index.php");
             exit;
@@ -548,7 +549,7 @@ class Controller {
         if($this->role == 1) {
             $comment = new \Monsapp\Myblog\Models\Comment();
             $comments = $comment->getPendingComments();
-            echo $this->twig->render("panel/comment.html.twig", array(
+            $this->escHtml($this->twig->render("panel/comment.html.twig", array(
                 "title" => "Gestion des commentaires - " . $this->title,
                 "navtitle" => $this->title,
                 "descriptions" => $this->descriptions,
@@ -557,7 +558,7 @@ class Controller {
                 "user" => $this->userInfos,
                 "comments" => $comments,
                 "token" => $this->superGlobal->getSessionValue("token")
-            ));
+            )));
         } else {
             Header("Location: ./index.php");
             exit;
@@ -595,7 +596,7 @@ class Controller {
 
             $role = new \Monsapp\Myblog\Models\Role();
             $allRoles = $role->getRoles();
-            echo $this->twig->render("panel/users.html.twig", array(
+            $this->escHtml($this->twig->render("panel/users.html.twig", array(
                 "title" => "Gestions des permissions - " . $this->title,
                 "navtitle" => $this->title,
                 "descriptions" => $this->descriptions,
@@ -606,7 +607,7 @@ class Controller {
                 "main_user_id" => $this->mainUser,
                 "roles" => $allRoles,
                 "token" => $this->superGlobal->getSessionValue("token")
-            ));
+            )));
         } else {
             Header("Location: ./index.php");
             exit;
@@ -716,7 +717,7 @@ class Controller {
         $post = new \Monsapp\Myblog\Models\Post();
         $posts = $post->getAllPosts();
         if($this->role >= 1) {
-            echo $this->twig->render("panel/posts.html.twig", array(
+            $this->escHtml($this->twig->render("panel/posts.html.twig", array(
                 "title" => "Gestions des articles - " . $this->title,
                 "navtitle" => $this->title,
                 "descriptions" => $this->descriptions,
@@ -725,7 +726,7 @@ class Controller {
                 "user" => $this->userInfos,
                 "posts" => $posts,
                 "token" => $this->superGlobal->getSessionValue("token")
-            ));
+            )));
         } else {
             Header("Location: ./index.php");
             exit;
@@ -753,7 +754,7 @@ class Controller {
         $contact = new \Monsapp\Myblog\Models\Contact();
         $messages = $contact->getAllContactMessage();
         if($this->role >= 1) {
-            echo $this->twig->render("panel/contact.html.twig", array(
+            $this->escHtml($this->twig->render("panel/contact.html.twig", array(
                 "title" => "Contact - " . $this->title,
                 "navtitle" => $this->title,
                 "descriptions" => $this->descriptions,
@@ -762,7 +763,7 @@ class Controller {
                 "user" => $this->userInfos,
                 "messages" => $messages,
                 "token" => $this->superGlobal->getSessionValue("token")
-            ));
+            )));
         } else {
             Header("Location: ./index.php");
             exit;
@@ -779,5 +780,9 @@ class Controller {
             Header("Location: ./index.php");
             exit;
         }
+    }
+
+    function escHtml(string $content) {
+        print_r($content);
     }
 }
