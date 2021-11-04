@@ -21,14 +21,14 @@
 ## Installation
 
 ### Installation requirements
--  PHP (>7.3) with PDO MySQL
--  MySQL (>5.7)
--  Apache (>2.4)
--  Autoload (Composer)
--  Twig (>1.42)
+-   PHP (>7.3) with PDO MySQL
+-   MySQL (>5.7)
+-   Apache (>2.4)
+-   Autoload (Composer)
+-   Twig (>1.42)
 
 ### How to
--  Edit ./config/config.ini file with your database infos
+-   Edit ./config/config.ini file with your database infos
 ```text
 [database]
 db_hostname = "yourDatabaseHostname"
@@ -36,7 +36,7 @@ db_name = "yourDatabaseName"
 db_user = "yourDatabaseUsername"
 db_password = "yourDatabasePassword"
 ```
--  Add require library with composer (vendor folder in root)
--  Upload all files and folder inside your server
--  Launch http://example.com/install.php and follow instructions
--  Enjoy
+-   Add require library with composer (vendor folder in root)
+-   Upload all files and folder inside your server
+-   Launch http://example.com/install.php and follow instructions
+-   Enjoy

@@ -23,7 +23,7 @@ class Post {
     return $results;
   }
 
-  function getPostInfos(int $id) {
+  function getPostInfos(int $idPost) {
     $sql = "SELECT p.id, p.user_id, p.title, p.hat, p.content, p.date, p.last_edited, p.keywords, u.name, u.surname
           FROM `post` AS p
           LEFT JOIN `user` AS u ON u.`id` = p.`user_id`
@@ -31,7 +31,7 @@ class Post {
           LIMIT 1;";
 
     $query = $this->dbManager->prepare($sql, array(\PDO::ATTR_CURSOR => \PDO::CURSOR_FWDONLY));
-    $query->execute(array(":id" => $id));
+    $query->execute(array(":id" => $idPost));
 
     $results = $query->fetch();
     $query->closeCursor();
@@ -58,7 +58,7 @@ class Post {
 
   }
 
-  function updatePost(int $postId ,int $userId, string $title, string $hat, string $content, string $keywords) {
+  function updatePost(int $idPost ,int $userId, string $title, string $hat, string $content, string $keywords) {
     $date = date("Y-m-d H:i:s");
 
     $sql = "UPDATE `post` 
@@ -68,7 +68,7 @@ class Post {
     $query = $this->dbManager->prepare($sql, array(\PDO::ATTR_CURSOR => \PDO::CURSOR_FWDONLY));
 
     $query->execute(array(
-      ":id" => $postId,
+      ":id" => $idPost,
       ":user_id" => $userId,
       ":title" => $title,
       ":hat" => $hat,
@@ -79,12 +79,12 @@ class Post {
     $query = null;
   }
 
-  function deletePost(int $id) {
+  function deletePost(int $idPost) {
     $sql = "DELETE FROM `post` WHERE `id` = :id;";
 
     $query = $this->dbManager->prepare($sql, array(\PDO::ATTR_CURSOR => \PDO::CURSOR_FWDONLY));
 
-    $query->execute(array(":id" => $id));
+    $query->execute(array(":id" => $idPost));
     $query = null;
   }
 }

@@ -209,7 +209,7 @@ class Page {
     function secondStep() {
         global $checkMarkImage, $crossMarkImage;
 
-        $db = new \Monsapp\Myblog\Utils\DatabaseManager();
+        $dbManager = new \Monsapp\Myblog\Utils\DatabaseManager();
         $html = new Html();
 
         $userTableSql = "
@@ -364,7 +364,7 @@ class Page {
             </div>
         </section>';
 
-        if($db->query($userTableSql)) {
+        if($dbManager->query($userTableSql)) {
             $content .= '
                 <div class="row">
                     <div class="col lead">
@@ -373,7 +373,7 @@ class Page {
                 </div>
             ';
         } else {
-            $error = print_r($db->errorInfo(), true);
+            $error = print_r($dbManager->errorInfo(), true);
             $content .= '
             <div class="row">
                 <div class="col lead">
@@ -383,7 +383,7 @@ class Page {
         ';
         }
 
-        if($db->query($roleTableSql)) {
+        if($dbManager->query($roleTableSql)) {
             $content .= '
                 <div class="row">
                     <div class="col lead">
@@ -392,7 +392,7 @@ class Page {
                 </div>
             ';
         } else {
-            $error = print_r($db->errorInfo(), true);
+            $error = print_r($dbManager->errorInfo(), true);
             $content .= '
             <div class="row">
                 <div class="col lead">
@@ -402,7 +402,7 @@ class Page {
         ';
         }
 
-        if($db->query($roleEntriesSql)) {
+        if($dbManager->query($roleEntriesSql)) {
             $content .= '
                 <div class="row">
                     <div class="col lead">
@@ -411,7 +411,7 @@ class Page {
                 </div>
             ';
         } else {
-            $error = print_r($db->errorInfo(), true);
+            $error = print_r($dbManager->errorInfo(), true);
             $content .= '
             <div class="row">
                 <div class="col lead">
@@ -421,7 +421,7 @@ class Page {
         ';
         }
 
-        if($db->query($socialTableSql)) {
+        if($dbManager->query($socialTableSql)) {
             $content .= '
                 <div class="row">
                     <div class="col lead">
@@ -430,7 +430,7 @@ class Page {
                 </div>
             ';
         } else {
-            $error = print_r($db->errorInfo(), true);
+            $error = print_r($dbManager->errorInfo(), true);
             $content .= '
             <div class="row">
                 <div class="col lead">
@@ -440,7 +440,7 @@ class Page {
         ';
         }
 
-        if($db->query($cvTableSql)) {
+        if($dbManager->query($cvTableSql)) {
             $content .= '
                 <div class="row">
                     <div class="col lead">
@@ -449,7 +449,7 @@ class Page {
                 </div>
             ';
         } else {
-            $error = print_r($db->errorInfo(), true);
+            $error = print_r($dbManager->errorInfo(), true);
             $content .= '
             <div class="row">
                 <div class="col lead">
@@ -460,7 +460,7 @@ class Page {
         }
 
         
-        if($db->query($userSocialTableSql)) {
+        if($dbManager->query($userSocialTableSql)) {
             $content .= '
                 <div class="row">
                     <div class="col lead">
@@ -469,7 +469,7 @@ class Page {
                 </div>
             ';
         } else {
-            $error = print_r($db->errorInfo(), true);
+            $error = print_r($dbManager->errorInfo(), true);
             $content .= '
             <div class="row">
                 <div class="col lead">
@@ -480,7 +480,7 @@ class Page {
         }
 
         
-        if($db->query($imageTableSql)) {
+        if($dbManager->query($imageTableSql)) {
             $content .= '
                 <div class="row">
                     <div class="col lead">
@@ -489,7 +489,7 @@ class Page {
                 </div>
             ';
         } else {
-            $error = print_r($db->errorInfo(), true);
+            $error = print_r($dbManager->errorInfo(), true);
             $content .= '
             <div class="row">
                 <div class="col lead">
@@ -500,7 +500,7 @@ class Page {
         }
 
         
-        if($db->query($postTableSql)) {
+        if($dbManager->query($postTableSql)) {
             $content .= '
                 <div class="row">
                     <div class="col lead">
@@ -509,7 +509,7 @@ class Page {
                 </div>
             ';
         } else {
-            $error = print_r($db->errorInfo(), true);
+            $error = print_r($dbManager->errorInfo(), true);
             $content .= '
             <div class="row">
                 <div class="col lead">
@@ -520,7 +520,7 @@ class Page {
         }
 
         
-        if($db->query($commentTableSql)) {
+        if($dbManager->query($commentTableSql)) {
             $content .= '
                 <div class="row">
                     <div class="col lead">
@@ -529,7 +529,7 @@ class Page {
                 </div>
             ';
         } else {
-            $error = print_r($db->errorInfo(), true);
+            $error = print_r($dbManager->errorInfo(), true);
             $content .= '
             <div class="row">
                 <div class="col lead">
@@ -540,7 +540,7 @@ class Page {
         }
 
         
-        if($db->query($configTableSql)) {
+        if($dbManager->query($configTableSql)) {
             $content .= '
                 <div class="row">
                     <div class="col lead">
@@ -549,7 +549,7 @@ class Page {
                 </div>
             ';
         } else {
-            $error = print_r($db->errorInfo(), true);
+            $error = print_r($dbManager->errorInfo(), true);
             $content .= '
             <div class="row">
                 <div class="col lead">
@@ -559,7 +559,7 @@ class Page {
         ';
         }
 
-        if($db->query($configEntriesSql)) {
+        if($dbManager->query($configEntriesSql)) {
             $content .= '
                 <div class="row">
                     <div class="col lead">
@@ -568,7 +568,7 @@ class Page {
                 </div>
             ';
         } else {
-            $error = print_r($db->errorInfo(), true);
+            $error = print_r($dbManager->errorInfo(), true);
             $content .= '
             <div class="row">
                 <div class="col lead">
@@ -579,7 +579,7 @@ class Page {
         }
 
         
-        if($db->query($contactTableSql)) {
+        if($dbManager->query($contactTableSql)) {
             $content .= '
                 <div class="row">
                     <div class="col lead">
@@ -588,7 +588,7 @@ class Page {
                 </div>
             ';
         } else {
-            $error = print_r($db->errorInfo(), true);
+            $error = print_r($dbManager->errorInfo(), true);
             $content .= '
             <div class="row">
                 <div class="col lead">
@@ -673,7 +673,7 @@ class Page {
     function fourthStep(array $postArray) {
         global $checkMarkImage, $warningMarkImage;
 
-        $db = new \Monsapp\Myblog\Utils\DatabaseManager();
+        $dbManager = new \Monsapp\Myblog\Utils\DatabaseManager();
         $html = new Html();
 
         $title = "Installation termin&eacute;e";
@@ -708,7 +708,7 @@ class Page {
             $sql = "INSERT INTO `user` (`id`, `name`, `surname`, `email`, `password`, `registration_date`, `user_hat`, `role_id`)
                 VALUES(1, :name, :surname, :email, :password, :date, :user_hat, 1);";
 
-            $query = $db->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
+            $query = $dbManager->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
 
             $date = date("Y-m-d H:i:s");
             $encryptedPassword = password_hash($postArray["password"], PASSWORD_DEFAULT);
@@ -799,7 +799,8 @@ class MinimumRequirements {
 
     function __construct() {
         try {
-            $db = new \Monsapp\Myblog\Utils\DatabaseManager();
+            // try to call DatabaseManager() if not exception status is true
+            $dbManager = new \Monsapp\Myblog\Utils\DatabaseManager();
             $this->databaseStatus = true;
         } catch(PDOException $e) {
             $this->databaseStatus = false;
