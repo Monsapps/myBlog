@@ -78,6 +78,11 @@ section h2::first-letter {
   justify-content: center;
 }
 
+.avatar-col img {
+  max-width: 50px;
+  max-height: 50px;
+}
+
 .hero-avatar img {
   margin: auto;
   min-width: 275px;
@@ -87,6 +92,11 @@ section h2::first-letter {
   -moz-transition: -moz-transform ease 0.7s;
   -ms-transition: -ms-transform ease 0.7s;
   -o-transition: -o-transform ease 0.7s;
+}
+
+.hero-social img {
+  max-width: 35px;
+  max-height: 35px;
 }
 
 .hero-avatar img:hover {
@@ -113,11 +123,6 @@ section h2::first-letter {
   content: "\00A0\00BB";
   display: inline-block;
   font-size: 1.5em;
-}
-
-.hero-social img {
-  max-width: 35px;
-  max-height: 35px;
 }
 
 /* Form style */
@@ -202,11 +207,6 @@ section h2::first-letter {
 
 .post-content-size {
   font-size: 1em;
-}
-
-.avatar-col img {
-  max-width: 50px;
-  max-height: 50px;
 }
 
 /* Comment style */
