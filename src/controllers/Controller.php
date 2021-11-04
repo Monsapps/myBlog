@@ -361,8 +361,8 @@ class Controller {
                 // unique file name for id reference
                 $encodedFileName = md5($postArray["user_id"]) .".". $fileExtension[1];
 
-                $uploadFile = $uploadDir . basename($encodedFileName);
-                if (move_uploaded_file($files['avatar']['tmp_name'], $uploadFile)) {
+                $uploadFile = $uploadDir . $this->baseFilename($encodedFileName);
+                if ($this->moveUploadedFile($files['avatar']['tmp_name'], $uploadFile)) {
                     // update or insert data image if user_image_id exist
                     if(!empty($postArray["user_image_file"])) {
                         $image->updateImage((int)$postArray["user_id"], $encodedFileName);
@@ -436,8 +436,8 @@ class Controller {
             if(strpos($mimeType, "application/pdf") !== false) {
                 // encode pdf file to store on server
                 $encodedFileName = md5($postArray["user_id"]) .".pdf";
-                $uploadFile = $uploadDir . basename($encodedFileName);
-                if (move_uploaded_file($files['cv']['tmp_name'], $uploadFile)) {
+                $uploadFile = $uploadDir . $this->baseFilename($encodedFileName);
+                if ($this->moveUploadedFile($files['cv']['tmp_name'], $uploadFile)) {
                     if(empty($postArray["user_cv_name"])) {
                         $image->setCv((int)$postArray["user_id"], $encodedFileName);
                     }
@@ -612,8 +612,8 @@ class Controller {
             
                             $filename = $name .".". $fileExtension[1];
             
-                            $uploadFile = $uploadDir . basename($filename);
-                            if (move_uploaded_file($imageTmpName, $uploadFile)) {
+                            $uploadFile = $uploadDir . $this->baseFilename($filename);
+                            if ($this->moveUploadedFile($imageTmpName, $uploadFile)) {
                                 $social->updateSocialImage((int)$postArray["id"][$i], $name, $filename);
                             } else {
                                 $this->redirectTo("./index.php?page=settingsmanager&error=2");
@@ -637,8 +637,8 @@ class Controller {
         
                         $filename = $name .".". $fileExtension[1];
         
-                        $uploadFile = $uploadDir . basename($filename);
-                        if (move_uploaded_file($imageTmpName, $uploadFile)) {
+                        $uploadFile = $uploadDir . $this->baseFilename($filename);
+                        if ($this->moveUploadedFile($imageTmpName, $uploadFile)) {
                             $social->addSocial($name, $filename);
                         } else {
                             $this->redirectTo("./index.php?page=settingsmanager&error=2");
@@ -735,5 +735,13 @@ class Controller {
             </html>
         <?php*/
         Header("Location: ". $urlAddress);
+    }
+
+    private function moveUploadedFile(string $filename, string $destination) {
+        return move_uploaded_file($filename, $destination);
+    }
+
+    private function baseFilename(string $path) {
+        return basename($path);
     }
 }
