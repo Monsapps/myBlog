@@ -8,8 +8,13 @@ namespace Monsapp\Myblog\Models;
 
 class Comment {
 
+    private $dbManager;
+
+    function __construct() {
+        $this->dbManager = new \Monsapp\Myblog\Utils\DatabaseManager();
+    }
+
     function getComments(int $postId) {
-        $db = new \Monsapp\Myblog\Utils\DatabaseManager();
         
         $sql = "SELECT c.content, c.date, u.name, u.surname, i.path_name
                 FROM `comment` AS c
@@ -18,7 +23,7 @@ class Comment {
                 WHERE `post_id` = :id AND `status` = 'Confirmed'
                 ORDER BY c.`date` ASC;";
     
-        $query = $db->prepare($sql, array(\PDO::ATTR_CURSOR => \PDO::CURSOR_FWDONLY));
+        $query = $this->dbManager->prepare($sql, array(\PDO::ATTR_CURSOR => \PDO::CURSOR_FWDONLY));
         $query->execute(array(":id" => $postId));
     
         $results = $query->fetchAll();
@@ -27,9 +32,8 @@ class Comment {
     }
 
     function getPendingComments() {
-        $db = new \Monsapp\Myblog\Utils\DatabaseManager();
 
-        $query = $db->query("SELECT c.id, c.content, p.title, u.name, u.surname
+        $query = $this->dbManager->query("SELECT c.id, c.content, p.title, u.name, u.surname
             FROM `comment` AS c
             LEFT JOIN `post` AS p ON p.`id` = c.`post_id`
             LEFT JOIN `user`AS u ON u.`id` = c.`user_id`
@@ -42,14 +46,13 @@ class Comment {
     }
 
     function addComment(int $postId, int $userId, string $content) {
-        $db = new \Monsapp\Myblog\Utils\DatabaseManager();
 
         $date = date("Y-m-d H:i:s");
 
         $sql = "INSERT INTO `comment` (`user_id`, `post_id`, `content`, `date`, `status`)
         VALUES(:user_id, :post_id, :content, :date, 'Pending');";
 
-        $query = $db->prepare($sql, array(\PDO::ATTR_CURSOR => \PDO::CURSOR_FWDONLY));
+        $query = $this->dbManager->prepare($sql, array(\PDO::ATTR_CURSOR => \PDO::CURSOR_FWDONLY));
 
         $query->execute(array(
             ":user_id" => $userId,
@@ -61,19 +64,17 @@ class Comment {
     }
 
     function activateComment(int $commentId) {
-        $db = new \Monsapp\Myblog\Utils\DatabaseManager();
 
         $sql = "UPDATE `comment` SET `status` = 'Confirmed' WHERE `id` = :id;";
-        $query = $db->prepare($sql, array(\PDO::ATTR_CURSOR => \PDO::CURSOR_FWDONLY));
+        $query = $this->dbManager->prepare($sql, array(\PDO::ATTR_CURSOR => \PDO::CURSOR_FWDONLY));
         $query->execute(array(":id" => $commentId));
         $query = null;
     }
 
     function rejectComment(int $commentId) {
-        $db = new \Monsapp\Myblog\Utils\DatabaseManager();
 
         $sql = "UPDATE `comment` SET `status` = 'Rejected' WHERE `id` = :id;";
-        $query = $db->prepare($sql, array(\PDO::ATTR_CURSOR => \PDO::CURSOR_FWDONLY));
+        $query = $this->dbManager->prepare($sql, array(\PDO::ATTR_CURSOR => \PDO::CURSOR_FWDONLY));
         $query->execute(array(":id" => $commentId));
         $query = null;
     }

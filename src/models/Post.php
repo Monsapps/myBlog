@@ -7,13 +7,15 @@ declare(strict_types=1);
 namespace Monsapp\Myblog\Models;
 
 class Post {
-  private $db;
+
+  private $dbManager;
+
   function __construct() {
-    $this->db = new \Monsapp\Myblog\Utils\DatabaseManager();
+    $this->dbManager = new \Monsapp\Myblog\Utils\DatabaseManager();
   }
 
   function getAllPosts() {
-    $query = $this->db->query("SELECT p.id, p.user_id, p.title, p.hat, p.date, p.last_edited, u.name, u.surname
+    $query = $this->dbManager->query("SELECT p.id, p.user_id, p.title, p.hat, p.date, p.last_edited, u.name, u.surname
                       FROM `post` AS p
                       LEFT JOIN `user` AS u ON u.`id` = p.`user_id`
                       ORDER by `last_edited` DESC;");
@@ -28,7 +30,7 @@ class Post {
           WHERE p.`id` = :id
           LIMIT 1;";
 
-    $query = $this->db->prepare($sql, array(\PDO::ATTR_CURSOR => \PDO::CURSOR_FWDONLY));
+    $query = $this->dbManager->prepare($sql, array(\PDO::ATTR_CURSOR => \PDO::CURSOR_FWDONLY));
     $query->execute(array(":id" => $id));
 
     $results = $query->fetch();
@@ -42,7 +44,7 @@ class Post {
     $sql = "INSERT INTO `post` (`user_id`, `title`, `hat`, `content`, `date`, `last_edited`, `keywords`)
         VALUES (:user_id, :title, :hat, :content, :date, :date, :keywords);";
 
-    $query = $this->db->prepare($sql, array(\PDO::ATTR_CURSOR => \PDO::CURSOR_FWDONLY));
+    $query = $this->dbManager->prepare($sql, array(\PDO::ATTR_CURSOR => \PDO::CURSOR_FWDONLY));
 
     $query->execute(array(
       ":user_id" => $userId,
@@ -63,7 +65,7 @@ class Post {
         SET `user_id` = :user_id, `title` = :title, `hat` = :hat, `content` = :content, `last_edited` = :date, `keywords` = :keywords
         WHERE `id` = :id;";
 
-    $query = $this->db->prepare($sql, array(\PDO::ATTR_CURSOR => \PDO::CURSOR_FWDONLY));
+    $query = $this->dbManager->prepare($sql, array(\PDO::ATTR_CURSOR => \PDO::CURSOR_FWDONLY));
 
     $query->execute(array(
       ":id" => $postId,
@@ -80,7 +82,7 @@ class Post {
   function deletePost(int $id) {
     $sql = "DELETE FROM `post` WHERE `id` = :id;";
 
-    $query = $this->db->prepare($sql, array(\PDO::ATTR_CURSOR => \PDO::CURSOR_FWDONLY));
+    $query = $this->dbManager->prepare($sql, array(\PDO::ATTR_CURSOR => \PDO::CURSOR_FWDONLY));
 
     $query->execute(array(":id" => $id));
     $query = null;

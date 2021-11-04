@@ -8,14 +8,14 @@ namespace Monsapp\Myblog\Models;
 
 class Social {
 
-    private $db;
+    private $dbManager;
 
     function __construct() {
-      $this->db = new \Monsapp\Myblog\Utils\DatabaseManager();
+      $this->dbManager = new \Monsapp\Myblog\Utils\DatabaseManager();
     }
 
     function getAllSocials() {
-        $query = $this->db->query("SELECT * FROM `social` ORDER BY `name`ASC;");
+        $query = $this->dbManager->query("SELECT * FROM `social` ORDER BY `name`ASC;");
         $results = $query->fetchAll();
         return $results;
     }
@@ -23,7 +23,7 @@ class Social {
     function deleteSocial(int $id) {
       $sql = "DELETE FROM `social` WHERE `id` = :id;";
 
-      $query = $this->db->prepare($sql, array(\PDO::ATTR_CURSOR => \PDO::CURSOR_FWDONLY));
+      $query = $this->dbManager->prepare($sql, array(\PDO::ATTR_CURSOR => \PDO::CURSOR_FWDONLY));
 
       $query->execute(array(":id" => $id));
       $query = null;
@@ -33,7 +33,7 @@ class Social {
 
       $sql = "INSERT INTO `social` (`name`, `social_image`) VALUES (:name, :filename);";
 
-      $query = $this->db->prepare($sql, array(\PDO::ATTR_CURSOR => \PDO::CURSOR_FWDONLY));
+      $query = $this->dbManager->prepare($sql, array(\PDO::ATTR_CURSOR => \PDO::CURSOR_FWDONLY));
       $query->execute(array(":name" => $name, ":filename" => $filename));
       $query = null;
     }
@@ -44,7 +44,7 @@ class Social {
                 SET `name` = :name, `social_image` = :filename
                 WHERE `id` = :id;";
 
-      $query = $this->db->prepare($sql, array(\PDO::ATTR_CURSOR => \PDO::CURSOR_FWDONLY));
+      $query = $this->dbManager->prepare($sql, array(\PDO::ATTR_CURSOR => \PDO::CURSOR_FWDONLY));
       $query->execute(array(":name" => $name, 
                             ":filename" => $filename,
                             ":id" => $id));
@@ -55,7 +55,7 @@ class Social {
 
       $sql = "UPDATE `social` SET `name` = :name WHERE `id` = :id;";
 
-      $query = $this->db->prepare($sql, array(\PDO::ATTR_CURSOR => \PDO::CURSOR_FWDONLY));
+      $query = $this->dbManager->prepare($sql, array(\PDO::ATTR_CURSOR => \PDO::CURSOR_FWDONLY));
       $query->execute(array(":name" => $name, ":id" => $id));
       $query = null;
     }

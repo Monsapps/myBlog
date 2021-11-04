@@ -2,7 +2,7 @@
 
 {% block error %}
 {% if(error != "0") %}
-<section class="container">
+<div class="container">
     <div class="box-error" id="box-error">
         {% if(error == "1") %}
         Tous les champs de sont pas renseigné
@@ -12,13 +12,13 @@
         {% endif %}
         <!-- <input type="button" value="Fermer" onclick="closeWindow()">-->
     </div>
-</section>
+</div>
 {% endif %}
 {% endblock %}
 
 {% block content %}
 <!-- Hero -->
-<section class="container">
+<div class="container">
     <div class="row">
         <div class="col text-center">
             <div class="hero-avatar">
@@ -59,7 +59,7 @@
             </div>
         </div>
     </div>
-</section>
+</div>
 <section class="container">
     <h2>Contactez moi</h2>
     {% if(status == "1") %}
@@ -83,7 +83,7 @@
                         <label for="email">Email</label>
                     </div>
                     <div class="form-textarea-container">
-                        <textarea name="message" id="name" required></textarea>
+                        <textarea name="message" id="message" required></textarea>
                         <label for="message">Message</label>
                     </div>
                     <input type="submit" value="Envoyer">

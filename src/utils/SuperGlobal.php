@@ -49,6 +49,14 @@ class SuperGlobal {
         }
     }
 
+    function setSessionValue(string $varName, string $value) {
+        $_SESSION["$varName"] = $value;
+    }
+
+    function unsetSession(string $varName) {
+        unset($_SESSION["$varName"]);
+    }
+
     function getCookieValue(string $varName = null) {
         $this->getCookie();
         if($varName != null) {
@@ -59,15 +67,15 @@ class SuperGlobal {
     }
 
     private function getPost() {
-        $this->post = (isset($_POST)) ? $_POST : null;
+        $this->post = (filter_input_array(INPUT_POST) !== null) ? filter_input_array(INPUT_POST) : null;
     }
 
-    private function geFiles() {
+    private function getFiles() {
         $this->files = (isset($_FILES)) ? $_FILES : null;
     }
 
     private function getGet() {
-        $this->get = (isset($_GET)) ? $_GET : null;
+        $this->get = (filter_input_array(INPUT_GET) !== null) ? filter_input_array(INPUT_GET) : null;
     }
 
     private function getSession() {
@@ -75,6 +83,6 @@ class SuperGlobal {
     }
 
     private function getCookie() {
-        $this->cookie = (isset($_COOKIE)) ? $_COOKIE : null;
+        $this->cookie = (filter_input_array(INPUT_COOKIE) !== null) ? filter_input_array(INPUT_COOKIE) : null;
     }
 }

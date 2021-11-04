@@ -8,14 +8,14 @@ namespace Monsapp\Myblog\Utils;
 
 class ConfigManager {
 
-    private $db;
+    private $dbManager;
     private $dbQuery;
 
     function __construct() {
 
-        $this->db = new DatabaseManager();
+        $this->dbManager = new DatabaseManager();
         // Load settings from database
-        $query = $this->db->query("SELECT * FROM `config`");
+        $query = $this->dbManager->query("SELECT * FROM `config`");
         // Add $query to local $dbQuery
         $this->dbQuery = $query;
     }
@@ -41,7 +41,7 @@ class ConfigManager {
             SET `value` = :values
             WHERE `name` = :setting;";
 
-        $query = $this->db->prepare($sql, array(\PDO::ATTR_CURSOR => \PDO::CURSOR_FWDONLY));
+        $query = $this->dbManager->prepare($sql, array(\PDO::ATTR_CURSOR => \PDO::CURSOR_FWDONLY));
         $query->execute(array(
             ":setting" => $setting,
             ":values" => $values

@@ -21,8 +21,10 @@ $warningMarkImage = '<img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADA
         
 $page = new Page();
 
-if(isset($_GET["step"])) {
-    switch($_GET["step"]) {
+$getArray = filter_input_array(INPUT_GET);
+
+if(isset($getArray["step"])) {
+    switch($getArray["step"]) {
         case 1:
             $page->firstStep();
         break;
@@ -33,7 +35,8 @@ if(isset($_GET["step"])) {
             $page->thirdStep();
         break;
         case 4:
-            $page->fourthStep($_POST);
+            $postArray = filter_input_array(INPUT_POST);
+            $page->fourthStep($postArray);
         break;
         default:
             $page->firstStep();
@@ -75,12 +78,12 @@ class Page {
             ';
         } else {
             $content .= '
-            <div class="row">
-                <div class="col lead">
-                '. $crossMarkImage .' Fichier config.ini: vous devez ajouter le fichier config.ini avec les identifiants de votre base de donn&eacute;es dans le dossier &laquo; config &raquo; (prenez l\'exemple de config.ini.example)  
+                <div class="row">
+                    <div class="col lead">
+                    '. $crossMarkImage .' Fichier config.ini: vous devez ajouter le fichier config.ini avec les identifiants de votre base de donn&eacute;es dans le dossier &laquo; config &raquo; (prenez l\'exemple de config.ini.example)  
+                    </div>
                 </div>
-            </div>
-        ';
+            ';
         }
 
         if($minimumRequirements->databaseStatus) {
@@ -239,7 +242,7 @@ class Page {
                 PRIMARY KEY (`id`))
             ENGINE = InnoDB;";
 
-        $curriculumVitaeTableSql = "
+        $cvTableSql = "
             CREATE TABLE IF NOT EXISTS `curriculum_vitae` (
                 `id` INT(11) NOT NULL AUTO_INCREMENT,
                 `user_id` INT(11) NULL,
@@ -437,7 +440,7 @@ class Page {
         ';
         }
 
-        if($db->query($curriculumVitaeTableSql)) {
+        if($db->query($cvTableSql)) {
             $content .= '
                 <div class="row">
                     <div class="col lead">
@@ -607,9 +610,7 @@ class Page {
     }
 
     function thirdStep() {
-        global $checkMarkImage, $crossMarkImage;
 
-        $db = new \Monsapp\Myblog\Utils\DatabaseManager();
         $html = new Html();
 
         $title = "Cr&eacute;ation du compte administrateur";
@@ -622,7 +623,7 @@ class Page {
                 </div>
             </div>
         </section>';
-        $error = empty($_GET["error"]) ? 0: $_GET["error"];
+        $error = empty($getArray["error"]) ? 0: $getArray["error"];
         if($error == 1) {
             $content .= '
             <section class="container">
@@ -670,7 +671,7 @@ class Page {
     }
 
     function fourthStep(array $postArray) {
-        global $checkMarkImage, $crossMarkImage, $warningMarkImage;
+        global $checkMarkImage, $warningMarkImage;
 
         $db = new \Monsapp\Myblog\Utils\DatabaseManager();
         $html = new Html();
@@ -723,7 +724,6 @@ class Page {
 
         } else {
             Header("Location: ./install.php?step=3&error=1");
-            exit;
         }
     }
 }
@@ -737,14 +737,14 @@ class Html {
     function buildPage(string $content, string $title) {
 
         $this->head($title);
-
-        echo $content;
-
+        ?>
+        <?= $content ?>
+        <?php
         $this->foot();
     }
 
     function head(string $title) {
-        echo '
+        ?>
         <!DOCTYPE html>
         <html lang="fr">
             <head>
@@ -753,7 +753,7 @@ class Html {
                 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-U1DAWAznBHeqEIlVSCgzq+c9gqGAJn5c/t99JyeKa9xxaYpSvHU5awsuZVVFIhvj" crossorigin="anonymous"></script>
                 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/css/bootstrap.min.css" integrity="sha384-KyZXEAg3QhqLMpG8r+8fhAXLRk2vvoC2f3B09zVXn8CA5QIVfZOJ3BCsw2P0p/We" crossorigin="anonymous">
                 <link rel="stylesheet" type="text/css" href="./public/css/style.css">
-                <title>'. $title .'</title>
+                <title><?= filter_var($title, FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?></title>
             </head>
             <body>
             <header class="container">
@@ -771,15 +771,16 @@ class Html {
                     </div>
                 </nav>
             </header>
-        <div class="container">';
+        <div class="container">
+            <?php
     }
 
     function foot() {
-        echo '
+        ?>
         </div>
             </body>
         </html>
-        ' ;
+        <?php
     }
 }
 
@@ -804,26 +805,34 @@ class MinimumRequirements {
             $this->databaseStatus = false;
         }
 
-        $socialsFolderPermission = substr(sprintf('%o', fileperms("./public/images/socials")), -4);
-        $uploadsFolderPermission = substr(sprintf('%o', fileperms("./public/uploads")), -4);
+        $socialsFolderPerm = substr(sprintf('%o', $this->filePerms("./public/images/socials")), -4);
+        $uploadsFolderPerm = substr(sprintf('%o', $this->filePerms("./public/uploads")), -4);
 
-        if($socialsFolderPermission == 755) {
+        if($socialsFolderPerm == 755) {
             $this->socialsFolderStatus  = true;
         }
 
-        if($uploadsFolderPermission == 755) {
+        if($uploadsFolderPerm == 755) {
             $this->uploadsFolderStatus = true;
         }
 
-        if(file_exists("./vendor/autoload.php")) {
+        if($this->fileExists("./vendor/autoload.php")) {
             $this->composerStatus = true;
         }
 
-        if(file_exists("./vendor/twig")) {
+        if($this->fileExists("./vendor/twig")) {
             $this->twigStatus = true;
         }
-        if(file_exists("./config/config.ini")) {
+        if($this->fileExists("./config/config.ini")) {
             $this->configIniStatus = true;
         }
+    }
+
+    private function fileExists(string $path) {
+        return file_exists($path);
+    }
+
+    private function filePerms(string $path) {
+        return fileperms($path);
     }
 }
