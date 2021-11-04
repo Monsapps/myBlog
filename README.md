@@ -1,4 +1,5 @@
 # myBlog
+[![Codacy Badge](https://app.codacy.com/project/badge/Grade/5d43642e85564289a15c2d9884055cdf)](https://www.codacy.com/gh/Monsapps/myBlog/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=Monsapps/myBlog&amp;utm_campaign=Badge_Grade)
 
 ## Project structure
 

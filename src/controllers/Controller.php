@@ -266,10 +266,10 @@ class Controller {
             // clear token
             $this->superGlobal->unsetSession("token");
             // Set cookies to store email and hashed pass
-            setcookie("email", $email, time()+3600);
+            $this->superGlobal->setCookieValue("email", $email, time()+3600);
             // We store combination of userId & email hashed password to compare inside Autorisation Controller
             $hashedInfos = password_hash($userInfos["id"] . $userInfos["email"], PASSWORD_DEFAULT);
-            setcookie("sessionid", $hashedInfos, time()+3600);
+            $this->superGlobal->setCookieValue("sessionid", $hashedInfos, time()+3600);
             $this->redirectTo("./index.php");
         } else {
             $this->redirectTo("./index.php?page=connect&error=3");
@@ -280,8 +280,8 @@ class Controller {
         // clear token
         session_destroy();
         // Set cookies to store empty
-        setcookie("email", "", time());
-        setcookie("sessionid", "", time());
+        $this->superGlobal->setCookieValue("email", "", time());
+        $this->superGlobal->setCookieValue("sessionid", "", time());
         $this->redirectTo("./index.php");
     }
 
