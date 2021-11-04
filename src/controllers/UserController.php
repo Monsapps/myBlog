@@ -24,8 +24,6 @@ class UserController {
         if(password_verify($userInfos["id"] . $userInfos["email"], $hashed)) {
             $this->userInfos = $userInfos;
             $this->userRole = (int)$userInfos['role_id'];
-        } else {
-            $this->userRole = -1;
         }
     }
 

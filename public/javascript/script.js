@@ -20,21 +20,10 @@
     var socialImage;
     var socialMeta;
 
-    if(document.getElementById(`social_id_${id}`)) {
-        socialId = document.getElementById(`social_id_${id}`).value;
-    }
-
-    if(document.getElementById(`social_name_${id}`)) {
-        socialName = document.getElementById(`social_name_${id}`).value;
-    }
-
-    if(document.getElementById(`social_image_${id}`)) {
-        socialImage = document.getElementById(`social_image_${id}`).value;
-    }
-    
-    if(document.getElementById(`social_meta_${id}`)) {
-        socialMeta = document.getElementById(`social_meta_${id}`).value;
-    }
+    socialId = (document.getElementById(`social_id_${id}`) ? document.getElementById(`social_id_${id}`).value : "");
+    socialName = (document.getElementById(`social_name_${id}`) ? document.getElementById(`social_name_${id}`).value : "");
+    socialImage = (document.getElementById(`social_image_${id}`) ? document.getElementById(`social_image_${id}`).value : "");
+    socialMeta = (document.getElementById(`social_meta_${id}`) ? document.getElementById(`social_meta_${id}`).value : "");
 
     // save input with index==id
     saveInputArray.forEach((input) => {

@@ -20,12 +20,12 @@ class Social {
         return $results;
     }
 
-    function deleteSocial(int $id) {
+    function deleteSocial(int $idSocial) {
       $sql = "DELETE FROM `social` WHERE `id` = :id;";
 
       $query = $this->dbManager->prepare($sql, array(\PDO::ATTR_CURSOR => \PDO::CURSOR_FWDONLY));
 
-      $query->execute(array(":id" => $id));
+      $query->execute(array(":id" => $idSocial));
       $query = null;
     }
 
@@ -38,7 +38,7 @@ class Social {
       $query = null;
     }
 
-    function updateSocialImage(int $id, string $name, string $filename) {
+    function updateSocialImage(int $idSocial, string $name, string $filename) {
 
       $sql = "UPDATE `social` 
                 SET `name` = :name, `social_image` = :filename
@@ -47,16 +47,16 @@ class Social {
       $query = $this->dbManager->prepare($sql, array(\PDO::ATTR_CURSOR => \PDO::CURSOR_FWDONLY));
       $query->execute(array(":name" => $name, 
                             ":filename" => $filename,
-                            ":id" => $id));
+                            ":id" => $idSocial));
       $query = null;
     }
 
-    function updateSocial(int $id, string $name) {
+    function updateSocial(int $idSocial, string $name) {
 
       $sql = "UPDATE `social` SET `name` = :name WHERE `id` = :id;";
 
       $query = $this->dbManager->prepare($sql, array(\PDO::ATTR_CURSOR => \PDO::CURSOR_FWDONLY));
-      $query->execute(array(":name" => $name, ":id" => $id));
+      $query->execute(array(":name" => $name, ":id" => $idSocial));
       $query = null;
     }
     

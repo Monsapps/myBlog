@@ -93,11 +93,11 @@ class Controller {
 
             $mainUser = $user->getUserInfos((int)$this->mainUser);
 
-            if($contact->sendMail($mainUser["email"], $postArray["message"], $postArray["email"], $postArray["name"], $postArray["surname"])) {
-                $this->redirectTo("./index.php?status=1");
-            } else {
+            if(!$contact->sendMail($mainUser["email"], $postArray["message"], $postArray["email"], $postArray["name"], $postArray["surname"])) {
+
                 $contact->sendMessage($postArray["message"], $postArray["email"], $postArray["name"], $postArray["surname"]);
                 $this->redirectTo("./index.php?status=1");
+
             }
         } else {
             $this->redirectTo("./index.php?error=1");
@@ -124,12 +124,12 @@ class Controller {
         ));
     }
 
-    function getPostPage(int $id) {
+    function getPostPage(int $idPost) {
         $post = new \Monsapp\Myblog\Models\Post();
-        $postInfos = $post->getPostInfos($id);
+        $postInfos = $post->getPostInfos($idPost);
 
         $comment = new \Monsapp\Myblog\Models\Comment();
-        $comments = $comment->getComments($id);
+        $comments = $comment->getComments($idPost);
 
         $this->twig->display("post.html.twig", array(
             "title" => $postInfos["title"] . " - " . $this->title, 
@@ -175,14 +175,14 @@ class Controller {
         }
     }
 
-    function getEditPostPage(int $id) {
+    function getEditPostPage(int $idPost) {
 
         // We store all users to edit author's post
         $user = new \Monsapp\Myblog\Models\User();
         $allUsers = $user->getAllUsers();
 
         $post = new \Monsapp\Myblog\Models\Post();
-        $postInfos = $post->getPostInfos($id);
+        $postInfos = $post->getPostInfos($idPost);
 
         if((!empty($this->superGlobal->getGetValue("token")) && $this->superGlobal->getGetValue("token") == $this->superGlobal->getSessionValue("token")) && ($this->isAllowedToCRUD && (($this->userInfos["id"] == $postInfos["user_id"])) || ($this->role == 1))) {
             $this->twig->display("editpost.html.twig", array(
@@ -197,7 +197,7 @@ class Controller {
                 "token" => $this->superGlobal->getSessionValue("token")
             ));
         } else {
-            $this->redirectTo("./index.php?page=post&id". $id);
+            $this->redirectTo("./index.php?page=post&id". $idPost);
         }
     }
 
@@ -266,10 +266,10 @@ class Controller {
             // clear token
             $this->superGlobal->unsetSession("token");
             // Set cookies to store email and hashed pass
-            setcookie("email", $email, time()+3600);
+            $this->superGlobal->setCookieValue("email", $email, time()+3600);
             // We store combination of userId & email hashed password to compare inside Autorisation Controller
             $hashedInfos = password_hash($userInfos["id"] . $userInfos["email"], PASSWORD_DEFAULT);
-            setcookie("sessionid", $hashedInfos, time()+3600);
+            $this->superGlobal->setCookieValue("sessionid", $hashedInfos, time()+3600);
             $this->redirectTo("./index.php");
         } else {
             $this->redirectTo("./index.php?page=connect&error=3");
@@ -280,8 +280,8 @@ class Controller {
         // clear token
         session_destroy();
         // Set cookies to store empty
-        setcookie("email", "", time());
-        setcookie("sessionid", "", time());
+        $this->superGlobal->setCookieValue("email", "", time());
+        $this->superGlobal->setCookieValue("sessionid", "", time());
         $this->redirectTo("./index.php");
     }
 
@@ -361,8 +361,8 @@ class Controller {
                 // unique file name for id reference
                 $encodedFileName = md5($postArray["user_id"]) .".". $fileExtension[1];
 
-                $uploadFile = $uploadDir . basename($encodedFileName);
-                if (move_uploaded_file($files['avatar']['tmp_name'], $uploadFile)) {
+                $uploadFile = $uploadDir . $this->baseFilename($encodedFileName);
+                if ($this->moveUploadedFile($files['avatar']['tmp_name'], $uploadFile)) {
                     // update or insert data image if user_image_id exist
                     if(!empty($postArray["user_image_file"])) {
                         $image->updateImage((int)$postArray["user_id"], $encodedFileName);
@@ -436,8 +436,8 @@ class Controller {
             if(strpos($mimeType, "application/pdf") !== false) {
                 // encode pdf file to store on server
                 $encodedFileName = md5($postArray["user_id"]) .".pdf";
-                $uploadFile = $uploadDir . basename($encodedFileName);
-                if (move_uploaded_file($files['cv']['tmp_name'], $uploadFile)) {
+                $uploadFile = $uploadDir . $this->baseFilename($encodedFileName);
+                if ($this->moveUploadedFile($files['cv']['tmp_name'], $uploadFile)) {
                     if(empty($postArray["user_cv_name"])) {
                         $image->setCv((int)$postArray["user_id"], $encodedFileName);
                     }
@@ -577,10 +577,10 @@ class Controller {
         }
     }
 
-    function getDeleteSocialPage(int $id) {
+    function getDeleteSocialPage(int $idSocial) {
         if((!empty($this->superGlobal->getGetValue("token")) && $this->superGlobal->getGetValue("token") == $this->superGlobal->getSessionValue("token")) && $this->role == 1) {
             $social = new \Monsapp\Myblog\Models\Social();
-            $social->deleteSocial($id);
+            $social->deleteSocial($idSocial);
             $this->redirectTo("./index.php?page=settingsmanager");
         } else {
             $this->redirectTo("./index.php");
@@ -612,8 +612,8 @@ class Controller {
             
                             $filename = $name .".". $fileExtension[1];
             
-                            $uploadFile = $uploadDir . basename($filename);
-                            if (move_uploaded_file($imageTmpName, $uploadFile)) {
+                            $uploadFile = $uploadDir . $this->baseFilename($filename);
+                            if ($this->moveUploadedFile($imageTmpName, $uploadFile)) {
                                 $social->updateSocialImage((int)$postArray["id"][$i], $name, $filename);
                             } else {
                                 $this->redirectTo("./index.php?page=settingsmanager&error=2");
@@ -637,8 +637,8 @@ class Controller {
         
                         $filename = $name .".". $fileExtension[1];
         
-                        $uploadFile = $uploadDir . basename($filename);
-                        if (move_uploaded_file($imageTmpName, $uploadFile)) {
+                        $uploadFile = $uploadDir . $this->baseFilename($filename);
+                        if ($this->moveUploadedFile($imageTmpName, $uploadFile)) {
                             $social->addSocial($name, $filename);
                         } else {
                             $this->redirectTo("./index.php?page=settingsmanager&error=2");
@@ -675,11 +675,11 @@ class Controller {
         }
     }
 
-    function getDeletePostPage(int $id) {
+    function getDeletePostPage(int $idPost) {
         $post = new \Monsapp\Myblog\Models\Post();
-        $postInfo = $post->getPostInfos($id);
+        $postInfo = $post->getPostInfos($idPost);
         if((!empty($this->superGlobal->getGetValue("token")) && $this->superGlobal->getGetValue("token") == $this->superGlobal->getSessionValue("token")) && (($this->role == 1) || (($this->role == 2) && ($this->userInfos == $postInfo["used_id"])))) {
-            $post->deletePost((int)$id);
+            $post->deletePost((int)$idPost);
             $this->redirectTo("./index.php?page=postmanager");
         /*} elseif($this->role == 2 && $this->userInfos == $postInfo["used_id"]) {
             $post->deletePost((int)$id);
@@ -709,10 +709,10 @@ class Controller {
         }
     }
 
-    function getReadMessagePage(int $id) {
+    function getReadMessagePage(int $idMessage) {
         if((!empty($this->superGlobal->getGetValue("token")) && $this->superGlobal->getGetValue("token") == $this->superGlobal->getSessionValue("token")) && ($this->role == 1)) {
             $contact = new \Monsapp\Myblog\Models\Contact();
-            $contact->updateStatus((int) $id);
+            $contact->updateStatus((int) $idMessage);
             $this->redirectTo("./index.php?page=contactmanager");
         } else {
             $this->redirectTo("./index.php");
@@ -735,5 +735,13 @@ class Controller {
             </html>
         <?php*/
         Header("Location: ". $urlAddress);
+    }
+
+    private function moveUploadedFile(string $filename, string $destination) {
+        return move_uploaded_file($filename, $destination);
+    }
+
+    private function baseFilename(string $path) {
+        return basename($path);
     }
 }

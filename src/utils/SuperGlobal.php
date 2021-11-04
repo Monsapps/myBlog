@@ -66,6 +66,10 @@ class SuperGlobal {
         }
     }
 
+    function setCookieValue(string $varName, string $value, int $duration) {
+        setcookie($varName, $value, $duration);
+    }
+
     private function getPost() {
         $this->post = (filter_input_array(INPUT_POST) !== null) ? filter_input_array(INPUT_POST) : null;
     }

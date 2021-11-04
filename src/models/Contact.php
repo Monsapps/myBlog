@@ -34,11 +34,11 @@ class Contact {
         return $results;
     }
 
-    function updateStatus(int $id) {
+    function updateStatus(int $idStatus) {
         $sql = "UPDATE `contact` SET `status` = 1 WHERE `id` = :id;";
 
         $query = $this->dbManager->prepare($sql, array(\PDO::ATTR_CURSOR => \PDO::CURSOR_FWDONLY));
-        $query->execute(array(":id" => $id));
+        $query->execute(array(":id" => $idStatus));
         $query = null;
     }
 }
