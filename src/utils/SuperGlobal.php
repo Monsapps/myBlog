@@ -17,36 +17,33 @@ class SuperGlobal {
         $this->getPost();
         if($varName !== null) {
             return (isset($this->post["$varName"])) ? $this->post["$varName"] : null;
-        } else {
-            return $this->post;
         }
+        return $this->post;
     }
 
     function getFilesValue(string $varName = null) {
         $this->getFiles();
         if($varName !== null) {
             return (isset($this->files["$varName"])) ? $this->files["$varName"] : null;
-        } else {
-            return $this->files;
         }
+        return $this->files;
     }
 
     function getGetValue(string $varName = null) {
         $this->getGet();
         if($varName !== null) {
             return (isset($this->get["$varName"])) ? $this->get["$varName"] : null;
-        } else {
-            return $this->get;
         }
+        return $this->get;
+        
     }
 
     function getSessionValue(string $varName = null) {
         $this->getSession();
         if($varName !== null) {
             return (isset($this->session["$varName"])) ? $this->session["$varName"] : null;
-        } else {
-            return $this->session;
         }
+        return $this->session;
     }
 
     function setSessionValue(string $varName, string $value) {
@@ -61,9 +58,8 @@ class SuperGlobal {
         $this->getCookie();
         if($varName !== null) {
             return (isset($this->cookie["$varName"])) ? $this->cookie["$varName"] : null;
-        } else {
-            return $this->cookie;
         }
+        return $this->cookie;
     }
 
     function setCookieValue(string $varName, string $value, int $duration) {

@@ -100,7 +100,6 @@ class Controller {
                 return;
             }
         }
-        
         $this->redirectTo("./index.php?error=1");
     }
 

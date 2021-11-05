@@ -1,6 +1,6 @@
 <?php
 /**
- * Controller to send mail
+ * Contact Controller, generate page and send email
  */
 declare(strict_types=1);
 
