@@ -97,11 +97,11 @@ class Controller {
 
                 $contact->sendMessage($postArray["message"], $postArray["email"], $postArray["name"], $postArray["surname"]);
                 $this->redirectTo("./index.php?status=1");
-
+                return;
             }
-        } else {
-            $this->redirectTo("./index.php?error=1");
         }
+        
+        $this->redirectTo("./index.php?error=1");
     }
 
     /**
