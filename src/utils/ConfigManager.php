@@ -20,7 +20,7 @@ class ConfigManager {
         $this->dbQuery = $query;
     }
 
-    function getConfig(string $name) {
+    function getConfig(string $name = null) {
         if(!empty($name)) {
             // Find value for $name
             while($getValue = $this->dbQuery->fetch()) {
@@ -31,8 +31,13 @@ class ConfigManager {
                     return $getValue["value"];
                 }
             }
-            // We close the DB
-            $this->dbQuery->closeCursor();
+        } else {
+            // Create new array
+            $siteInfo = [];
+            while($getValue = $this->dbQuery->fetch()) {
+                $siteInfo[$getValue["name"]] = $getValue["value"];
+            }
+            return $siteInfo;
         }
     }
 

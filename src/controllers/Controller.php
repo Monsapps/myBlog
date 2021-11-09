@@ -9,10 +9,7 @@ namespace Monsapp\Myblog\Controllers;
 class Controller {
 
     private $config;
-    private $title;
-    private $keywords;
-    private $descriptions;
-    private $mainUser;
+    private $siteInfo;
     private $twig;
     private $role;
     private $isAllowedToCRUD;
@@ -25,10 +22,7 @@ class Controller {
 
         $this->superGlobal = new \Monsapp\Myblog\Utils\SuperGlobal();
 
-        $this->title = $this->config->getConfig("site_title");
-        $this->keywords = $this->config->getConfig("site_keywords");
-        $this->descriptions = $this->config->getConfig("site_descriptions");
-        $this->mainUser = $this->config->getConfig("site_main_user_id");
+        $this->siteInfo = $this->config->getConfig();
 
         $loader = new \Twig\Loader\FilesystemLoader("src/views/");
         $this->twig = new \Twig\Environment($loader);
@@ -67,13 +61,13 @@ class Controller {
 
     function getHomepage() {
         $user = new \Monsapp\Myblog\Models\User();
-        $mainUser = $user->getUserInfos((int)$this->mainUser);
-        $userSocials = $user->getUserSocials((int)$this->mainUser);
+        $mainUser = $user->getUserInfos((int)$this->siteInfo["site_main_user_id"]);
+        $userSocials = $user->getUserSocials((int)$this->siteInfo["site_main_user_id"]);
         $this->twig->display("index.html.twig", array(
-                "title" => $this->title, 
-                "navtitle" => $this->title, 
-                "descriptions" => $this->descriptions,
-                "keywords" => $this->keywords,
+                "title" => $this->siteInfo["site_title"], 
+                "navtitle" => $this->siteInfo["site_title"], 
+                "descriptions" => $this->siteInfo["site_descriptions"],
+                "keywords" => $this->siteInfo["site_keywords"],
                 "role" => $this->role,
                 "user" => $this->userInfos,
                 "main_user" => $mainUser,
@@ -91,7 +85,7 @@ class Controller {
             $contact = new \Monsapp\Myblog\Controllers\ContactController();
             $user = new \Monsapp\Myblog\Models\User();
 
-            $mainUser = $user->getUserInfos((int)$this->mainUser);
+            $mainUser = $user->getUserInfos((int)$this->siteInfo["site_main_user_id"]);
 
             if(!$contact->sendMail($mainUser["email"], $postArray["message"], $postArray["email"], $postArray["name"], $postArray["surname"])) {
 
@@ -112,10 +106,10 @@ class Controller {
         $posts = $post->getAllPosts();
 
         $this->twig->display("posts.html.twig", array(
-            "title" => "Articles - " . $this->title, 
-            "navtitle" => $this->title, 
-            "descriptions" => $this->descriptions,
-            "keywords" => $this->keywords,
+            "title" => "Articles - " . $this->siteInfo["site_title"], 
+            "navtitle" => $this->siteInfo["site_title"], 
+            "descriptions" => $this->siteInfo["site_descriptions"],
+            "keywords" => $this->siteInfo["site_keywords"],
             "role" => $this->role,
             "user" => $this->userInfos,
             "posts" => $posts,
@@ -131,10 +125,10 @@ class Controller {
         $comments = $comment->getComments($idPost);
 
         $this->twig->display("post.html.twig", array(
-            "title" => $postInfos["title"] . " - " . $this->title, 
-            "navtitle" => $this->title, 
-            "descriptions" => $this->descriptions,
-            "keywords" => $postInfos["keywords"],
+            "title" => $postInfos["title"] . " - " . $this->siteInfo["site_title"], 
+            "navtitle" => $this->siteInfo["site_title"], 
+            "descriptions" => $this->siteInfo["site_descriptions"],
+            "keywords" => $this->siteInfo["site_keywords"],
             "role" => $this->role,
             "is_allowed_to_crud" => $this->isAllowedToCRUD, 
             "user" => $this->userInfos,
@@ -147,10 +141,10 @@ class Controller {
     function getAddPostPage() {
         if((!empty($this->superGlobal->getGetValue("token")) && $this->superGlobal->getGetValue("token") == $this->superGlobal->getSessionValue("token")) && $this->isAllowedToCRUD) {
             $this->twig->display("addpost.html.twig", array(
-                "title" => $this->title, 
-                "navtitle" => $this->title, 
-                "descriptions" => $this->descriptions,
-                "keywords" => $this->keywords,
+                "title" => "Ajouter un article - " . $this->siteInfo["site_title"], 
+                "navtitle" => $this->siteInfo["site_title"], 
+                "descriptions" => $this->siteInfo["site_descriptions"],
+                "keywords" => $this->siteInfo["site_keywords"],
                 "role" => $this->role,
                 "user" => $this->userInfos,
                 "token" => $this->superGlobal->getSessionValue("token")
@@ -164,7 +158,7 @@ class Controller {
         if($this->isAllowedToCRUD && ($postArray["token"] == $this->superGlobal->getSessionValue("token"))) {
             // We need to attach user id to a post
             $userInfos = $this->userInfos;
-
+            // TODO control les valeurs
             $post = new \Monsapp\Myblog\Models\Post();
             $post->addPost((int)$userInfos["id"], $postArray["title"], $postArray["hat"], $postArray["content"], $postArray["keywords"]);
 
@@ -185,10 +179,10 @@ class Controller {
 
         if((!empty($this->superGlobal->getGetValue("token")) && $this->superGlobal->getGetValue("token") == $this->superGlobal->getSessionValue("token")) && ($this->isAllowedToCRUD && (($this->userInfos["id"] == $postInfos["user_id"])) || ($this->role == 1))) {
             $this->twig->display("editpost.html.twig", array(
-                "title" => $this->title, 
-                "navtitle" => $this->title, 
-                "descriptions" => $this->descriptions,
-                "keywords" => $this->keywords,
+                "title" => "Modifier "  . $postInfos["title"] . " - " . $this->siteInfo["site_title"], 
+                "navtitle" => $this->siteInfo["site_title"], 
+                "descriptions" => $this->siteInfo["site_descriptions"],
+                "keywords" => $this->siteInfo["site_keywords"],
                 "role" => $this->role,
                 "user" => $this->userInfos,
                 "post" => $postInfos,
@@ -217,10 +211,10 @@ class Controller {
     function getConnectPage() {
 
         $this->twig->display("connect.html.twig", array(
-            "title" => "Connexion - " . $this->title,
-            "navtitle" => $this->title,
-            "descriptions" => $this->descriptions,
-            "keywords" => $this->keywords,
+            "title" => "Connexion - " . $this->siteInfo["site_title"], 
+            "navtitle" => $this->siteInfo["site_title"], 
+            "descriptions" => $this->siteInfo["site_descriptions"],
+            "keywords" => $this->siteInfo["site_keywords"],
             "role" => $this->role
         ));
     }
@@ -313,10 +307,10 @@ class Controller {
                 $socials = $social->getAllSocials();
                 $userSocials = $user->getUserSocials((int)$this->userInfos["id"]);
                 $this->twig->display("panel/index.html.twig", array(
-                    "title" => "Panneau de configation - " . $this->title,
-                    "navtitle" => $this->title,
-                    "descriptions" => $this->descriptions,
-                    "keywords" => $this->keywords,
+                    "title" => "Panneau de configuration - " . $this->siteInfo["site_title"], 
+                    "navtitle" => $this->siteInfo["site_title"], 
+                    "descriptions" => $this->siteInfo["site_descriptions"],
+                    "keywords" => $this->siteInfo["site_keywords"],
                     "role" => $this->role,
                     "user" => $this->userInfos,
                     "socials" => $socials,
@@ -430,7 +424,7 @@ class Controller {
         if((isset($postArray["token"]) && $postArray["token"] == $this->superGlobal->getSessionValue("token")) && $this->role == 1) {
             $image = new \Monsapp\Myblog\Models\CurriculumVitae();
             $uploadDir = "./public/uploads/";
-    
+            var_dump($_FILES);
             $mimeType = mime_content_type($files['cv']['tmp_name']);
             if(strpos($mimeType, "application/pdf") !== false) {
                 // encode pdf file to store on server
@@ -445,7 +439,7 @@ class Controller {
                     $this->redirectTo("./index.php?page=panel&error=2");
                 }
             } else {
-                $this->redirectTo("./index.php?page=panel&error=1");
+                $this->redirectTo("./index.php?page=panel&error=1");// todo
             }
         } else {
             $this->redirectTo("./index.php?page=panel");
@@ -461,14 +455,14 @@ class Controller {
             $social = new \Monsapp\Myblog\Models\Social();
             $socials = $social->getAllSocials();
             $this->twig->display("panel/settings.html.twig", array(
-                "title" => "Préférences générales - " . $this->title,
-                "navtitle" => $this->title,
-                "descriptions" => $this->descriptions,
-                "keywords" => $this->keywords,
+                "title" => "Préférences générales - " . $this->siteInfo["site_title"], 
+                "navtitle" => $this->siteInfo["site_title"], 
+                "descriptions" => $this->siteInfo["site_descriptions"],
+                "keywords" => $this->siteInfo["site_keywords"],
                 "role" => $this->role,
                 "users" => $allUsers,
                 "user" => $this->userInfos,
-                "main_user_id" => $this->mainUser,
+                "main_user_id" => $this->siteInfo["site_main_user_id"],
                 "socials" => $socials,
                 "token" => $this->superGlobal->getSessionValue("token")
             ));
@@ -480,19 +474,19 @@ class Controller {
     function getMainSettingsPage(array $post) {
         // only admin can edit main settings
         if((isset($post["token"]) && $post["token"] == $this->superGlobal->getSessionValue("token")) && $this->role == 1) {
-            if(!empty($post["site_title"]) && $this->title != $post["site_title"]) {
+            if(!empty($post["site_title"]) && $this->siteInfo["site_title"] != $post["site_title"]) {
                 $this->config->editConfig("site_title", $post["site_title"]);
             }
 
-            if(!empty($post["site_description"]) && $this->descriptions != $post["site_description"]) {
+            if(!empty($post["site_description"]) && $this->siteInfo["site_descriptions"] != $post["site_description"]) {
                 $this->config->editConfig("site_descriptions", $post["site_description"]);
             }
 
-            if(!empty($post["site_keywords"]) && $this->keywords != $post["site_keywords"]) {
+            if(!empty($post["site_keywords"]) && $this->siteInfo["site_keywords"] != $post["site_keywords"]) {
                 $this->config->editConfig("site_keywords", $post["site_keywords"]);
             }
 
-            if(!empty($post["main_user"]) && $this->mainUser != $post["main_user"]) {
+            if(!empty($post["main_user"]) && $this->siteInfo["site_main_user_id"] != $post["main_user"]) {
                 $this->config->editConfig("site_main_user_id", $post["main_user"]);
             }
 
@@ -508,10 +502,10 @@ class Controller {
             $comment = new \Monsapp\Myblog\Models\Comment();
             $comments = $comment->getPendingComments();
             $this->twig->display("panel/comment.html.twig", array(
-                "title" => "Gestion des commentaires - " . $this->title,
-                "navtitle" => $this->title,
-                "descriptions" => $this->descriptions,
-                "keywords" => $this->keywords,
+                "title" => "Gestion des commentaires - " . $this->siteInfo["site_title"], 
+                "navtitle" => $this->siteInfo["site_title"], 
+                "descriptions" => $this->siteInfo["site_descriptions"],
+                "keywords" => $this->siteInfo["site_keywords"],
                 "role" => $this->role,
                 "user" => $this->userInfos,
                 "comments" => $comments,
@@ -550,14 +544,14 @@ class Controller {
             $role = new \Monsapp\Myblog\Models\Role();
             $allRoles = $role->getRoles();
             $this->twig->display("panel/users.html.twig", array(
-                "title" => "Gestions des permissions - " . $this->title,
-                "navtitle" => $this->title,
-                "descriptions" => $this->descriptions,
-                "keywords" => $this->keywords,
+                "title" => "Gestion des permissions - " . $this->siteInfo["site_title"], 
+                "navtitle" => $this->siteInfo["site_title"], 
+                "descriptions" => $this->siteInfo["site_descriptions"],
+                "keywords" => $this->siteInfo["site_keywords"],
                 "role" => $this->role,
                 "user" => $this->userInfos,
                 "users" => $allUsers,
-                "main_user_id" => $this->mainUser,
+                "main_user_id" => (int)$this->siteInfo["site_main_user_id"],
                 "roles" => $allRoles,
                 "token" => $this->superGlobal->getSessionValue("token")
             ));
@@ -660,10 +654,10 @@ class Controller {
         $posts = $post->getAllPosts();
         if($this->role >= 1) {
             $this->twig->display("panel/posts.html.twig", array(
-                "title" => "Gestions des articles - " . $this->title,
-                "navtitle" => $this->title,
-                "descriptions" => $this->descriptions,
-                "keywords" => $this->keywords,
+                "title" => "Gestion des articles - " . $this->siteInfo["site_title"], 
+                "navtitle" => $this->siteInfo["site_title"], 
+                "descriptions" => $this->siteInfo["site_descriptions"],
+                "keywords" => $this->siteInfo["site_keywords"],
                 "role" => $this->role,
                 "user" => $this->userInfos,
                 "posts" => $posts,
@@ -694,10 +688,10 @@ class Controller {
         $messages = $contact->getAllContactMessage();
         if($this->role >= 1) {
             $this->twig->display("panel/contact.html.twig", array(
-                "title" => "Contact - " . $this->title,
-                "navtitle" => $this->title,
-                "descriptions" => $this->descriptions,
-                "keywords" => $this->keywords,
+                "title" => "Gestion des contacts - " . $this->siteInfo["site_title"], 
+                "navtitle" => $this->siteInfo["site_title"], 
+                "descriptions" => $this->siteInfo["site_descriptions"],
+                "keywords" => $this->siteInfo["site_keywords"],
                 "role" => $this->role,
                 "user" => $this->userInfos,
                 "messages" => $messages,
