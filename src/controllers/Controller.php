@@ -424,7 +424,6 @@ class Controller {
         if((isset($postArray["token"]) && $postArray["token"] == $this->superGlobal->getSessionValue("token")) && $this->role == 1) {
             $image = new \Monsapp\Myblog\Models\CurriculumVitae();
             $uploadDir = "./public/uploads/";
-            var_dump($_FILES);
             $mimeType = mime_content_type($files['cv']['tmp_name']);
             if(strpos($mimeType, "application/pdf") !== false) {
                 // encode pdf file to store on server
