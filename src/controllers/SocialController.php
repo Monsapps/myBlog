@@ -79,8 +79,6 @@ class SocialController extends Controller {
                             $uploadFile = $uploadDir . $this->baseFilename($filename);
                             if ($this->moveUploadedFile($imageTmpName, $uploadFile)) {
                                 $social->updateSocialImage((int)$postArray["id"][$i], $name, $filename);
-                            } else {
-                                $this->redirectTo("./index.php?page=settingsmanager&error=2");
                             }
                         } else {
                             $this->redirectTo("./index.php?page=settingsmanager&error=1");
@@ -113,11 +111,9 @@ class SocialController extends Controller {
 
                 }
             }
-
             $this->redirectTo("./index.php?page=settingsmanager");
-        } else {
-            $this->redirectTo("./index.php");
         }
+        $this->redirectTo("./index.php");
     }
 
     function getDeleteSocialPage(int $idSocial) {
@@ -125,9 +121,7 @@ class SocialController extends Controller {
             $social = new \Monsapp\Myblog\Models\Social();
             $social->deleteSocial($idSocial);
             $this->redirectTo("./index.php?page=settingsmanager");
-        } else {
-            $this->redirectTo("./index.php");
         }
+        $this->redirectTo("./index.php");
     }
-
 }
