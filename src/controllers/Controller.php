@@ -8,13 +8,13 @@ namespace Monsapp\Myblog\Controllers;
 
 class Controller {
 
-    private $config;
-    private $siteInfo;
-    private $twig;
-    private $role;
-    private $isAllowedToCRUD;
-    private $userInfos;
-    private $superGlobal;
+    protected $config;
+    protected $siteInfo;
+    protected $twig;
+    protected $role;
+    protected $isAllowedToCRUD;
+    protected $userInfos;
+    protected $superGlobal;
 
     function __construct() {
 
@@ -73,135 +73,6 @@ class Controller {
                 "main_user" => $mainUser,
                 "userSocials" => $userSocials
             ));
-    }
-
-    /**
-     * Controller for contact form
-     */
-
-    function getContactPage(array $postArray) {
-        
-        if(!empty($postArray["name"]) && !empty($postArray["surname"]) && !empty($postArray["email"]) && !empty($postArray["message"])) {
-            $contact = new \Monsapp\Myblog\Controllers\ContactController();
-            $user = new \Monsapp\Myblog\Models\User();
-
-            $mainUser = $user->getUserInfos((int)$this->siteInfo["site_main_user_id"]);
-
-            if(!$contact->sendMail($mainUser["email"], $postArray["message"], $postArray["email"], $postArray["name"], $postArray["surname"])) {
-
-                $contact->sendMessage($postArray["message"], $postArray["email"], $postArray["name"], $postArray["surname"]);
-                $this->redirectTo("./index.php?status=1");
-                return;
-            }
-        }
-        $this->redirectTo("./index.php?error=1");
-    }
-
-    /**
-     * Controllers for Posts
-     */
-
-    function getPostsPage() {
-        $post = new \Monsapp\Myblog\Models\Post();
-        $posts = $post->getAllPosts();
-
-        $this->twig->display("posts.html.twig", array(
-            "title" => "Articles - " . $this->siteInfo["site_title"], 
-            "navtitle" => $this->siteInfo["site_title"], 
-            "descriptions" => $this->siteInfo["site_descriptions"],
-            "keywords" => $this->siteInfo["site_keywords"],
-            "role" => $this->role,
-            "user" => $this->userInfos,
-            "posts" => $posts,
-            "token" => $this->superGlobal->getSessionValue("token")
-        ));
-    }
-
-    function getPostPage(int $idPost) {
-        $post = new \Monsapp\Myblog\Models\Post();
-        $postInfos = $post->getPostInfos($idPost);
-
-        $comment = new \Monsapp\Myblog\Models\Comment();
-        $comments = $comment->getComments($idPost);
-
-        $this->twig->display("post.html.twig", array(
-            "title" => $postInfos["title"] . " - " . $this->siteInfo["site_title"], 
-            "navtitle" => $this->siteInfo["site_title"], 
-            "descriptions" => $this->siteInfo["site_descriptions"],
-            "keywords" => $this->siteInfo["site_keywords"],
-            "role" => $this->role,
-            "is_allowed_to_crud" => $this->isAllowedToCRUD, 
-            "user" => $this->userInfos,
-            "post" => $postInfos,
-            "comments" => $comments,
-            "token" => $this->superGlobal->getSessionValue("token")
-        ));
-    }
-
-    function getAddPostPage() {
-        if((!empty($this->superGlobal->getGetValue("token")) && $this->superGlobal->getGetValue("token") == $this->superGlobal->getSessionValue("token")) && $this->isAllowedToCRUD) {
-            $this->twig->display("addpost.html.twig", array(
-                "title" => "Ajouter un article - " . $this->siteInfo["site_title"], 
-                "navtitle" => $this->siteInfo["site_title"], 
-                "descriptions" => $this->siteInfo["site_descriptions"],
-                "keywords" => $this->siteInfo["site_keywords"],
-                "role" => $this->role,
-                "user" => $this->userInfos,
-                "token" => $this->superGlobal->getSessionValue("token")
-            ));
-        } else {
-            $this->redirectTo("./index.php");
-        }
-    }
-
-    function getPublishPage(array $postArray) {
-        if($this->isAllowedToCRUD && ($postArray["token"] == $this->superGlobal->getSessionValue("token"))) {
-            // We need to attach user id to a post
-            $userInfos = $this->userInfos;
-            // TODO control les valeurs
-            $post = new \Monsapp\Myblog\Models\Post();
-            $post->addPost((int)$userInfos["id"], $postArray["title"], $postArray["hat"], $postArray["content"], $postArray["keywords"]);
-
-            $this->redirectTo("./index.php?page=post");
-        } else {
-            $this->redirectTo("./index.php");
-        }
-    }
-
-    function getEditPostPage(int $idPost) {
-
-        // We store all users to edit author's post
-        $user = new \Monsapp\Myblog\Models\User();
-        $allUsers = $user->getAllUsers();
-
-        $post = new \Monsapp\Myblog\Models\Post();
-        $postInfos = $post->getPostInfos($idPost);
-
-        if((!empty($this->superGlobal->getGetValue("token")) && $this->superGlobal->getGetValue("token") == $this->superGlobal->getSessionValue("token")) && ($this->isAllowedToCRUD && (($this->userInfos["id"] == $postInfos["user_id"])) || ($this->role == 1))) {
-            $this->twig->display("editpost.html.twig", array(
-                "title" => "Modifier "  . $postInfos["title"] . " - " . $this->siteInfo["site_title"], 
-                "navtitle" => $this->siteInfo["site_title"], 
-                "descriptions" => $this->siteInfo["site_descriptions"],
-                "keywords" => $this->siteInfo["site_keywords"],
-                "role" => $this->role,
-                "user" => $this->userInfos,
-                "post" => $postInfos,
-                "authors" => $allUsers,
-                "token" => $this->superGlobal->getSessionValue("token")
-            ));
-        } else {
-            $this->redirectTo("./index.php?page=post&id". $idPost);
-        }
-    }
-
-    function getEditPostPublishPage(array $postArray) {
-        if($this->isAllowedToCRUD && ($postArray["token"] == $this->superGlobal->getSessionValue("token"))) {
-            $post = new \Monsapp\Myblog\Models\Post();
-            $post->updatePost((int)$postArray["id"], (int)$postArray["author"], $postArray["title"], $postArray["hat"], $postArray["content"], $postArray["keywords"]);
-            $this->redirectTo("./index.php?page=post&id=". $postArray["id"]);
-        }
-
-        $this->redirectTo("./index.php?page=post&id=". $postArray["id"]);
     }
 
     /**
@@ -276,20 +147,6 @@ class Controller {
         $this->superGlobal->setCookieValue("email", "", time());
         $this->superGlobal->setCookieValue("sessionid", "", time());
         $this->redirectTo("./index.php");
-    }
-
-    /**
-     * Controller for comments
-     */
-
-    function getAddCommentPage(array $postArray) {
-        if(($this->role != -1) && ($postArray["token"] == $this->superGlobal->getSessionValue("token"))) {
-            $comment = new \Monsapp\Myblog\Models\Comment();
-            $comment->addComment((int)$postArray["post_id"], (int)$postArray["user_id"], $postArray["comment"]);
-            $this->redirectTo("./index.php?page=post&id=". $postArray["post_id"] ."&status=1");
-        } else {
-            $this->redirectTo("./index.php?page=post&id=". $postArray["post_id"]);
-        }
     }
 
     /**
@@ -379,46 +236,6 @@ class Controller {
         }
     }
 
-    function getAddUserSocialsPage(array $postArray) {
-        // only confirmed user and user himself can add socials
-        if((isset($postArray["token"]) && $postArray["token"] == $this->superGlobal->getSessionValue("token")) && ($this->role != -1 && $this->userInfos["id"] == $postArray["user_id"])) {
-            $user = new \Monsapp\Myblog\Models\User();
-            //todo get userid
-            for($i = 0; $i < count($postArray["social_id"]); $i++) {
-                $user->addSocial((int)$postArray["user_id"], (int)$postArray["social_id"][$i], $postArray["meta"][$i]);
-            }
-            $this->redirectTo("./index.php?page=panel");
-        } else {
-            $this->redirectTo("./index.php");
-        }
-    }
-
-    function getUpdateUserSocialsPage(array $postArray) {
-        // only confirmed user and user himself can update socials
-        if((isset($postArray["token"]) && $postArray["token"] == $this->superGlobal->getSessionValue("token")) && ($this->role != -1 && $this->userInfos["id"] == $postArray["user_id"])) {
-
-            $user = new \Monsapp\Myblog\Models\User();
-
-            for($i = 0; $i < count($postArray["social_id"]); $i++) {
-                $user->updateSocial((int)$postArray["social_id"][$i], $postArray["meta"][$i]);
-            }
-            $this->redirectTo("./index.php?page=panel");
-        } else {
-            $this->redirectTo("./index.php");
-        }
-    }
-
-    function getDeleteUserSocialPage(int $userId, int $socialId) {
-        // only confirmed user and user himself can delete socials
-        if((!empty($this->superGlobal->getGetValue("token")) && $this->superGlobal->getGetValue("token") == $this->superGlobal->getSessionValue("token")) && ($this->role != -1 && $this->userInfos["id"] == $userId)) {
-            $user = new \Monsapp\Myblog\Models\User();
-            $user->deleteSocial($socialId);
-            $this->redirectTo("./index.php?page=panel");
-        } else {
-            $this->redirectTo("./index.php");
-        }
-    }
-
     function getUploadCvPage(array $files, array $postArray) {
         // only admin can upload cv
         if((isset($postArray["token"]) && $postArray["token"] == $this->superGlobal->getSessionValue("token")) && $this->role == 1) {
@@ -495,46 +312,6 @@ class Controller {
         }
     }
 
-    function getCommentManagerPage() {
-        // only admin can crud comment
-        if($this->role == 1) {
-            $comment = new \Monsapp\Myblog\Models\Comment();
-            $comments = $comment->getPendingComments();
-            $this->twig->display("panel/comment.html.twig", array(
-                "title" => "Gestion des commentaires - " . $this->siteInfo["site_title"], 
-                "navtitle" => $this->siteInfo["site_title"], 
-                "descriptions" => $this->siteInfo["site_descriptions"],
-                "keywords" => $this->siteInfo["site_keywords"],
-                "role" => $this->role,
-                "user" => $this->userInfos,
-                "comments" => $comments,
-                "token" => $this->superGlobal->getSessionValue("token")
-            ));
-        } else {
-            $this->redirectTo("./index.php");
-        }
-    }
-
-    function getActivateCommentPage(int $commentId) {
-        if((!empty($this->superGlobal->getGetValue("token")) && $this->superGlobal->getGetValue("token") == $this->superGlobal->getSessionValue("token")) && $this->role == 1) {
-            $comment = new \Monsapp\Myblog\Models\Comment();
-            $comment->activateComment($commentId);
-            $this->redirectTo("./index.php?page=commentmanager");
-        } else {
-            $this->redirectTo("./index.php?page=panel");
-        }
-    }
-
-    function getRejectCommentPage(int $commentId) {
-        if((!empty($this->superGlobal->getGetValue("token")) && $this->superGlobal->getGetValue("token") == $this->superGlobal->getSessionValue("token")) && $this->role == 1) {
-            $comment = new \Monsapp\Myblog\Models\Comment();
-            $comment->rejectComment($commentId);
-            $this->redirectTo("./index.php?page=commentmanager");
-        } else {
-            $this->redirectTo("./index.php?page=panel");
-        }
-    }
-
     function getPermissionsManagerPage() {
         if($this->role == 1) {
             $user = new \Monsapp\Myblog\Models\User();
@@ -564,148 +341,6 @@ class Controller {
             $user = new \Monsapp\Myblog\Models\User();
             $user->setPermission((int)$postArray["user_id"], (int)$postArray["role_id"]);
             $this->redirectTo("./index.php?page=permissionmanager");
-        } else {
-            $this->redirectTo("./index.php");
-        }
-    }
-
-    function getDeleteSocialPage(int $idSocial) {
-        if((!empty($this->superGlobal->getGetValue("token")) && $this->superGlobal->getGetValue("token") == $this->superGlobal->getSessionValue("token")) && $this->role == 1) {
-            $social = new \Monsapp\Myblog\Models\Social();
-            $social->deleteSocial($idSocial);
-            $this->redirectTo("./index.php?page=settingsmanager");
-        } else {
-            $this->redirectTo("./index.php");
-        }
-    }
-
-    function getUpdateSocialPage(array $files, array $postArray) {
-        if((isset($postArray["token"]) && $postArray["token"] == $this->superGlobal->getSessionValue("token")) && $this->role == 1) {
-            $social = new \Monsapp\Myblog\Models\Social();
-
-            $uploadDir = "./public/images/socials/";
-
-            for($i = 0; $i < count($postArray["id"]); $i++) {
-
-                $name = $postArray["name"][$i];
-
-                // if id != 0 update table
-                if(!empty($postArray["id"][$i])) {
-                    // if an new image is present, upload new one
-                    if(!empty($files["image"]["name"][$i])) {
-
-                        $imageTmpName = $files["image"]['tmp_name'][$i];
-                        $mimeType = mime_content_type($imageTmpName);
-
-                        // checking the mime_type if <<image/...>>
-                        if(strpos($mimeType, "image") !== false) {
-                            // get the file extension for the mimetype
-                            preg_match("#/([a-z]{3,4})#", $mimeType, $fileExtension);
-            
-                            $filename = $name .".". $fileExtension[1];
-            
-                            $uploadFile = $uploadDir . $this->baseFilename($filename);
-                            if ($this->moveUploadedFile($imageTmpName, $uploadFile)) {
-                                $social->updateSocialImage((int)$postArray["id"][$i], $name, $filename);
-                            } else {
-                                $this->redirectTo("./index.php?page=settingsmanager&error=2");
-                            }
-                        } else {
-                            $this->redirectTo("./index.php?page=settingsmanager&error=1");
-                        }
-                    } else {
-                        $social->updateSocial((int)$postArray["id"][$i], $name);
-                    }
-
-                } else {
-                    $imageTmpName = $files["image"]["tmp_name"][$i];
-                    $mimeType = mime_content_type($imageTmpName);
-
-                    // checking the mime_type if <<image/...>>
-                    if(strpos($mimeType, "image") !== false) {
-
-                        // get the file extension for the mimetype
-                        preg_match("#/([a-z]{3,4})#", $mimeType, $fileExtension);
-        
-                        $filename = $name .".". $fileExtension[1];
-        
-                        $uploadFile = $uploadDir . $this->baseFilename($filename);
-                        if ($this->moveUploadedFile($imageTmpName, $uploadFile)) {
-                            $social->addSocial($name, $filename);
-                        } else {
-                            $this->redirectTo("./index.php?page=settingsmanager&error=2");
-                        }
-                    } else {
-                        $this->redirectTo("./index.php?page=settingsmanager&error=1");
-                    }
-
-                }
-            }
-
-            $this->redirectTo("./index.php?page=settingsmanager");
-        } else {
-            $this->redirectTo("./index.php");
-        }
-    }
-
-    function getPostManagerPage() {
-        $post = new \Monsapp\Myblog\Models\Post();
-        $posts = $post->getAllPosts();
-        if($this->role >= 1) {
-            $this->twig->display("panel/posts.html.twig", array(
-                "title" => "Gestion des articles - " . $this->siteInfo["site_title"], 
-                "navtitle" => $this->siteInfo["site_title"], 
-                "descriptions" => $this->siteInfo["site_descriptions"],
-                "keywords" => $this->siteInfo["site_keywords"],
-                "role" => $this->role,
-                "user" => $this->userInfos,
-                "posts" => $posts,
-                "token" => $this->superGlobal->getSessionValue("token")
-            ));
-        } else {
-            $this->redirectTo("./index.php");
-        }
-    }
-
-    function getDeletePostPage(int $idPost) {
-        $post = new \Monsapp\Myblog\Models\Post();
-        $postInfo = $post->getPostInfos($idPost);
-        if((!empty($this->superGlobal->getGetValue("token")) && $this->superGlobal->getGetValue("token") == $this->superGlobal->getSessionValue("token")) && (($this->role == 1) || (($this->role == 2) && ($this->userInfos == $postInfo["used_id"])))) {
-            $post->deletePost((int)$idPost);
-            $this->redirectTo("./index.php?page=postmanager");
-        /*} elseif($this->role == 2 && $this->userInfos == $postInfo["used_id"]) {
-            $post->deletePost((int)$id);
-            Header("Location: ./index.php?page=postmanager");
-            exit;*/
-         }else {
-            $this->redirectTo("./index.php");
-        }
-    }
-
-    function getContactManagerPage() {
-        $contact = new \Monsapp\Myblog\Models\Contact();
-        $messages = $contact->getAllContactMessage();
-        if($this->role >= 1) {
-            $this->twig->display("panel/contact.html.twig", array(
-                "title" => "Gestion des contacts - " . $this->siteInfo["site_title"], 
-                "navtitle" => $this->siteInfo["site_title"], 
-                "descriptions" => $this->siteInfo["site_descriptions"],
-                "keywords" => $this->siteInfo["site_keywords"],
-                "role" => $this->role,
-                "user" => $this->userInfos,
-                "messages" => $messages,
-                "token" => $this->superGlobal->getSessionValue("token")
-            ));
-        } else {
-            $this->redirectTo("./index.php");
-        }
-    }
-
-    function getReadMessagePage(int $idMessage) {
-        if((!empty($this->superGlobal->getGetValue("token")) && $this->superGlobal->getGetValue("token") == $this->superGlobal->getSessionValue("token")) && ($this->role == 1)) {
-            $contact = new \Monsapp\Myblog\Models\Contact();
-            $contact->updateStatus((int) $idMessage);
-            $this->redirectTo("./index.php?page=contactmanager");
         } else {
             $this->redirectTo("./index.php");
         }

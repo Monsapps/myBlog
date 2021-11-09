@@ -71,6 +71,11 @@
         Votre commentaire à bien été enregistré, cependant il sera affiché lorsque l'administrateur l'aura validé.
     </div>
     {% endif %}
+    {% if(error == "1") %}
+    <div class="box-error">
+        Veuillez remplir tous les champs.
+    </div>
+    {% endif %}
     {% if (role != -1) %}
     <div class="row">
         <form action="./index.php?page=addcomment" method="POST">

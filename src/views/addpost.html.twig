@@ -1,5 +1,17 @@
 {% extends "base.html.twig" %}
 
+{% block error %}
+{% if(error != "0") %}
+<div class="container">
+    <div class="box-error" id="box-error">
+        {% if(error == "1") %}
+        Tous les champs de sont pas renseignés
+        {% endif %}
+    </div>
+</div>
+{% endif %}
+{% endblock %}
+
 {% block content %}
 <!-- Add Post -->
 <section class="container">
