@@ -31,14 +31,13 @@ class ConfigManager {
                     return $getValue["value"];
                 }
             }
-        } else {
-            // Create new array
-            $siteInfo = [];
-            while($getValue = $this->dbQuery->fetch()) {
-                $siteInfo[$getValue["name"]] = $getValue["value"];
-            }
-            return $siteInfo;
         }
+        // Create new array & return it
+        $siteInfo = [];
+        while($getValue = $this->dbQuery->fetch()) {
+            $siteInfo[$getValue["name"]] = $getValue["value"];
+        }
+        return $siteInfo;
     }
 
     function editConfig(string $setting, string $values) {
