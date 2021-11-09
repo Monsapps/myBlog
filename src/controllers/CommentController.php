@@ -20,9 +20,8 @@ class CommentController extends Controller {
             $comment = new \Monsapp\Myblog\Models\Comment();
             $comment->addComment((int)$postArray["post_id"], (int)$postArray["user_id"], $postArray["comment"]);
             $this->redirectTo("./index.php?page=post&id=". $postArray["post_id"] ."&status=1");
-        } else {
-            $this->redirectTo("./index.php?page=post&id=". $postArray["post_id"] ."&token=". $this->superGlobal->getSessionValue("token"));
         }
+        $this->redirectTo("./index.php?page=post&id=". $postArray["post_id"] ."&token=". $this->superGlobal->getSessionValue("token"));
     }
 
     /**
@@ -44,9 +43,8 @@ class CommentController extends Controller {
                 "comments" => $comments,
                 "token" => $this->superGlobal->getSessionValue("token")
             ));
-        } else {
-            $this->redirectTo("./index.php");
         }
+        $this->redirectTo("./index.php");
     }
 
     function getActivateCommentPage(int $commentId) {
@@ -54,9 +52,8 @@ class CommentController extends Controller {
             $comment = new \Monsapp\Myblog\Models\Comment();
             $comment->activateComment($commentId);
             $this->redirectTo("./index.php?page=commentmanager");
-        } else {
-            $this->redirectTo("./index.php?page=panel");
         }
+        $this->redirectTo("./index.php?page=panel");
     }
 
     function getRejectCommentPage(int $commentId) {
@@ -64,8 +61,7 @@ class CommentController extends Controller {
             $comment = new \Monsapp\Myblog\Models\Comment();
             $comment->rejectComment($commentId);
             $this->redirectTo("./index.php?page=commentmanager");
-        } else {
-            $this->redirectTo("./index.php?page=panel");
         }
+        $this->redirectTo("./index.php?page=panel");
     }
 }
