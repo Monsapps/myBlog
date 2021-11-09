@@ -56,9 +56,8 @@ class PostController extends Controller {
                 "user" => $this->userInfos,
                 "token" => $this->superGlobal->getSessionValue("token")
             ));
-        } else {
-            $this->redirectTo("./index.php");
         }
+        $this->redirectTo("./index.php");
     }
 
     function getPublishPage(array $postArray) {
@@ -74,9 +73,8 @@ class PostController extends Controller {
             $post->addPost((int)$userInfos["id"], $postArray["title"], $postArray["hat"], $postArray["content"], $postArray["keywords"]);
 
             $this->redirectTo("./index.php?page=post&token=" . $this->superGlobal->getSessionValue("token"));
-        } else {
-            $this->redirectTo("./index.php");
         }
+        $this->redirectTo("./index.php");
     }
 
     function getEditPostPage(int $idPost) {
@@ -100,9 +98,9 @@ class PostController extends Controller {
                 "authors" => $allUsers,
                 "token" => $this->superGlobal->getSessionValue("token")
             ));
-        } else {
-            $this->redirectTo("./index.php?page=post&id". $idPost);
         }
+
+        $this->redirectTo("./index.php?page=post&id". $idPost);
     }
 
     function getEditPostPublishPage(array $postArray) {
@@ -113,10 +111,9 @@ class PostController extends Controller {
             || empty($postArray["hat"]) 
             || empty($postArray["content"]) 
             || empty($postArray["keywords"])) {
-                if(empty($postArray["title"]) || empty($postArray["hat"]) || $postArray["content"]) {
-                    $this->redirectTo("./index.php?page=post&error=1&token=" . $this->superGlobal->getSessionValue("token"));
-                    return;
-                }
+
+                $this->redirectTo("./index.php?page=post&error=1&token=" . $this->superGlobal->getSessionValue("token"));
+                
         }
 
         if($this->isAllowedToCRUD && ($postArray["token"] == $this->superGlobal->getSessionValue("token"))) {
@@ -147,9 +144,9 @@ class PostController extends Controller {
                 "posts" => $posts,
                 "token" => $this->superGlobal->getSessionValue("token")
             ));
-        } else {
-            $this->redirectTo("./index.php");
         }
+        
+        $this->redirectTo("./index.php");
     }
 
     function getDeletePostPage(int $idPost) {
@@ -158,13 +155,7 @@ class PostController extends Controller {
         if((!empty($this->superGlobal->getGetValue("token")) && $this->superGlobal->getGetValue("token") == $this->superGlobal->getSessionValue("token")) && (($this->role == 1) || (($this->role == 2) && ($this->userInfos == $postInfo["used_id"])))) {
             $post->deletePost((int)$idPost);
             $this->redirectTo("./index.php?page=postmanager");
-        /*} elseif($this->role == 2 && $this->userInfos == $postInfo["used_id"]) {
-            $post->deletePost((int)$id);
-            Header("Location: ./index.php?page=postmanager");
-            exit;*/
-         }else {
-            $this->redirectTo("./index.php");
-        }
+         }
+        $this->redirectTo("./index.php");
     }
-
 }

@@ -17,9 +17,9 @@ class SocialController extends Controller {
                 $user->addSocial((int)$postArray["user_id"], (int)$postArray["social_id"][$i], $postArray["meta"][$i]);
             }
             $this->redirectTo("./index.php?page=panel");
-        } else {
-            $this->redirectTo("./index.php");
         }
+
+        $this->redirectTo("./index.php");
     }
 
     function getUpdateUserSocialsPage(array $postArray) {
@@ -32,9 +32,9 @@ class SocialController extends Controller {
                 $user->updateSocial((int)$postArray["social_id"][$i], $postArray["meta"][$i]);
             }
             $this->redirectTo("./index.php?page=panel");
-        } else {
-            $this->redirectTo("./index.php");
         }
+        
+        $this->redirectTo("./index.php");
     }
 
     function getDeleteUserSocialPage(int $userId, int $socialId) {
@@ -43,9 +43,8 @@ class SocialController extends Controller {
             $user = new \Monsapp\Myblog\Models\User();
             $user->deleteSocial($socialId);
             $this->redirectTo("./index.php?page=panel");
-        } else {
-            $this->redirectTo("./index.php");
         }
+        $this->redirectTo("./index.php");
     }
 
     /**

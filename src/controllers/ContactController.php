@@ -63,9 +63,8 @@ class ContactController extends Controller {
                 "messages" => $messages,
                 "token" => $this->superGlobal->getSessionValue("token")
             ));
-        } else {
-            $this->redirectTo("./index.php");
         }
+        $this->redirectTo("./index.php");
     }
 
     function getReadMessagePage(int $idMessage) {
@@ -73,9 +72,8 @@ class ContactController extends Controller {
             $contact = new \Monsapp\Myblog\Models\Contact();
             $contact->updateStatus((int) $idMessage);
             $this->redirectTo("./index.php?page=contactmanager");
-        } else {
-            $this->redirectTo("./index.php");
         }
+        $this->redirectTo("./index.php");
     }
 }
  

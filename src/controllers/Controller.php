@@ -362,6 +362,7 @@ class Controller {
             </html>
         <?php*/
         Header("Location: ". $urlAddress);
+        return;
     }
 
     private function moveUploadedFile(string $filename, string $destination) {
