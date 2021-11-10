@@ -4,6 +4,10 @@ body {
 
 /* Navigation style */
 
+.active {
+  font-weight: bold;
+}
+
 .nav-bar-margin-start {
   margin-left: 10px;
 }

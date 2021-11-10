@@ -4,6 +4,10 @@
 */
 
 $controller = new Monsapp\Myblog\Controllers\Controller();
+$contactController = new Monsapp\Myblog\Controllers\ContactController();
+$postController = new Monsapp\Myblog\Controllers\PostController();
+$commentController = new Monsapp\Myblog\Controllers\CommentController();
+$socialController = new Monsapp\Myblog\Controllers\SocialController();
 $superGlobal = new Monsapp\Myblog\Utils\SuperGlobal();
 
 if(!empty($superGlobal->getGetValue("page"))) {
@@ -13,12 +17,12 @@ if(!empty($superGlobal->getGetValue("page"))) {
             if(!empty($superGlobal->getGetValue("id"))) {
                 // We must have an numeric id 
                 if(is_numeric($superGlobal->getGetValue("id"))) {
-                    $controller->getPostPage($superGlobal->getGetValue("id"));
+                    $postController->getPostPage($superGlobal->getGetValue("id"));
                 } else {
-                    $controller->getPostsPage();
+                    $postController->getPostsPage();
                 }
             } else {
-                $controller->getPostsPage();
+                $postController->getPostsPage();
             }
         break;
         case "connect":
@@ -38,32 +42,32 @@ if(!empty($superGlobal->getGetValue("page"))) {
             }
         break;
         case "contact":
-            $controller->getContactPage($superGlobal->getPostValue());
+            $contactController->getContactPage($superGlobal->getPostValue());
         break;
         case "addpost":
-            $controller->getAddPostPage();
+            $postController->getAddPostPage();
         break;
         case "publish":
-            $controller->getPublishPage($superGlobal->getPostValue());
+            $postController->getPublishPage($superGlobal->getPostValue());
         break;
         case "editpost":
             // If an id get the post
             if(!empty($superGlobal->getGetValue("id"))) {
                 // We must have an numeric id 
                 if(is_numeric($superGlobal->getGetValue("id"))) {
-                    $controller->getEditPostPage($superGlobal->getGetValue("id"));
+                    $postController->getEditPostPage($superGlobal->getGetValue("id"));
                 } else {
-                    $controller->getPostsPage();
+                    $postController->getPostsPage();
                 }
             } else {
-                $controller->getPostsPage();
+                $postController->getPostsPage();
             }
         break;
         case "editpostpublish":
-            $controller->getEditPostPublishPage($superGlobal->getPostValue());
+            $postController->getEditPostPublishPage($superGlobal->getPostValue());
         break;
         case "addcomment":
-            $controller->getAddCommentPage($superGlobal->getPostValue());
+            $commentController->getAddCommentPage($superGlobal->getPostValue());
         break;
         case "panel":
             $controller->getPanelPage();
@@ -74,30 +78,30 @@ if(!empty($superGlobal->getGetValue("page"))) {
             $controller->getUploadAvatarPage($superGlobal->getFilesValue(), $superGlobal->getPostValue());
         break;
         case "addusersocials":
-            $controller->getAddUserSocialsPage($superGlobal->getPostValue());
+            $socialController->getAddUserSocialsPage($superGlobal->getPostValue());
         break;
         case "updateusersocials":
-            $controller->getUpdateUserSocialsPage($superGlobal->getPostValue());
+            $socialController->getUpdateUserSocialsPage($superGlobal->getPostValue());
         break;
         case "deleteusersocial":
-            $controller->getDeleteUserSocialPage($superGlobal->getGetValue("user_id"), $superGlobal->getGetValue("social_id"));
+            $socialController->getDeleteUserSocialPage($superGlobal->getGetValue("user_id"), $superGlobal->getGetValue("social_id"));
         break;
         case "uploadcv":
             $controller->getUploadCvPage($superGlobal->getFilesValue(), $superGlobal->getPostValue());
         break;
         case "commentmanager":
-            $controller->getCommentManagerPage();
+            $commentController->getCommentManagerPage();
         break;
         case "confirmcomment":
             if(is_numeric($superGlobal->getGetValue("id"))) {
-                $controller->getActivateCommentPage($superGlobal->getGetValue("id"));
+                $commentController->getActivateCommentPage($superGlobal->getGetValue("id"));
             } else {
                 $controller->getHomepage();
             }
         break;
         case "rejectcomment":
             if(is_numeric($superGlobal->getGetValue("id"))) {
-                $controller->getRejectCommentPage($superGlobal->getGetValue("id"));
+                $commentController->getRejectCommentPage($superGlobal->getGetValue("id"));
             } else {
                 $controller->getHomepage();
             }
@@ -106,10 +110,10 @@ if(!empty($superGlobal->getGetValue("page"))) {
             $controller->getSettingsManagerPage();
         break;
         case "contactmanager":
-            $controller->getContactManagerPage();
+            $contactController->getContactManagerPage();
         break;
         case "readmessage":
-            $controller->getReadMessagePage($superGlobal->getGetValue("id"));
+            $contactController->getReadMessagePage($superGlobal->getGetValue("id"));
         break;
         case "mainsettings":
             $controller->getMainSettingsPage($superGlobal->getPostValue());
@@ -121,16 +125,16 @@ if(!empty($superGlobal->getGetValue("page"))) {
             $controller->getSetPermissionPage($superGlobal->getPostValue());
         break;
         case "deletesocial":
-            $controller->getDeleteSocialPage($superGlobal->getGetValue("id"));
+            $socialController->getDeleteSocialPage($superGlobal->getGetValue("id"));
         break;
         case "updatesocial":
-            $controller->getUpdateSocialPage($superGlobal->getFilesValue(), $superGlobal->getPostValue());
+            $socialController->getUpdateSocialPage($superGlobal->getFilesValue(), $superGlobal->getPostValue());
         break;
         case "postmanager":
-            $controller->getPostManagerPage();
+            $postController->getPostManagerPage();
         break;
         case "deletepost":
-            $controller->getDeletePostPage($superGlobal->getGetValue("id"));
+            $postController->getDeletePostPage($superGlobal->getGetValue("id"));
         break;
         default:
             $controller->getHomepage();

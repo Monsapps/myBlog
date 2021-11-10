@@ -16,54 +16,50 @@ class SuperGlobal {
     function getPostValue(string $varName = null) {
         $this->getPost();
         if($varName != null) {
-            return (isset($this->post["$varName"])) ? $this->post["$varName"] : null;
-        } else {
-            return $this->post;
+            return (isset($this->post[$varName])) ? $this->post[$varName] : null;
         }
+        return $this->post;
     }
 
     function getFilesValue(string $varName = null) {
         $this->getFiles();
         if($varName != null) {
-            return (isset($this->files["$varName"])) ? $this->files["$varName"] : null;
-        } else {
-            return $this->files;
+            return (isset($this->files[$varName])) ? $this->files[$varName] : null;
         }
+        return $this->files;
     }
 
     function getGetValue(string $varName = null) {
         $this->getGet();
         if($varName != null) {
-            return (isset($this->get["$varName"])) ? $this->get["$varName"] : null;
-        } else {
-            return $this->get;
+            return (isset($this->get[$varName])) ? $this->get[$varName] : null;
         }
+        return $this->get;
+        
     }
 
     function getSessionValue(string $varName = null) {
         $this->getSession();
         if($varName != null) {
-            return (isset($this->session["$varName"])) ? $this->session["$varName"] : null;
-        } else {
-            return $this->session;
+            return (isset($this->session[$varName])) ? $this->session[$varName] : null;
         }
+        return $this->session;
     }
 
     function setSessionValue(string $varName, string $value) {
-        $_SESSION["$varName"] = $value;
+        $_SESSION[$varName] = $value;
     }
 
     function unsetSession(string $varName) {
-        unset($_SESSION["$varName"]);
+        unset($_SESSION[$varName]);
     }
 
     function getCookieValue(string $varName = null) {
         $this->getCookie();
         if($varName != null) {
-            return (isset($this->cookie["$varName"])) ? $this->cookie["$varName"] : null;
-        } else {
-            return $this->cookie;
+            return (isset($this->cookie[$varName])) ? $this->cookie[$varName] : null;
         }
+        return $this->cookie;
     }
 
     function setCookieValue(string $varName, string $value, int $duration) {

@@ -38,9 +38,6 @@ class UserController {
     function isAllowedToCrud() {
         if($this->userRole > 0) {
             return true;
-        } else {
-            return false;
         }
-
     }
 }
