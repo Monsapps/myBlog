@@ -19,7 +19,7 @@
         </div>
         <div class="row">
             <div class="col text-justify post-content-size">
-                {{ post.content }}
+                {{ post.content|nl2br }}
             </div>
         </div>
         <div class="row">
@@ -50,7 +50,7 @@
         <div class="col-9 col-lg-11">
             <div class="row">
                 <div class="col">
-                    {{ comment.content }}
+                    {{ comment.content|nl2br }}
                 </div>
             </div>
             <div class="row">
