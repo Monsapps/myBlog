@@ -62,6 +62,7 @@ class ContactController extends Controller {
                 "messages" => $messages,
                 "token" => $this->superGlobal->getSessionValue("token")
             ));
+            return;
         }
         $this->redirectTo("./index.php");
     }

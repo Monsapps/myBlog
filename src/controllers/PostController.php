@@ -56,6 +56,7 @@ class PostController extends Controller {
                 "user" => $this->userInfos,
                 "token" => $this->superGlobal->getSessionValue("token")
             ));
+            return;
         }
         $this->redirectTo("./index.php");
     }
@@ -73,6 +74,7 @@ class PostController extends Controller {
             $post->addPost((int)$userInfos["id"], $postArray["title"], $postArray["hat"], $postArray["content"], $postArray["keywords"]);
 
             $this->redirectTo("./index.php?page=post&token=" . $this->superGlobal->getSessionValue("token"));
+            return;
         }
         $this->redirectTo("./index.php");
     }
@@ -98,6 +100,7 @@ class PostController extends Controller {
                 "authors" => $allUsers,
                 "token" => $this->superGlobal->getSessionValue("token")
             ));
+            return;
         }
 
         $this->redirectTo("./index.php?page=post&id". $idPost);
@@ -113,7 +116,6 @@ class PostController extends Controller {
             || empty($postArray["keywords"])) {
 
                 $this->redirectTo("./index.php?page=post&error=1&token=" . $this->superGlobal->getSessionValue("token"));
-                
         }
 
         if($this->isAllowedToCRUD && ($postArray["token"] == $this->superGlobal->getSessionValue("token"))) {
@@ -144,6 +146,7 @@ class PostController extends Controller {
                 "posts" => $posts,
                 "token" => $this->superGlobal->getSessionValue("token")
             ));
+            return;
         }
         
         $this->redirectTo("./index.php");

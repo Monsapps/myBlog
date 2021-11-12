@@ -43,6 +43,7 @@ class CommentController extends Controller {
                 "comments" => $comments,
                 "token" => $this->superGlobal->getSessionValue("token")
             ));
+            return;
         }
         $this->redirectTo("./index.php");
     }

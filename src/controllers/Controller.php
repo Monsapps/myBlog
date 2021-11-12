@@ -174,13 +174,12 @@ class Controller {
                     "userSocials" => $userSocials,
                     "token" => $this->superGlobal->getSessionValue("token")
                 ));
-            } else {
-                $this->redirectTo("./index.php");
+                return;
             }
-
-        } else {
             $this->redirectTo("./index.php");
+
         }
+        $this->redirectTo("./index.php");
     }
 
     function getEditProfilePage(array $postArray) {
@@ -282,9 +281,9 @@ class Controller {
                 "socials" => $socials,
                 "token" => $this->superGlobal->getSessionValue("token")
             ));
-        } else {
-            $this->redirectTo("./index.php");
+            return;
         }
+        $this->redirectTo("./index.php");
     }
 
     function getMainSettingsPage(array $post) {
@@ -331,9 +330,10 @@ class Controller {
                 "roles" => $allRoles,
                 "token" => $this->superGlobal->getSessionValue("token")
             ));
-        } else {
-            $this->redirectTo("./index.php");
+            return;
         }
+
+        $this->redirectTo("./index.php");
     }
 
     function getSetPermissionPage(array $postArray) {
