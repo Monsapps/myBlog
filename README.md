@@ -3,21 +3,22 @@
 
 ## Project structure
 
-```text
-./config/ (folder for config file)
-./public/css/ (cascading style sheets file)
-./public/images/ (images files)
-./public/javascript/ (javascript file)
-./public/uploads/ (uploaded files)
-./src/controller/ (controllers php files)
-./src/model/ (models php files)
-./src/utils/ (utils php files)
-./src/view/ (templates php files)
-./src/view/panel/ (templates php files)
-./index.php (main php file)
-./install.php (php script to install myBlog)
-./README.md (this)
-```
+*   config (folder for config file)
+*   public
+    *   css (cascading style sheets file)
+    *   images (images files)
+    *   javasript (javascript file)
+    *   uploads (uploaded files)
+*   src
+    *   controllers (Controllers files)
+    *   models (Models files)
+    *   routes (router file)
+    *   utils (utils files)
+    *   views (Views files)
+        *   panel (Views for panel)
+* index.php (main php files)
+* install.php (php script to install myBlog)
+* README.md (this)
 
 ## Installation
 
