@@ -133,7 +133,7 @@ class User {
 
         $sql = "INSERT INTO `user_social` (`user_id`, `social_id`, `meta`) VALUES (:user_id, :social_id, :meta);";
 
-        $query = $this->db->prepare($sql, array(\PDO::ATTR_CURSOR => \PDO::CURSOR_FWDONLY));
+        $query = $this->dbManager->prepare($sql, array(\PDO::ATTR_CURSOR => \PDO::CURSOR_FWDONLY));
         $query->execute(array(":user_id" => $userId, ":social_id" => $socialId, ":meta" => $meta));
         $query = null;
     }
