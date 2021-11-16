@@ -8,6 +8,11 @@ class DatabaseManager extends \PDO {
 
     private $iniConfig;
 
+    /**
+     * Overwrite PDO connection
+     * @return void
+     */
+
     function __construct() {
 
         $this->parseIniFile();
@@ -23,12 +28,22 @@ class DatabaseManager extends \PDO {
         }
     }
 
+    /**
+     * Open config.ini file for the database connection
+     * @return void
+     */
+
     private function parseIniFile() {
         if(!$iniConfig = parse_ini_file("./config/config.ini", TRUE))
             throw new Exception("Impossible d'ouvrir le fichier de configuration de la base de données");
 
         $this->iniConfig = $iniConfig;
     }
+
+    /**
+     * Error exception page
+     * @return void
+     */
 
     function errorException($error) {
         ?>

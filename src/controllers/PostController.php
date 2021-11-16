@@ -1,12 +1,17 @@
 <?php
 /**
- * Post controller, CRUD Posts
+ * Post controller
  */
 declare(strict_types=1);
 
 namespace Monsapp\Myblog\Controllers;
 
 class PostController extends Controller {
+
+    /**
+     * Show all posts page
+     * @return void
+     */
 
     function getPostsPage() {
         $post = new \Monsapp\Myblog\Models\Post();
@@ -23,6 +28,13 @@ class PostController extends Controller {
             "token" => $this->superGlobal->getSessionValue("token")
         ));
     }
+
+    /**
+     * Show unique post page
+     * @param int $idPost
+     *  Post id
+     * @return void
+     */
 
     function getPostPage(int $idPost) {
         $post = new \Monsapp\Myblog\Models\Post();
@@ -45,6 +57,11 @@ class PostController extends Controller {
         ));
     }
 
+    /**
+     * Show add post form page
+     * @return void
+     */
+
     function getAddPostPage() {
         if((!empty($this->superGlobal->getGetValue("token")) && $this->superGlobal->getGetValue("token") == $this->superGlobal->getSessionValue("token")) && $this->isAllowedToCRUD) {
             $this->twig->display("addpost.html.twig", array(
@@ -61,6 +78,13 @@ class PostController extends Controller {
         $this->redirectTo("./index.php");
     }
 
+    /**
+     * Add post to database
+     * @param array $postArray
+     *  Array from add post page
+     * @return void
+     */
+
     function getPublishPage(array $postArray) {
 
         if(empty($postArray["title"]) || empty($postArray["hat"]) || $postArray["content"]) {
@@ -69,7 +93,6 @@ class PostController extends Controller {
         if($this->isAllowedToCRUD && ($postArray["token"] == $this->superGlobal->getSessionValue("token"))) {
             // We need to attach user id to a post
             $userInfos = $this->userInfos;
-            // TODO control les valeurs
             $post = new \Monsapp\Myblog\Models\Post();
             $post->addPost((int)$userInfos["id"], $postArray["title"], $postArray["hat"], $postArray["content"], $postArray["keywords"]);
 
@@ -79,8 +102,12 @@ class PostController extends Controller {
         $this->redirectTo("./index.php");
     }
 
-    function getEditPostPage(int $idPost) {
+    /**
+     * Show edit post page
+     * @return void
+     */
 
+    function getEditPostPage(int $idPost) {
         // We store all users to edit author's post
         $user = new \Monsapp\Myblog\Models\User();
         $allUsers = $user->getAllUsers();
@@ -106,10 +133,16 @@ class PostController extends Controller {
         $this->redirectTo("./index.php?page=post&id". $idPost);
     }
 
+    /**
+     * Update post in the database
+     * @param array $postArray
+     *  Array from edit post page
+     * @return void
+     */
+
     function getEditPostPublishPage(array $postArray) {
 
         if(empty($postArray["id"]) 
-            || empty($postArray["author"]) 
             || empty($postArray["title"]) 
             || empty($postArray["hat"]) 
             || empty($postArray["content"]) 
@@ -128,9 +161,9 @@ class PostController extends Controller {
     }
 
     /**
-     * This is admin section
+     * Show all posts for admin, own post for editor
+     * @return void
      */
-
 
     function getPostManagerPage() {
         $post = new \Monsapp\Myblog\Models\Post();
@@ -148,9 +181,15 @@ class PostController extends Controller {
             ));
             return;
         }
-        
         $this->redirectTo("./index.php");
     }
+
+    /**
+     * Delete post in the database
+     * @param int $idPost
+     *  Post id
+     * @return void
+     */
 
     function getDeletePostPage(int $idPost) {
         $post = new \Monsapp\Myblog\Models\Post();

@@ -12,6 +12,13 @@ class SuperGlobal {
     private $get;
     private $session;
     private $cookie;
+
+    /**
+     * Return value of $_POST
+     * @param string|null $varName
+     *  Variable name
+     * @return string
+     */
     
     function getPostValue(string $varName = null) {
         $this->getPost();
@@ -21,6 +28,13 @@ class SuperGlobal {
         return $this->post;
     }
 
+    /**
+     * Return value of $_FILES
+     * @param string|null $varName
+     *  Variable name
+     * @return array
+     */
+
     function getFilesValue(string $varName = null) {
         $this->getFiles();
         if($varName != null) {
@@ -28,6 +42,13 @@ class SuperGlobal {
         }
         return $this->files;
     }
+
+    /**
+     * Return value of $_GET
+     * @param string|null $varName
+     *  Variable name
+     * @return string
+     */
 
     function getGetValue(string $varName = null) {
         $this->getGet();
@@ -38,6 +59,13 @@ class SuperGlobal {
         
     }
 
+    /**
+     * Return value of $_SESSION
+     * @param string|null $varName
+     *  Variable name
+     * @return string
+     */
+
     function getSessionValue(string $varName = null) {
         $this->getSession();
         if($varName != null) {
@@ -46,13 +74,36 @@ class SuperGlobal {
         return $this->session;
     }
 
+    /**
+     * Set value of $_SESSION
+     * @param string $varName
+     *  Variable name
+     * @param string $value
+     *  Value
+     * @return array
+     */
+
     function setSessionValue(string $varName, string $value) {
         $_SESSION[$varName] = $value;
     }
 
+    /**
+     * Delete session value
+     * @param string $varName
+     *  Variable name
+     * @return void
+     */
+
     function unsetSession(string $varName) {
         unset($_SESSION[$varName]);
     }
+
+    /**
+     * Return value of $_COOKIE
+     * @param string|null $varName
+     *  Variable name
+     * @return string
+     */
 
     function getCookieValue(string $varName = null) {
         $this->getCookie();
@@ -61,6 +112,17 @@ class SuperGlobal {
         }
         return $this->cookie;
     }
+
+    /**
+     * Set cookie value
+     * @param string $varName
+     *  Variable name
+     * @param string $value
+     *  Value of cookie
+     * @param int $duration
+     *  Duration of cookie
+     * @return void
+     */
 
     function setCookieValue(string $varName, string $value, int $duration) {
         setcookie($varName, $value, $duration);

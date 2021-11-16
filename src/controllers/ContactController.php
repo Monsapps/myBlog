@@ -8,6 +8,13 @@ namespace Monsapp\Myblog\Controllers;
 
 class ContactController extends Controller {
 
+    /**
+     * Try sending mail with smtp if not add info to database
+     * @param array $postArray
+     *  Array from contact form
+     * @return void
+     */
+
     function getContactPage(array $postArray) {
         
         if(!empty($postArray["name"]) && !empty($postArray["surname"]) && !empty($postArray["email"]) && !empty($postArray["message"])) {
@@ -16,28 +23,61 @@ class ContactController extends Controller {
 
             $mainUser = $user->getUserInfos((int)$this->siteInfo["site_main_user_id"]);
 
-            if(!$contact->sendMail($mainUser["email"], $postArray["message"], $postArray["email"], $postArray["name"], $postArray["surname"])) {
+            $message = utf8_decode($postArray["message"]);
+            $name = utf8_decode($postArray["name"]);
+            $surname = utf8_decode($postArray["surname"]);
+
+            if(!$contact->sendMail($mainUser["email"], $message, $postArray["email"], $name, $surname)) {
 
                 $contact->sendMessage($postArray["message"], $postArray["email"], $postArray["name"], $postArray["surname"]);
-                $this->redirectTo("./index.php?status=1");
             }
+
+            $this->redirectTo("./index.php?status=1");
         }
         $this->redirectTo("./index.php?error=1");
     }
 
+    /**
+     * Send mail to the main user
+     * @param string $toAdmin
+     *  Admin mail
+     * @param string $message
+     *  Content of message
+     * @param string $from
+     *  Sender mail
+     * @param string $senderName
+     *  Sender name
+     * @param string $senderSurname
+     *  Sender surname
+     * @return bool
+     */
+
     function sendMail(string $toAdmin, string $message, string $from, string $senderName, string $senderSurname): Bool {
 
-        $subject = $senderName . " " . $senderSurname . "vous à contacter";
+        $subject = $senderName . " " . $senderSurname . utf8_decode(" vous à contacter");
         $headers = array(
+            "MIME-Version" => "1.0",
+            "Content-type" => "text/html; charset=utf-8",
             "From" => $from,
             "Reply-To"=> $from,
             "X-Mailer" => "PHP/" . phpversion()
         );
 
-        if(!mail($toAdmin, $subject, $message, $headers)) {
-            return false;
-        }
+        return mail($toAdmin, $subject, $message, $headers);
     }
+
+    /**
+     * Add contact message to the database
+     * @param string $message
+     *  Content of message
+     * @param string $from
+     *  Sender mail
+     * @param string $senderName
+     *  Sender name
+     * @param string $senderSurname
+     *  Sender surname
+     * @return void
+     */
 
     function sendMessage(string $message, string $email, string $senderName, string $senderSurname) {
         $contact = new \Monsapp\Myblog\Models\Contact();
@@ -45,7 +85,8 @@ class ContactController extends Controller {
     }
 
     /**
-     * Panel Controller for Contact in DB
+     * Get contact messages in admin section
+     * @return void
      */
 
     function getContactManagerPage() {
@@ -66,6 +107,13 @@ class ContactController extends Controller {
         }
         $this->redirectTo("./index.php");
     }
+
+    /**
+     * Update message status for contact message
+     * @param int $idMessage
+     *  Message id
+     * @return void
+     */
 
     function getReadMessagePage(int $idMessage) {
         if((!empty($this->superGlobal->getGetValue("token")) && $this->superGlobal->getGetValue("token") == $this->superGlobal->getSessionValue("token")) && ($this->role == 1)) {

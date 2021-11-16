@@ -14,6 +14,11 @@ class Post {
     $this->dbManager = new \Monsapp\Myblog\Utils\DatabaseManager();
   }
 
+  /**
+   * Return all posts from database
+   * @return array
+   */
+
   function getAllPosts() {
     $query = $this->dbManager->query("SELECT p.id, p.user_id, p.title, p.hat, p.date, p.last_edited, u.name, u.surname
                       FROM `post` AS p
@@ -22,6 +27,13 @@ class Post {
     $results = $query->fetchAll();
     return $results;
   }
+
+  /**
+   * Return unique post info from database
+   * @param int $idPost
+   *  Post id
+   * @return array
+   */
 
   function getPostInfos(int $idPost) {
     $sql = "SELECT p.id, p.user_id, p.title, p.hat, p.content, p.date, p.last_edited, p.keywords, u.name, u.surname
@@ -37,6 +49,21 @@ class Post {
     $query->closeCursor();
     return $results;
   }
+
+  /**
+   * Add post to the database
+   * @param int $useriId
+   *  User id
+   * @param string $title
+   *  Title of the post
+   * @param string $hat
+   *  Hat of the post
+   * @param string $content
+   *  Content of the post
+   * @param string $keywords
+   *  Keywords of the post for SEO
+   * @return void
+   */
 
   function addPost(int $userId, string $title, string $hat, string $content, string $keywords) {
     $date = date("Y-m-d H:i:s");
@@ -58,6 +85,21 @@ class Post {
 
   }
 
+  /**
+   * Update post info into the database
+   * @param int $useriId
+   *  User id
+   * @param string $title
+   *  Title of the post
+   * @param string $hat
+   *  Hat of the post
+   * @param string $content
+   *  Content of the post
+   * @param string $keywords
+   *  Keywords of the post for SEO
+   * @return void
+   */
+
   function updatePost(int $idPost ,int $userId, string $title, string $hat, string $content, string $keywords) {
     $date = date("Y-m-d H:i:s");
 
@@ -78,6 +120,13 @@ class Post {
     ));
     $query = null;
   }
+
+  /**
+   * Delete post of the database
+   * @param int $idPost
+   *  Post id
+   * @return void
+   */
 
   function deletePost(int $idPost) {
     $sql = "DELETE FROM `post` WHERE `id` = :id;";

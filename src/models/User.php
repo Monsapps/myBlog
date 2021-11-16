@@ -14,6 +14,13 @@ class User {
         $this->dbManager = new \Monsapp\Myblog\Utils\DatabaseManager();
     }
 
+    /**
+     * Get user info from the database
+     * @param string|int $emailOrInt
+     *  User email or id
+     * @return array
+     */
+
     function getUserInfos($emailOrInt) {
         $userInfos = null;
         // if email is present return infos by email for login
@@ -47,7 +54,12 @@ class User {
             $query = null;
         }
         return $userInfos;
-     }
+    }
+
+    /**
+     * Return all users from the database
+     * @return array
+     */
     
     function getAllUsers() {
     $query = $this->dbManager->query("SELECT * FROM `user`;");
@@ -55,8 +67,14 @@ class User {
     return $results;
     }
 
-    function userExist(string $email) {
+    /**
+     * Return user count from the database
+     * @param string $email
+     *  Mail of the user
+     * @return int
+     */
 
+    function userExist(string $email) {
     $sql = "SELECT *
         FROM `user`
         WHERE email = :email;";
@@ -67,9 +85,25 @@ class User {
     $resultCount = $query->rowCount();
 
     $query = null;
-    // return true of false???
     return $resultCount;
     }
+
+    /**
+     * Add user to the database
+     * @param string $name
+     *  Name
+     * @param string $surname
+     *  Surname
+     * @param string $email
+     *  Mail
+     * @param string $password
+     *  Hashed password
+     * @param string $date
+     *  Date of registration
+     * @param string $userHat
+     *  "Punch line" of the user
+     * @return void
+     */
 
     function addUser(string $name, string $surname, string $email, string $password, string $date, string $userHat) {
 
@@ -88,6 +122,17 @@ class User {
     $query = null;
     }
 
+    /**
+     * Update user to the database
+     * @param string $name
+     *  Name
+     * @param string $surname
+     *  Surname
+     * @param string $hat
+     *  "Punch line" of the user
+     * @return void
+     */
+
     function updateUser(int $userId, string $name, string $surname, string $hat) {
         $sql = "UPDATE `user` SET 
         `name` = :name,
@@ -105,6 +150,15 @@ class User {
         $query = null;
     }
 
+    /**
+     * Set user permission
+     * @param int $userId
+     *  User id
+     * @param int $roleId
+     *  Role id
+     * @return void
+     */
+
     function setPermission(int $userId, int $roleId) {
         $sql = "UPDATE `user` SET `role_id` = :role_id WHERE `id` = :user_id;";
 
@@ -115,6 +169,13 @@ class User {
         ));
         $query = null;
     }
+
+    /**
+     * Return user socials networks from the database
+     * @param int $userId
+     *  User id
+     * @return array
+     */
 
     function getUserSocials(int $userId) {
         $sql = "SELECT us.id, us.meta, s.name, s.social_image
@@ -129,6 +190,17 @@ class User {
         return $socials;
     }
 
+    /**
+     * Add user social to the database
+     * @param int $userId
+     *  User id
+     * @param int $socialId
+     *  Social network id
+     * @param string $meta
+     *  Profile address
+     * @return void
+     */
+
     function addSocial(int $userId, int $socialId, string $meta) {
 
         $sql = "INSERT INTO `user_social` (`user_id`, `social_id`, `meta`) VALUES (:user_id, :social_id, :meta);";
@@ -138,6 +210,15 @@ class User {
         $query = null;
     }
 
+    /**
+     * Update user social to the database
+     * @param int $socialId
+     *  Social network id
+     * @param string $meta
+     *  Profile address
+     * @return void
+     */
+
     function updateSocial(int $socialId, string $socialMeta) {
         $sql = "UPDATE `user_social` SET `meta` = :meta WHERE `id` = :id;";
 
@@ -145,6 +226,13 @@ class User {
         $query->execute(array(":meta" => $socialMeta, ":id" => $socialId));
         $query = null;
     }
+
+    /**
+     * Delete user social to the database
+     * @param int $socialId
+     *  Social network id
+     * @return void
+     */
 
     function deleteSocial(int $socialId) {
         $sql = "DELETE FROM `user_social` WHERE `id` = :id;";

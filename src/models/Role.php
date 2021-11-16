@@ -14,6 +14,11 @@ class Role {
         $this->dbManager = new \Monsapp\Myblog\Utils\DatabaseManager();
     }
 
+    /**
+     * Return availables roles
+     * @return array
+     */
+
     function getRoles() {
         $query = $this->dbManager->query("SELECT * FROM `role`;");
         $results = $query->fetchAll();
