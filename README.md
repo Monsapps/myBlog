@@ -7,7 +7,7 @@
 *   public
     *   css (cascading style sheets file)
     *   images (images files)
-    *   javasript (javascript file)
+    *   javascript (javascript file)
     *   uploads (uploaded files)
 *   src
     *   controllers (Controllers files)
