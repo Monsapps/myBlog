@@ -20,6 +20,13 @@ class ConfigManager {
         $this->dbQuery = $query;
     }
 
+    /**
+     * Return main settings value
+     * @param null|string $name
+     *  If null return all settings else unique setting value
+     * @return array|string
+     */
+
     function getConfig(string $name = null) {
         if(!empty($name)) {
             // Find value for $name
@@ -39,6 +46,15 @@ class ConfigManager {
         }
         return $siteInfo;
     }
+
+    /**
+     * Update setting value
+     * @param string $setting
+     *  Setting name
+     * @param string $values
+     *  Setting value
+     * @return void
+     */
 
     function editConfig(string $setting, string $values) {
         $sql = "UPDATE `config`

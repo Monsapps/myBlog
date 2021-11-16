@@ -27,13 +27,28 @@ class UserController {
         }
     }
 
+    /**
+     * Return user role
+     * @return int
+     */
+
     function getUserRole() {
         return $this->userRole;
     }
 
+    /**
+     * Return user info
+     * @return array
+     */
+
     function getUserInfos() {
         return $this->userInfos;
     }
+
+    /**
+     * Return if role can Add/Update/Delete content
+     * @return bool
+     */
 
     function isAllowedToCrud() {
         if($this->userRole > 0) {

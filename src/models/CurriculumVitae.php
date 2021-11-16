@@ -14,14 +14,23 @@ class CurriculumVitae {
         $this->dbManager = new \Monsapp\Myblog\Utils\DatabaseManager();
     }
 
-    function setCv(int $userId, string $fileName) {
+    /**
+     * Add curriculum vitae info to database
+     * @param int $userId
+     *  User id
+     * @param string $filename
+     *  Filename
+     * @return void
+     */
+
+    function setCv(int $userId, string $filename) {
         $sql = "INSERT INTO `curriculum_vitae` (`user_id`, `file_name`)
-        VALUES(:user_id, :file_name);";
+        VALUES(:user_id, :filename);";
 
         $query = $this->dbManager->prepare($sql, array(\PDO::ATTR_CURSOR => \PDO::CURSOR_FWDONLY));
         $query->execute(array(
             ":user_id" => $userId,
-            ":file_name" => $fileName
+            ":filename" => $filename
             ));
         $query = null;
     }

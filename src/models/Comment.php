@@ -14,6 +14,13 @@ class Comment {
         $this->dbManager = new \Monsapp\Myblog\Utils\DatabaseManager();
     }
 
+    /**
+     * Return all comments for a post
+     * @param int $postId
+     *  Post id
+     * @return array
+     */
+
     function getComments(int $postId) {
         
         $sql = "SELECT c.content, c.date, u.name, u.surname, i.path_name
@@ -31,6 +38,11 @@ class Comment {
         return $results;
     }
 
+    /**
+     * Return all pending comments
+     * @return array
+     */
+
     function getPendingComments() {
 
         $query = $this->dbManager->query("SELECT c.id, c.content, p.title, u.name, u.surname
@@ -44,6 +56,17 @@ class Comment {
         $query->closeCursor();
         return $results;
     }
+
+    /**
+     * Add comment to database
+     * @param int $postId
+     *  Post id
+     * @param int $userId
+     *  User id
+     * @param string $content
+     *  Content of comment
+     * @return void
+     */
 
     function addComment(int $postId, int $userId, string $content) {
 
@@ -63,6 +86,13 @@ class Comment {
         $query = null;
     }
 
+    /**
+     * Activate comment visibility
+     * @param int $commentId
+     *  Comment id
+     * @return void
+     */
+
     function activateComment(int $commentId) {
 
         $sql = "UPDATE `comment` SET `status` = 'Confirmed' WHERE `id` = :id;";
@@ -70,6 +100,13 @@ class Comment {
         $query->execute(array(":id" => $commentId));
         $query = null;
     }
+
+    /**
+     * Reject comment 
+     * @param int $commentId
+     *  Comment id
+     * @return void
+     */
 
     function rejectComment(int $commentId) {
 

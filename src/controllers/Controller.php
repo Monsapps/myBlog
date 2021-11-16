@@ -56,7 +56,8 @@ class Controller {
     }
 
     /**
-     * Controller for homepage
+     * Show main page with main user information
+     * @return void
      */
 
     function getHomepage() {
@@ -76,7 +77,8 @@ class Controller {
     }
 
     /**
-     * Controllers for login/logout/register
+     * Show login page for login/logout/register
+     * @return void
      */
 
     function getConnectPage() {
@@ -89,6 +91,14 @@ class Controller {
             "role" => $this->role
         ));
     }
+
+    /**
+     * Compare input password if the same, if mail is already in the database
+     * finally it add new user in database
+     * @param array $post
+     *  Array from registration form
+     * @return void
+     */
 
     function getRegistrationPage(array $post) {
 
@@ -106,6 +116,7 @@ class Controller {
                 $this->redirectTo("./index.php?page=connect&error=2");
             } else {
                 $date = date("Y-m-d H:i:s");
+                // hash the password for security
                 $encryptedPassword = password_hash($password, PASSWORD_DEFAULT);
                 $user->addUser($name, $surname, $email, $encryptedPassword, $date, "");
                 $this->redirectTo("./index.php");
@@ -115,6 +126,13 @@ class Controller {
             $this->redirectTo("./index.php?page=connect&error=1");
         }
     }
+
+    /**
+     * Compare info from login form with the database info and create cookies
+     * @param array $post
+     *  Array from login form
+     * @return void
+     */
 
     function getLoginPage(array $post) {
 
@@ -140,6 +158,11 @@ class Controller {
         }
     }
 
+    /**
+     * Delete session and cookies
+     * @return void
+     */
+
     function getDisconnectPage() {
         // clear token
         session_destroy();
@@ -150,7 +173,8 @@ class Controller {
     }
 
     /**
-     * Controller for panel
+     * Get panel page
+     * @return void
      */
 
     function getPanelPage() {
@@ -177,10 +201,16 @@ class Controller {
                 return;
             }
             $this->redirectTo("./index.php");
-
         }
         $this->redirectTo("./index.php");
     }
+
+    /**
+     * Update user info
+     * @param array $postArray
+     *  Array from user panel info
+     * @return void
+     */
 
     function getEditProfilePage(array $postArray) {
         // only confirmed users and user himself can update infos
@@ -193,6 +223,15 @@ class Controller {
             $this->redirectTo("./index.php");
         }
     }
+
+    /**
+     * Update user avatar in database and uploads folder
+     * @param array $files
+     *  Array files from user panel info
+     * @param array $postArray
+     *  Array from user panel info
+     * @return void
+     */
 
     function getUploadAvatarPage(array $files, array $postArray) {
         // only confirmed users and user himself can upload avatar
@@ -235,6 +274,15 @@ class Controller {
         }
     }
 
+    /**
+     * Add/Update curriculum vitae in database and uploads folder
+     * @param array $files
+     *  Array files from user panel info
+     * @param array $postArray
+     *  Array from user panel info
+     * @return void
+     */
+
     function getUploadCvPage(array $files, array $postArray) {
         // only admin can upload cv
         if((isset($postArray["token"]) && $postArray["token"] == $this->superGlobal->getSessionValue("token")) && $this->role == 1) {
@@ -261,6 +309,11 @@ class Controller {
         }
     }
 
+    /**
+     * Show main settings page in admin section
+     * @return void
+     */
+
     function getSettingsManagerPage() {
 
         // only admin can edit main settings
@@ -285,6 +338,11 @@ class Controller {
         }
         $this->redirectTo("./index.php");
     }
+
+    /**
+     * Update main settings
+     * @return void
+     */
 
     function getMainSettingsPage(array $post) {
         // only admin can edit main settings
@@ -311,6 +369,11 @@ class Controller {
         }
     }
 
+    /**
+     * Show all users with roles
+     * @return void|null
+     */
+
     function getPermissionsManagerPage() {
         if($this->role == 1) {
             $user = new \Monsapp\Myblog\Models\User();
@@ -335,6 +398,13 @@ class Controller {
 
         $this->redirectTo("./index.php");
     }
+    
+    /**
+     * Update user role
+     * @param array $postArray
+     *  Array from permission page
+     * @return void
+     */
 
     function getSetPermissionPage(array $postArray) {
         if((isset($postArray["token"]) && $postArray["token"] == $this->superGlobal->getSessionValue("token")) && $this->role == 1) {
@@ -345,6 +415,12 @@ class Controller {
             $this->redirectTo("./index.php");
         }
     }
+
+    /**
+     * Redirection to an address
+     * @param string $urlAddress
+     * @return void
+     */
 
     function redirectTo(string $urlAddress) {
         // Javascript redirection or PHP ??
@@ -365,9 +441,25 @@ class Controller {
         exit;
     }
 
+    /**
+     * Move uploaded file
+     * @param string $filename
+     *  Path of file
+     * @param string $destination
+     *  Path of destination
+     * @return bool
+     */
+
     private function moveUploadedFile(string $filename, string $destination) {
         return move_uploaded_file($filename, $destination);
     }
+
+    /**
+     * Get real path
+     * @param string $path
+     *  Path of file
+     * @return string
+     */
 
     private function baseFilename(string $path) {
         return basename($path);

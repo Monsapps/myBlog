@@ -8,6 +8,13 @@ namespace Monsapp\Myblog\Controllers;
 
 class SocialController extends Controller {
 
+    /**
+     * Add user social network
+     * @param array $postArray
+     *  Array from panel page
+     * @return void
+     */
+
     function getAddUserSocialsPage(array $postArray) {
         // only confirmed user and user himself can add socials
         if((isset($postArray["token"]) && $postArray["token"] == $this->superGlobal->getSessionValue("token")) && ($this->role != -1 && $this->userInfos["id"] == $postArray["user_id"])) {
@@ -21,6 +28,13 @@ class SocialController extends Controller {
 
         $this->redirectTo("./index.php");
     }
+
+    /**
+     * Update user  social network
+     * @param array $postArray
+     *  Array from panel page
+     * @return void
+     */
 
     function getUpdateUserSocialsPage(array $postArray) {
         // only confirmed user and user himself can update socials
@@ -37,6 +51,13 @@ class SocialController extends Controller {
         $this->redirectTo("./index.php");
     }
 
+    /**
+     * Delete user social network
+     * @param array $postArray
+     *  Array from panel page
+     * @return void
+     */
+
     function getDeleteUserSocialPage(int $userId, int $socialId) {
         // only confirmed user and user himself can delete socials
         if((!empty($this->superGlobal->getGetValue("token")) && $this->superGlobal->getGetValue("token") == $this->superGlobal->getSessionValue("token")) && ($this->role != -1 && $this->userInfos["id"] == $userId)) {
@@ -48,7 +69,12 @@ class SocialController extends Controller {
     }
 
     /**
-     * This is admin section Crud Social element
+     * Add available social network in blog
+     * @param array $files
+     *  Array files for logo
+     * @param array $postArray
+     *  Array from panel page
+     * @return void
      */
 
     function getUpdateSocialPage(array $files, array $postArray) {
@@ -115,6 +141,13 @@ class SocialController extends Controller {
         }
         $this->redirectTo("./index.php");
     }
+
+    /**
+     * Delete available social network
+     * @param int $îdSocial
+     *  Social id
+     * @return void
+     */
 
     function getDeleteSocialPage(int $idSocial) {
         if((!empty($this->superGlobal->getGetValue("token")) && $this->superGlobal->getGetValue("token") == $this->superGlobal->getSessionValue("token")) && $this->role == 1) {

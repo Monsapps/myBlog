@@ -14,6 +14,15 @@ class Image {
         $this->dbManager = new \Monsapp\Myblog\Utils\DatabaseManager();
     }
 
+    /**
+     * Add avatar info to database
+     * @param int $userId
+     *  User id
+     * @param string $imageName
+     *  Image name
+     * @return void
+     */
+
     function setImage(int $userId, string $imageName) {
         $sql = "INSERT INTO `image` (`user_id`, `path_name`)
         VALUES(:user_id, :path_name);";
@@ -25,6 +34,15 @@ class Image {
             ));
         $query = null;
     }
+
+    /**
+     * Update avatar info of the database
+     * @param int $userId
+     *  User id
+     * @param string $imageName
+     *  Image name
+     * @return void
+     */
 
     function updateImage(int $userId, string $imageName) {
         $sql = "UPDATE `image` SET `path_name` = :path_name WHERE `user_id` = :id;";

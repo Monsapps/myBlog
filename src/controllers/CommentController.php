@@ -1,12 +1,19 @@
 <?php
 /**
- * Comment controller
+ * This is the controller for comments
  */
 declare(strict_types=1);
 
 namespace Monsapp\Myblog\Controllers;
 
 class CommentController extends Controller {
+
+    /**
+     * Add comment to database
+     * @param array $postArray
+     *  Array from add comment form
+     * @return void
+     */
 
     function getAddCommentPage(array $postArray) {
 
@@ -25,7 +32,8 @@ class CommentController extends Controller {
     }
 
     /**
-     * This is admin section
+     * Get all pendings comments in admin section
+     * @return void
      */
 
     function getCommentManagerPage() {
@@ -48,6 +56,13 @@ class CommentController extends Controller {
         $this->redirectTo("./index.php");
     }
 
+    /**
+     * Activate comment to database
+     * @param int $commentId
+     *  Comment id
+     * @return void
+     */
+
     function getActivateCommentPage(int $commentId) {
         if((!empty($this->superGlobal->getGetValue("token")) && $this->superGlobal->getGetValue("token") == $this->superGlobal->getSessionValue("token")) && $this->role == 1) {
             $comment = new \Monsapp\Myblog\Models\Comment();
@@ -56,6 +71,13 @@ class CommentController extends Controller {
         }
         $this->redirectTo("./index.php?page=panel");
     }
+
+    /**
+     * Reject comment to database
+     * @param int $commentId
+     *  Comment id
+     * @return void
+     */
 
     function getRejectCommentPage(int $commentId) {
         if((!empty($this->superGlobal->getGetValue("token")) && $this->superGlobal->getGetValue("token") == $this->superGlobal->getSessionValue("token")) && $this->role == 1) {
