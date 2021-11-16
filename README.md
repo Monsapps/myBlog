@@ -13,7 +13,7 @@
     *   javascript (javascript file)
 
     *   uploads (uploaded files)
-    
+
 *   src
     *   controllers (Controllers files)
 
