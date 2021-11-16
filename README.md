@@ -4,6 +4,7 @@
 ## Project structure
 
 *   config (folder for config file)
+
 *   public
 
     *   css (cascading style sheets file)
@@ -15,6 +16,7 @@
     *   uploads (uploaded files)
 
 *   src
+
     *   controllers (Controllers files)
 
     *   models (Models files)
@@ -28,7 +30,9 @@
         *   panel (Views for panel)
 
 *   index.php (main php files)
+
 *   install.php (php script to install myBlog)
+
 *   README.md (this)
 
 ## Installation
