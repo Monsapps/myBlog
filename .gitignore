@@ -1,4 +1,4 @@
 /vendor
 /config/config.ini
-/public/uploads
-/public/images/socials
+/public/uploads/
+/public/images/socials/
