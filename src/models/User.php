@@ -162,7 +162,7 @@ class User {
     function setPermission(int $userId, int $roleId) {
         $sql = "UPDATE `user` SET `role_id` = :role_id WHERE `id` = :user_id;";
 
-        $query = $this->db->prepare($sql, array(\PDO::ATTR_CURSOR => \PDO::CURSOR_FWDONLY));
+        $query = $this->dbManager->prepare($sql, array(\PDO::ATTR_CURSOR => \PDO::CURSOR_FWDONLY));
         $query->execute(array(
             ":role_id" => $roleId,
             ":user_id" => $userId
