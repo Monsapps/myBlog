@@ -8,11 +8,8 @@
 *   public
 
     *   css (cascading style sheets file)
-
     *   images (images files)
-
     *   javascript (javascript file)
-
     *   uploads (uploaded files)
 
 *   src
