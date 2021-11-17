@@ -87,7 +87,7 @@ class PostController extends Controller {
 
     function getPublishPage(array $postArray) {
 
-        if(empty($postArray["title"]) || empty($postArray["hat"]) || $postArray["content"]) {
+        if(empty($postArray["title"]) || empty($postArray["hat"]) || empty($postArray["content"])) {
             $this->redirectTo("./index.php?page=addpost&error=1&token=" . $this->superGlobal->getSessionValue("token"));
         }
         if($this->isAllowedToCRUD && ($postArray["token"] == $this->superGlobal->getSessionValue("token"))) {
