@@ -43,8 +43,14 @@ class PostController extends Controller {
         $comment = new \Monsapp\Myblog\Models\Comment();
         $comments = $comment->getComments($idPost);
 
+        if(!empty($postInfos["title"])) {
+            $postTitle = $postInfos["title"];
+        } else {
+            $postTitle = "Article introuvable";
+        }
+
         $this->twig->display("post.html.twig", array(
-            "title" => $postInfos["title"] . " - " . $this->siteInfo["site_title"], 
+            "title" => $postTitle . " - " . $this->siteInfo["site_title"], 
             "navtitle" => $this->siteInfo["site_title"], 
             "descriptions" => $this->siteInfo["site_descriptions"],
             "keywords" => $this->siteInfo["site_keywords"],
